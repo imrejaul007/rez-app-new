@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatarFallback: {
-    backgroundColor: colors.neutral[100],
+    backgroundColor: colors.neutral[700],
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -285,11 +285,11 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.neutral[900],
+    color: colors.text.primary,
   },
   reviewDate: {
     fontSize: 12,
-    color: colors.neutral[500],
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   ratingContainer: {
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   reviewText: {
     fontSize: 14,
     lineHeight: 20,
-    color: colors.neutral[700],
+    color: colors.text.secondary,
   },
   imagesContainer: {
     marginBottom: 12,
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   storeResponse: {
-    backgroundColor: colors.tint.coolGray,
+    backgroundColor: colors.neutral[200],
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
@@ -336,12 +336,12 @@ const styles = StyleSheet.create({
   },
   storeResponseDate: {
     fontSize: 11,
-    color: colors.neutral[500],
+    color: colors.text.tertiary,
   },
   storeResponseText: {
     fontSize: 13,
     lineHeight: 18,
-    color: colors.neutral[700],
+    color: colors.text.secondary,
   },
   actions: {
     flexDirection: 'row',
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     gap: 20,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: colors.neutral[100],
+    borderTopColor: colors.border.default,
   },
   actionButton: {
     flexDirection: 'row',
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     fontSize: 12,
-    color: colors.neutral[500],
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   actionTextActive: {
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     gap: 6,
     borderWidth: 1,
-    borderColor: '#FCD34D',
+    borderColor: colors.warningScale[200],
   },
   pendingBadgeText: {
     fontSize: 12,

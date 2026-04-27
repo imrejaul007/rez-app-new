@@ -25,7 +25,7 @@ const RatingBreakdown: React.FC<RatingBreakdownProps> = ({
           {/* Star number and icon */}
           <View style={styles.starSection}>
             <ThemedText style={styles.starNumber}>{rating.stars}</ThemedText>
-            <Ionicons name="star" size={14} color="#FFB800" />
+            <Ionicons name="star" size={14} color={colors.warningScale[400]} />
           </View>
 
           {/* Progress bar */}
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   starNumber: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.neutral[700],
+    color: colors.text.secondary,
     width: 12,
   },
   progressBarContainer: {
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   progressBarBackground: {
     height: 8,
-    backgroundColor: colors.neutral[100],
+    backgroundColor: colors.neutral[200],
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   percentageText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.neutral[500],
+    color: colors.text.tertiary,
   },
 });
 

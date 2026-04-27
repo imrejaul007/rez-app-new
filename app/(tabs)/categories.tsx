@@ -14,7 +14,7 @@
  */
 
 import React, { Suspense, useCallback, useState } from 'react';
-import { View, StyleSheet, Pressable, StatusBar, Platform, TextInput, RefreshControl, Dimensions } from 'react-native';
+import { View, StyleSheet, Pressable, Platform, TextInput, RefreshControl, Dimensions } from 'react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
@@ -22,6 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { colors } from '@/constants/theme';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { useTheme } from '@/contexts/ThemeContext';
 import { ThemedText } from '@/components/ThemedText';
 import CachedImage from '@/components/ui/CachedImage';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
@@ -226,6 +227,7 @@ function CategoriesScreen() {
   const scrollY = useSharedValue(0);
   const [refreshing, setRefreshing] = useState(false);
   const { segment, statedIdentity } = useUserIdentityStore();
+  const { isDark, themeColors } = useTheme();
 
   const isStudentUser = segment === 'verified_student' || statedIdentity === 'student';
   const isEmployeeCorporate = segment === 'verified_employee' || statedIdentity === 'corporate';
@@ -317,14 +319,17 @@ function CategoriesScreen() {
       <ExpoStatusBar style="light" />
 
       {/* ── Header ── */}
-      <View style={styles.header}>
+      <View style={[styles.header, { backgroundColor: Colors.brand.purpleLight }]}>
         <View style={styles.headerTop}>
           <View style={styles.headerLeft}>
             <ThemedText style={styles.headerTitle}>Discover Everything</ThemedText>
           </View>
           <View style={styles.headerRight}>
             <Pressable
-              style={styles.headerIcon}
+              style={[
+                styles.headerIcon,
+                { backgroundColor: isDark ? themeColors.neutral[700] : 'rgba(255,255,255,0.5)' },
+              ]}
               onPress={() => router.push('/wallet-screen')}
               android_ripple={{ color: 'rgba(0,0,0,0.1)', borderless: true, radius: 20 }}
               accessibilityRole="button"
@@ -894,8 +899,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
   },
   header: {
-    backgroundColor: Colors.primary[500],
-    paddingTop: Platform.OS === 'ios' ? 50 : (StatusBar.currentHeight || 0) + 10,
+    paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.base,
   },
@@ -922,7 +926,6 @@ const styles = StyleSheet.create({
     width: Spacing['3xl'],
     height: Spacing['3xl'],
     borderRadius: BorderRadius.xl,
-    backgroundColor: 'rgba(255,255,255,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },

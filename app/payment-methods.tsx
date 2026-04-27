@@ -10,7 +10,9 @@ import {
   TextInput,
   Dimensions,
   KeyboardAvoidingView,
+  ActivityIndicator,
 } from 'react-native';
+import { useTheme } from '@/hooks/useTheme';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -29,9 +31,14 @@ function PaymentMethodsPage() {
   const cartState = useCartState();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
+  const { colors: themeColors } = useTheme();
   const [showUPIInput, setShowUPIInput] = useState(false);
   const [upiId, setUpiId] = useState('');
   const [cardNumber, setCardNumber] = useState('');
+
+  // Dynamic theme colors for elements that need dark-mode adaptation
+  const successBg = themeColors.successScale ? themeColors.successScale[50] : colors.tint.green;
+  const successText = themeColors.text?.primary || colors.text.primary;
 
   // Get store ID from cart items
   const storeId = (cartState.items[0] as any)?.store?.id || state.store?.id;
@@ -102,177 +109,214 @@ function PaymentMethodsPage() {
           </View>
         </LinearGradient>
 
-        <ScrollView
-          style={styles.content}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Recent Methods */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Recent Methods</ThemedText>
-            <View style={styles.recentMethodsGrid}>
-              {recentMethods.map((method) => (
-                <Pressable key={method.id} style={styles.recentMethodCard}>
-                  <View style={styles.recentMethodIcon}>
-                    <ThemedText style={styles.recentMethodIconText}>{method.icon}</ThemedText>
+        {state.loading ? (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={Colors.brand.purpleLight} />
+            <ThemedText style={styles.loadingText}>Loading payment options...</ThemedText>
+          </View>
+        ) : (
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Recent Methods */}
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Recent Methods</ThemedText>
+              <View style={styles.recentMethodsGrid}>
+                {recentMethods.map((method) => (
+                  <Pressable
+                    key={method.id}
+                    style={styles.recentMethodCard}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Pay with ${method.name}`}
+                  >
+                    <View style={styles.recentMethodIcon}>
+                      <ThemedText style={styles.recentMethodIconText}>{method.icon}</ThemedText>
+                    </View>
+                    <ThemedText style={styles.recentMethodName}>{method.name}</ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* Quick Pay Button */}
+            <Pressable
+              style={styles.quickPayButton}
+              onPress={() => handlers.handleRazorpayPayment()}
+              accessibilityRole="button"
+              accessibilityLabel={`Pay ${currencySymbol}${(state.billSummary?.totalPayable || 0).toLocaleString()} instantly`}
+            >
+              <LinearGradient
+                colors={[Colors.brand.purpleLight, Colors.brand.purple]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.quickPayGradient}
+              >
+                <View style={styles.quickPayContent}>
+                  <View style={styles.quickPayLeft}>
+                    <Ionicons name="flash" size={24} color={colors.brand.goldBright} />
+                    <View>
+                      <ThemedText style={styles.quickPayTitle}>Pay Instantly</ThemedText>
+                      <ThemedText style={styles.quickPaySubtitle}>UPI • Cards • Net Banking • Wallets</ThemedText>
+                    </View>
                   </View>
-                  <ThemedText style={styles.recentMethodName}>{method.name}</ThemedText>
+                  <ThemedText style={styles.quickPayAmount}>
+                    {currencySymbol}
+                    {(state.billSummary?.totalPayable || 0).toLocaleString()}
+                  </ThemedText>
+                </View>
+              </LinearGradient>
+            </Pressable>
+
+            {/* UPI Section */}
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Supported Payment Methods</ThemedText>
+
+              <View style={styles.paymentMethodsGrid}>
+                <View style={styles.methodCard}>
+                  <Ionicons name="card-outline" size={24} color={Colors.brand.purpleLight} />
+                  <ThemedText style={styles.methodLabel}>UPI</ThemedText>
+                </View>
+                <View style={styles.methodCard}>
+                  <Ionicons name="card" size={24} color={Colors.success} />
+                  <ThemedText style={styles.methodLabel}>Cards</ThemedText>
+                </View>
+                <View style={styles.methodCard}>
+                  <Ionicons name="business" size={24} color={Colors.info} />
+                  <ThemedText style={styles.methodLabel}>Net Banking</ThemedText>
+                </View>
+                <View style={styles.methodCard}>
+                  <Ionicons name="wallet" size={24} color={Colors.warning} />
+                  <ThemedText style={styles.methodLabel}>Wallets</ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.infoBox}>
+                <Ionicons name="shield-checkmark" size={20} color={Colors.success} />
+                <ThemedText style={styles.infoText}>Secure payments powered by Razorpay</ThemedText>
+              </View>
+            </View>
+
+            {/* Credit & Debit Cards */}
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Credit & Debit cards</ThemedText>
+
+              {/* Show applied card offer if available */}
+              {appliedOffer && (
+                <View style={styles.appliedOfferBanner}>
+                  <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
+                  <ThemedText style={styles.appliedOfferText}>
+                    Card offer applied! Save{' '}
+                    {appliedOffer.type === 'percentage'
+                      ? `${appliedOffer.value}%`
+                      : `${currencySymbol}${appliedOffer.value}`}
+                  </ThemedText>
+                </View>
+              )}
+
+              <Pressable
+                style={styles.cardOption}
+                accessibilityRole="button"
+                accessibilityLabel="Select SBI card ending in 4545"
+              >
+                <View style={styles.cardLeft}>
+                  <View style={styles.visaIcon}>
+                    <ThemedText style={styles.visaText}>VISA</ThemedText>
+                  </View>
+                  <View>
+                    <ThemedText style={styles.cardTitle}>SBI</ThemedText>
+                    <ThemedText style={styles.cardSubtitle}>••••••••• 4545</ThemedText>
+                  </View>
+                </View>
+              </Pressable>
+
+              <Pressable
+                style={styles.paymentOption}
+                accessibilityRole="button"
+                accessibilityLabel="Add new card"
+                onPress={() => {
+                  // When user adds/enters card, trigger validation
+                  // In real implementation, this would be triggered when card number is entered
+                  if (cardNumber && cardNumber.length >= 13) {
+                    validateAndApplyBestOffer(cardNumber);
+                  }
+                }}
+              >
+                <View style={styles.paymentOptionLeft}>
+                  <View style={styles.addCardIcon}>
+                    <Ionicons name="add" size={20} color={Colors.brand.purpleLight} />
+                  </View>
+                  <ThemedText style={styles.paymentOptionTitle}>Add new card</ThemedText>
+                </View>
+                <ThemedText style={styles.cardSubtitle}>••••••••• 4545</ThemedText>
+              </Pressable>
+            </View>
+
+            {/* Net Banking */}
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Net Banking</ThemedText>
+
+              <Pressable
+                style={styles.paymentOption}
+                accessibilityRole="button"
+                accessibilityLabel="Select net banking"
+              >
+                <View style={styles.paymentOptionLeft}>
+                  <View style={styles.bankIcon}>
+                    <Ionicons name="business" size={16} color={Colors.brand.purpleLight} />
+                  </View>
+                  <ThemedText style={styles.paymentOptionTitle}>Select Net working</ThemedText>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+              </Pressable>
+            </View>
+
+            {/* Pay Later */}
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Pay later</ThemedText>
+
+              {payLaterOptions.map((option) => (
+                <Pressable
+                  key={option.id}
+                  style={styles.paymentOption}
+                  accessibilityRole="button"
+                  accessibilityLabel={option.name}
+                >
+                  <View style={styles.paymentOptionLeft}>
+                    <View style={styles.payLaterIcon}>
+                      <ThemedText style={styles.payLaterIconText}>{option.icon}</ThemedText>
+                    </View>
+                    <ThemedText style={styles.paymentOptionTitle}>{option.name}</ThemedText>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                </Pressable>
+              ))}
+
+              <ThemedText style={styles.sectionSubtitle}>Pay later</ThemedText>
+
+              {emiOptions.map((option) => (
+                <Pressable
+                  key={option.id}
+                  style={styles.paymentOption}
+                  accessibilityRole="button"
+                  accessibilityLabel={option.name}
+                >
+                  <View style={styles.paymentOptionLeft}>
+                    <View style={styles.emiIcon}>
+                      <ThemedText style={styles.emiIconText}>{option.icon}</ThemedText>
+                    </View>
+                    <ThemedText style={styles.paymentOptionTitle}>{option.name}</ThemedText>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
                 </Pressable>
               ))}
             </View>
-          </View>
 
-          {/* Quick Pay Button */}
-          <Pressable style={styles.quickPayButton} onPress={() => handlers.handleRazorpayPayment()}>
-            <LinearGradient
-              colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.quickPayGradient}
-            >
-              <View style={styles.quickPayContent}>
-                <View style={styles.quickPayLeft}>
-                  <Ionicons name="flash" size={24} color={colors.brand.goldBright} />
-                  <View>
-                    <ThemedText style={styles.quickPayTitle}>Pay Instantly</ThemedText>
-                    <ThemedText style={styles.quickPaySubtitle}>UPI • Cards • Net Banking • Wallets</ThemedText>
-                  </View>
-                </View>
-                <ThemedText style={styles.quickPayAmount}>
-                  {currencySymbol}
-                  {(state.billSummary?.totalPayable || 0).toLocaleString()}
-                </ThemedText>
-              </View>
-            </LinearGradient>
-          </Pressable>
-
-          {/* UPI Section */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Supported Payment Methods</ThemedText>
-
-            <View style={styles.paymentMethodsGrid}>
-              <View style={styles.methodCard}>
-                <Ionicons name="card-outline" size={24} color={Colors.brand.purpleLight} />
-                <ThemedText style={styles.methodLabel}>UPI</ThemedText>
-              </View>
-              <View style={styles.methodCard}>
-                <Ionicons name="card" size={24} color={Colors.success} />
-                <ThemedText style={styles.methodLabel}>Cards</ThemedText>
-              </View>
-              <View style={styles.methodCard}>
-                <Ionicons name="business" size={24} color={Colors.info} />
-                <ThemedText style={styles.methodLabel}>Net Banking</ThemedText>
-              </View>
-              <View style={styles.methodCard}>
-                <Ionicons name="wallet" size={24} color={Colors.warning} />
-                <ThemedText style={styles.methodLabel}>Wallets</ThemedText>
-              </View>
-            </View>
-
-            <View style={styles.infoBox}>
-              <Ionicons name="shield-checkmark" size={20} color={Colors.success} />
-              <ThemedText style={styles.infoText}>Secure payments powered by Razorpay</ThemedText>
-            </View>
-          </View>
-
-          {/* Credit & Debit Cards */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Credit & Debit cards</ThemedText>
-
-            {/* Show applied card offer if available */}
-            {appliedOffer && (
-              <View style={styles.appliedOfferBanner}>
-                <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
-                <ThemedText style={styles.appliedOfferText}>
-                  Card offer applied! Save{' '}
-                  {appliedOffer.type === 'percentage'
-                    ? `${appliedOffer.value}%`
-                    : `${currencySymbol}${appliedOffer.value}`}
-                </ThemedText>
-              </View>
-            )}
-
-            <Pressable style={styles.cardOption}>
-              <View style={styles.cardLeft}>
-                <View style={styles.visaIcon}>
-                  <ThemedText style={styles.visaText}>VISA</ThemedText>
-                </View>
-                <View>
-                  <ThemedText style={styles.cardTitle}>SBI</ThemedText>
-                  <ThemedText style={styles.cardSubtitle}>••••••••• 4545</ThemedText>
-                </View>
-              </View>
-            </Pressable>
-
-            <Pressable
-              style={styles.paymentOption}
-              onPress={() => {
-                // When user adds/enters card, trigger validation
-                // In real implementation, this would be triggered when card number is entered
-                if (cardNumber && cardNumber.length >= 13) {
-                  validateAndApplyBestOffer(cardNumber);
-                }
-              }}
-            >
-              <View style={styles.paymentOptionLeft}>
-                <View style={styles.addCardIcon}>
-                  <Ionicons name="add" size={20} color={Colors.brand.purpleLight} />
-                </View>
-                <ThemedText style={styles.paymentOptionTitle}>Add new card</ThemedText>
-              </View>
-              <ThemedText style={styles.cardSubtitle}>••••••••• 4545</ThemedText>
-            </Pressable>
-          </View>
-
-          {/* Net Banking */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Net Banking</ThemedText>
-
-            <Pressable style={styles.paymentOption}>
-              <View style={styles.paymentOptionLeft}>
-                <View style={styles.bankIcon}>
-                  <Ionicons name="business" size={16} color={Colors.brand.purpleLight} />
-                </View>
-                <ThemedText style={styles.paymentOptionTitle}>Select Net working</ThemedText>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-            </Pressable>
-          </View>
-
-          {/* Pay Later */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Pay later</ThemedText>
-
-            {payLaterOptions.map((option) => (
-              <Pressable key={option.id} style={styles.paymentOption}>
-                <View style={styles.paymentOptionLeft}>
-                  <View style={styles.payLaterIcon}>
-                    <ThemedText style={styles.payLaterIconText}>{option.icon}</ThemedText>
-                  </View>
-                  <ThemedText style={styles.paymentOptionTitle}>{option.name}</ThemedText>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-              </Pressable>
-            ))}
-
-            <ThemedText style={styles.sectionSubtitle}>Pay later</ThemedText>
-
-            {emiOptions.map((option) => (
-              <Pressable key={option.id} style={styles.paymentOption}>
-                <View style={styles.paymentOptionLeft}>
-                  <View style={styles.emiIcon}>
-                    <ThemedText style={styles.emiIconText}>{option.icon}</ThemedText>
-                  </View>
-                  <ThemedText style={styles.paymentOptionTitle}>{option.name}</ThemedText>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-              </Pressable>
-            ))}
-          </View>
-
-          <View style={styles.bottomSpace} />
-        </ScrollView>
+            <View style={styles.bottomSpace} />
+          </ScrollView>
+        )}
       </KeyboardAvoidingView>
     </View>
   );
@@ -436,7 +480,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.bodySmall,
-    color: '#065F46',
+    color: colors.text.primary,
     flex: 1,
   },
 
@@ -536,7 +580,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: '#1A365D',
+    backgroundColor: Colors.primary[500],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -580,7 +624,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: '#E0F7FA',
+    backgroundColor: colors.tint.blue,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -610,16 +654,29 @@ const styles = StyleSheet.create({
   appliedOfferBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#D1FAE5',
+    backgroundColor: colors.tint.green,
     padding: 10,
     borderRadius: 8,
     marginBottom: 8,
     gap: 8,
   },
   appliedOfferText: {
-    color: '#065F46',
+    color: colors.text.primary,
     fontSize: 13,
     flex: 1,
+  },
+
+  // Loading Overlay
+  loadingOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+    gap: Spacing.md,
+  },
+  loadingText: {
+    ...Typography.body,
+    color: colors.text.secondary,
   },
 });
 export default withErrorBoundary(PaymentMethodsPage, 'PaymentMethods');

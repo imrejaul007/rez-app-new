@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator, Linking } from "react-native";
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { colors } from '@/constants/theme';
+import { useTheme } from '@/contexts/ThemeContext';
 import referralService from '@/services/referralApi';
 
 const { width } = Dimensions.get("window");
@@ -27,6 +28,11 @@ const ReferAndEarnCard: React.FC<ReferAndEarnCardProps> = ({
 }) => {
   const [data, setData] = useState<ReferData | null>(null);
   const [loading, setLoading] = useState(false);
+  const { isDark, themeColors } = useTheme();
+  const cardBg = isDark ? themeColors.background.secondary : '#F6F3FF';
+  const cardTitleColor = isDark ? colors.brand.purpleDeep : '#3B1E77';
+  const cardSubtitleColor = isDark ? colors.text.secondary : '#555';
+  const inviteBtnBg = isDark ? colors.brand.purple : '#8A4DFF';
 
   useEffect(() => {
     if (propData) {
@@ -88,13 +94,13 @@ const ReferAndEarnCard: React.FC<ReferAndEarnCardProps> = ({
   }
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: cardBg }]}>
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{data?.title}</Text>
-        <Text style={styles.subtitle}>{data?.subtitle}</Text>
+        <Text style={[styles.title, { color: cardTitleColor }]}>{data?.title}</Text>
+        <Text style={[styles.subtitle, { color: cardSubtitleColor }]}>{data?.subtitle}</Text>
       </View>
 
-      <Pressable style={styles.inviteButton} onPress={handleInvite}>
+      <Pressable style={[styles.inviteButton, { backgroundColor: inviteBtnBg }]} onPress={handleInvite}>
         <Text style={styles.inviteText}>{data?.inviteButtonText}</Text>
       </Pressable>
     </View>
@@ -107,7 +113,6 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F6F3FF",
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 16,
@@ -121,15 +126,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: "600",
-    color: "#3B1E77",
   },
   subtitle: {
     fontSize: 13,
-    color: "#555",
     marginTop: 2,
   },
   inviteButton: {
-    backgroundColor: "#8A4DFF",
     paddingHorizontal: 18,
     paddingVertical: 8,
     borderRadius: 20,
