@@ -4,11 +4,23 @@
  */
 
 
-const INTENT_CAPTURE_URL = process.env.NEXT_PUBLIC_INTENT_CAPTURE_URL || '';
+const INTENT_CAPTURE_URL = process.env.EXPO_PUBLIC_INTENT_CAPTURE_URL || '';
 
-// ── App Type ──────────────────────────────────────────────────────────────────
+// ── App Type Derivation ───────────────────────────────────────────────────────
+// Derive appType from the intentKey prefix so flights, trains, cabs, and hotels
+// are tracked under their correct product type, not under a hardcoded 'hotel_ota'.
 
-const APP_TYPE = 'hotel_ota'; // This app handles hotels, flights, trains, cabs
+function deriveAppType(intentKey: string): string {
+  const prefix = intentKey.split('_')[0];
+  switch (prefix) {
+    case 'flight': return 'flight';
+    case 'hotel': return 'hotel';
+    case 'train': return 'train';
+    case 'cab': return 'cab';
+    case 'bill': return 'bill_payment';
+    default: return 'consumer';
+  }
+}
 
 // ── Event Mapping ────────────────────────────────────────────────────────────
 
@@ -229,7 +241,7 @@ async function captureIntent(params: CaptureIntentParams): Promise<void> {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: params.userId,
-        appType: APP_TYPE,
+        appType: deriveAppType(params.intentKey),
         intentKey: params.intentKey,
         eventType: params.eventType,
         category: params.category,
