@@ -10,6 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { logger } from '@/utils/logger';
+import { captureHotelIntent, type HotelIntentParams } from './intentCaptureService';
+import { useAuthStore } from '@/stores/authStore';
 
 const OTA_BASE = process.env.EXPO_PUBLIC_HOTEL_OTA_URL ?? (__DEV__ ? 'http://localhost:3008' : (() => { throw new Error('[HotelOTA] EXPO_PUBLIC_HOTEL_OTA_URL is not configured'); })());
 // These keys hold OTA JWTs. Use SecureStore on native (Android Keystore / iOS Keychain)
@@ -223,7 +225,19 @@ export async function searchHotels(params: {
       .map(([k, v]) => [k, String(v)])
   ).toString();
   const res = await otaFetch<any>('GET', `/v1/hotels?${q}`, undefined, false);
-  return res.data ?? res;
+  const result = res.data ?? res;
+  // RTMN Commerce Memory: Capture hotel search intent (non-blocking)
+  const userId = useAuthStore.getState()?.state?.user?.id;
+  if (userId && params.city) {
+    captureHotelIntent({
+      userId,
+      eventType: 'HOTEL_SEARCH',
+      city: params.city,
+      checkinDate: params.checkin,
+      checkoutDate: params.checkout,
+    }).catch(() => {});
+  }
+  return result;
 }
 
 export async function getHotelById(hotelId: string): Promise<OtaHotel> {
@@ -333,6 +347,19 @@ export async function holdBooking(params: {
     }
   }
 
+  // RTMN Commerce Memory: Capture hotel booking hold intent (non-blocking)
+  const userId = useAuthStore.getState()?.state?.user?.id;
+  if (userId) {
+    captureHotelIntent({
+      userId,
+      eventType: 'HOTEL_BOOKING_START',
+      hotelId: params.hotelId,
+      city: '',
+      checkinDate: params.checkin,
+      checkoutDate: params.checkout,
+    }).catch(() => {});
+  }
+
   return {
     holdId: d.hold_id,
     bookingRef: d.booking_ref,
@@ -371,6 +398,18 @@ export async function confirmBooking(params: {
     razorpay_signature: params.razorpaySignature,
   });
   const d = res.data ?? res;
+
+  // RTMN Commerce Memory: Capture hotel booking confirmation intent (non-blocking)
+  const userId = useAuthStore.getState()?.state?.user?.id;
+  if (userId && d.hotel_id) {
+    captureHotelIntent({
+      userId,
+      eventType: 'HOTEL_BOOKING_COMPLETE',
+      hotelId: d.hotel_id,
+      city: '',
+    }).catch(() => {});
+  }
+
   return {
     bookingId: d.booking_id,
     bookingRef: d.booking_ref,

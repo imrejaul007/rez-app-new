@@ -1,5 +1,7 @@
 import apiClient, { ApiResponse, API_TIMEOUTS } from './apiClient';
 import uuid from 'react-native-uuid';
+import { captureBillIntent, type BillIntentParams } from './intentCaptureService';
+import { useAuthStore } from '@/stores/authStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -131,7 +133,7 @@ export async function payBill(
     `bill-${Date.now()}-${uuid.v4()}`;
 
   // CONS-015: PAYMENT timeout — give payment gateway and BBPS enough time
-  return apiClient.post<any>('/bill-payments/pay', {
+  const response = await apiClient.post<any>('/bill-payments/pay', {
     providerId,
     customerNumber,
     amount,
@@ -141,6 +143,19 @@ export async function payBill(
     timeout: API_TIMEOUTS.PAYMENT,
     headers: { 'Idempotency-Key': key },
   });
+
+  // RTMN Commerce Memory: Capture bill payment completion intent (non-blocking)
+  const userId = useAuthStore.getState()?.state?.user?.id;
+  if (userId) {
+    captureBillIntent({
+      userId,
+      eventType: 'BILL_PAYMENT_COMPLETE',
+      billId: providerId,
+      amount,
+    }).catch(() => {});
+  }
+
+  return response;
 }
 
 export async function getPaymentHistory(
