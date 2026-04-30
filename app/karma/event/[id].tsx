@@ -58,6 +58,8 @@ function KarmaEventDetailScreen() {
         karmaService.getEventDetail(id),
         karmaService.getMyBooking(id),
       ]);
+      // G-KU-M8 FIX: Use fresh eventRes data in the same callback to avoid stale closure.
+      // Previously, event state from a previous render was used in handleCheckIn/CheckOut.
       if (eventRes.success && eventRes.data) setEvent(eventRes.data);
       if (bookingRes.success) setBooking(bookingRes.data ?? null);
     } catch {
@@ -358,7 +360,7 @@ function KarmaEventDetailScreen() {
             <View style={styles.impactDivider} />
             <View style={styles.impactCard}>
               <Ionicons name="time" size={24} color="#22C55E" />
-              <Text style={styles.impactNumber}>{event.totalHours}</Text>
+              <Text style={styles.impactNumber}>{event.expectedDurationHours}h</Text>
               <Text style={styles.impactLabel}>Hours Given</Text>
             </View>
           </View>
@@ -442,13 +444,13 @@ function KarmaEventDetailScreen() {
                 />
                 <Text style={styles.statusLabel}>NGO Approval</Text>
                 <Text style={[styles.statusValue, booking.ngoApproved && { color: Colors.success }]}>
-                  {booking.ngoApproved ? 'Approved' : booking.ngoApproved === false ? 'Rejected' : 'Pending'}
+                  {booking.ngoApproved ? 'Approved' : 'Pending NGO Review'}
                 </Text>
               </View>
               <View style={styles.statusRow}>
                 <Ionicons name="speedometer" size={18} color={KARMA_PURPLE} />
                 <Text style={styles.statusLabel}>Confidence</Text>
-                <Text style={styles.statusValue}>{Math.round(booking.confidenceScore * 100)}%</Text>
+                <Text style={styles.statusValue}>{Math.round((booking.confidenceScore ?? 0) * 100)}%</Text>
               </View>
               {booking.karmaEarned > 0 && (
                 <View style={styles.statusRow}>

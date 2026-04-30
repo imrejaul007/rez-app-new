@@ -188,7 +188,7 @@ function LevelProgressBar({ level }: { level: 'L1' | 'L2' | 'L3' | 'L4' }) {
       </View>
     </View>
   );
-}
+});
 
 // =============================================================================
 // BADGE ITEM
@@ -218,7 +218,7 @@ function BadgeItem({
       </Text>
     </View>
   );
-}
+});
 
 // =============================================================================
 // EARN RECORD ITEM
@@ -291,8 +291,9 @@ function KarmaMyKarmaScreen() {
         if (!isMounted()) return;
         if (profileRes.success && profileRes.data) setProfile(profileRes.data);
         if (historyRes.success && historyRes.data) setHistory(historyRes.data.records ?? []);
-      } catch {
-        // non-fatal
+      } catch (err: any) {
+        // G-KU-H5 FIX: Log non-fatal errors instead of silently ignoring.
+        console.warn('[MyKarma] Failed to load karma data', err?.message ?? err);
       } finally {
         if (!isMounted()) return;
         setLoading(false);
@@ -302,6 +303,8 @@ function KarmaMyKarmaScreen() {
     [isAuthenticated, isMounted],
   );
 
+  // G-KU-M11 FIX: useFocusEffect requires a callback that may return a cleanup fn.
+  // Using useCallback correctly ensures fetchData is recreated when its deps change.
   useFocusEffect(
     useCallback(() => {
       fetchData();
@@ -372,6 +375,23 @@ function KarmaMyKarmaScreen() {
   }
 
   const levelCfg = profile ? LEVEL_CONFIG[profile.level] : LEVEL_CONFIG.L1;
+  // G-KU-H6 FIX: If user is authenticated but profile is null, show an error message
+  // instead of silently rendering default values (L1, 0 karma, 0 events).
+  if (!profile && !loading && isAuthenticated) {
+    return (
+      <View style={styles.container}>
+        <KarmaHeader title="My Karma" showBack />
+        <View style={styles.authRequired}>
+          <Ionicons name="alert-circle-outline" size={64} color={Colors.textSecondary} />
+          <Text style={styles.authTitle}>Failed to Load Karma</Text>
+          <Text style={styles.authSubtitle}>Could not load your karma profile. Please try again.</Text>
+          <Pressable style={styles.loginBtn} onPress={() => fetchData()}>
+            <Text style={styles.loginBtnText}>Retry</Text>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
   const conversionRate = profile ? CONVERSION_RATES[profile.level] : 25;
   const progressPercent =
     profile && profile.level !== 'L4' ? Math.min((profile.activeKarma / (levelCfg.next ?? 1)) * 100, 100) : 100;
