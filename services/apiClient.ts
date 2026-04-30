@@ -1,5 +1,11 @@
 // API Client
 // Base client for all backend API communications
+//
+// SECURITY ENHANCEMENT RECOMMENDATIONS:
+// - Certificate pinning: See docs/CERTIFICATE-PINNING-GUIDE.md
+// - Firebase App Check: Recommended for API abuse prevention
+//   Install: npx expo install @react-native-firebase/app-check
+//   Docs: https://firebase.google.com/docs/app-check
 
 import { Platform } from 'react-native';
 import Constants from 'expo-constants';
