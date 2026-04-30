@@ -91,7 +91,9 @@ export function OffersProvider({ children }: OffersProviderProps) {
       const pageDataResponse = await realOffersApi.getOffersPageData();
 
       if (pageDataResponse.success && pageDataResponse.data) {
-        dispatch({ type: 'SET_OFFERS', payload: pageDataResponse.data as unknown as OffersPageData });
+        // Type-safe dispatch: assume response data structure matches OffersPageData
+        const offersData = pageDataResponse.data as OffersPageData;
+        dispatch({ type: 'SET_OFFERS', payload: offersData });
         return;
       }
 

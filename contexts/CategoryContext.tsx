@@ -578,7 +578,24 @@ export function CategoryProvider({ children }: CategoryProviderProps) {
       }
       
       // Map backend categories to frontend format
-      const categories = (response.data as any).map((cat: any) => ({
+      // Define typed interface for backend category response
+      interface BackendCategory {
+        _id: string;
+        name: string;
+        slug: string;
+        description: string;
+        type: string;
+        image: string;
+        bannerImage: string;
+        metadata?: { color?: string; featured?: boolean };
+        icon: string;
+        productCount?: number;
+        isActive?: boolean;
+        sortOrder?: number;
+        updatedAt?: string;
+      }
+
+      const categories = (response.data as BackendCategory[]).map((cat) => ({
         id: cat._id,
         name: cat.name,
         slug: cat.slug,

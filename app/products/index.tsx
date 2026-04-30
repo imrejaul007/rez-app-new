@@ -125,10 +125,11 @@ const ProductsPage: React.FC = () => {
   ];
 
   // Transform product data
+  // Uses canonical format: pricing.mrp (marked retail price) and pricing.selling (actual selling price)
   const transformProduct = (product: any): DisplayProduct => {
-    const basePrice = product.pricing?.basePrice || product.price || 0;
-    const salePrice = product.pricing?.salePrice || basePrice;
-    const discount = basePrice > salePrice ? Math.round((1 - salePrice / basePrice) * 100) : 0;
+    const mrp = product.pricing?.mrp || product.pricing?.basePrice || product.price || 0;
+    const selling = product.pricing?.selling || product.pricing?.salePrice || mrp;
+    const discount = mrp > selling ? Math.round((1 - selling / mrp) * 100) : 0;
 
     return {
       id: product._id || product.id,
@@ -137,8 +138,8 @@ const ProductsPage: React.FC = () => {
       category: product.category?.name || 'Product',
       rating: product.ratings?.average || 4.5,
       reviewCount: product.ratings?.count || 0,
-      price: salePrice,
-      originalPrice: basePrice,
+      price: selling,
+      originalPrice: mrp,
       discount,
       cashback: product.cashback?.percentage ? `${product.cashback.percentage}%` : '10%',
       image: product.images?.[0]?.url || product.images?.[0] || product.image,

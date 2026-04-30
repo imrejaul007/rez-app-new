@@ -12,7 +12,7 @@ export interface NotificationData {
   type?: 'info' | 'success' | 'warning' | 'error' | 'promotional';
   category?: 'order' | 'earning' | 'general' | 'promotional' | 'social' | 'security' | 'system' | 'reminder';
   priority?: 'low' | 'medium' | 'high' | 'urgent';
-  deliveryChannels?: ('push' | 'email' | 'sms' | 'in_app')[];
+  deliveryChannels?: ('push' | 'email' | 'sms' | 'in_app' | 'whatsapp')[];
   data?: Record<string, any>;
 }
 
@@ -97,7 +97,7 @@ class NotificationValidationService {
       if (!Array.isArray(data.deliveryChannels)) {
         errors.push('Delivery channels must be an array');
       } else {
-        const validChannels = ['push', 'email', 'sms', 'in_app'];
+        const validChannels = ['push', 'email', 'sms', 'in_app', 'whatsapp'];
         const invalidChannels = data.deliveryChannels.filter(channel => !validChannels.includes(channel));
         if (invalidChannels.length > 0) {
           errors.push(`Invalid delivery channels: ${invalidChannels.join(', ')}`);
@@ -200,7 +200,7 @@ class NotificationValidationService {
       priority: this.sanitizeEnum(data.priority, ['low', 'medium', 'high', 'urgent'] as const, 'medium'),
       deliveryChannels: this.sanitizeArray(
         data.deliveryChannels,
-        ['push', 'email', 'sms', 'in_app'] as const,
+        ['push', 'email', 'sms', 'in_app', 'whatsapp'] as const,
         ['in_app']
       ),
       data: this.sanitizeObject(data.data, {})
