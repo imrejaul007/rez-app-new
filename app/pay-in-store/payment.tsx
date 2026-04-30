@@ -13,7 +13,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * - Rewards preview
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Platform, Modal, TextInput } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -78,8 +78,13 @@ function PaymentScreen() {
     selectedOfferIds,
   });
 
-  // IDEMPOTENCY FIX: crypto.randomUUID() replaces Date.now() + Math.random() for collision-safe idempotency.
-  const idempotencyKeyRef = useRef(`PAY-${crypto.randomUUID()}`);
+  // CD-CRIT-09 FIX: Generate a fresh idempotency key on each payment attempt.
+  // Previously used useRef which created the key once at mount — retries reused
+  // the same key, causing silent server-side ignores on successful duplicate requests.
+  // Now useState so we can regenerate per attempt.
+  const [idempotencyKey, setIdempotencyKey] = useState(`PAY-${crypto.randomUUID()}`);
+
+  const regenerateIdempotencyKey = () => setIdempotencyKey(`PAY-${crypto.randomUUID()}`);
 
   // Local state for modals
   const [currentPaymentData, setCurrentPaymentData] = useState<StorePaymentInitResponse | null>(null);
@@ -92,7 +97,9 @@ function PaymentScreen() {
   const handlePayment = async () => {
     paymentFlow.clearError();
 
-    const paymentData = await paymentFlow.initiatePayment(idempotencyKeyRef.current);
+    // CD-CRIT-09: Fresh key per attempt prevents server-side silent ignores on retry.
+    regenerateIdempotencyKey();
+    const paymentData = await paymentFlow.initiatePayment(idempotencyKey);
 
     if (!paymentData) return;
 
@@ -103,7 +110,7 @@ function PaymentScreen() {
       try {
         const confirmResponse = await apiClient.post('/store-payment/confirm', {
           paymentId: paymentData.paymentId,
-          idempotencyKey: idempotencyKeyRef.current,
+          idempotencyKey: idempotencyKey,
         });
 
         if (confirmResponse.success && confirmResponse.data) {
@@ -179,7 +186,7 @@ function PaymentScreen() {
           const confirmResponse = await apiClient.post('/store-payment/confirm', {
             paymentId: paymentData.paymentId,
             transactionId: data.razorpay_payment_id,
-            idempotencyKey: idempotencyKeyRef.current,
+            idempotencyKey: idempotencyKey,
           });
 
           if (!isMounted()) return;

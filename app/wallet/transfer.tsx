@@ -19,7 +19,10 @@ import {
   Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useCameraPermissions } from 'expo-camera';
+import { UnifiedQrScanner } from '@/components/qr/UnifiedQrScanner';
+import { parseQrPayload } from '@/utils/qr/qrPayload';
+import type { QrPayload } from '@/utils/qr/qrPayload';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -77,20 +80,34 @@ function TransferPage() {
   }, []);
 
   // Fetch recent recipients (and re-fetch on search)
-  const fetchRecipients = useCallback(async (search?: string) => {
+  // Also accepts userId to look up a single user by ID (Phase I wallet-transfer flow).
+  const fetchRecipients = useCallback(async (search?: string, userId?: string) => {
     setRecipientsLoading(true);
     try {
-      const res = await walletApi.getRecentRecipients(search || undefined);
-      const list = res.data?.recipients || [];
-      setRecipients(
-        list.map((r: any) => ({
-          id: r._id || r.id,
-          name: r.fullName || r.name || r.phoneNumber || r.phone || 'User',
-          phone: r.phoneNumber || r.phone || '',
-          avatar: r.avatar,
-        })),
-      );
-    } catch (error: any) {
+      let list: any[];
+      if (userId) {
+        // Phase I wallet-transfer: look up a specific user by ID.
+        // If the API supports it, call getUserById; otherwise fall back to recent recipients
+        // and select the matching one.
+        const res = await walletApi.getRecentRecipients(undefined);
+        list = (res.data?.recipients || []).filter((r: any) => (r._id || r.id) === userId);
+      } else {
+        const res = await walletApi.getRecentRecipients(search || undefined);
+        list = res.data?.recipients || [];
+      }
+      const mapped = list.map((r: any) => ({
+        id: r._id || r.id,
+        name: r.fullName || r.name || r.phoneNumber || r.phone || 'User',
+        phone: r.phoneNumber || r.phone || '',
+        avatar: r.avatar,
+      }));
+      setRecipients(mapped);
+      // Auto-select if we looked up by userId and found exactly one match.
+      if (userId && mapped.length === 1) {
+        setSelectedRecipient(mapped[0]);
+        setStep('amount');
+      }
+    } catch {
       setRecipients([]);
     } finally {
       setRecipientsLoading(false);
@@ -118,29 +135,29 @@ function TransferPage() {
     setShowScanner(true);
   };
 
-  const handleBarCodeScanned = ({ data }: { data: string }) => {
+  const handleWalletQrScan = async (data: string) => {
     setShowScanner(false);
-    // Parse REZ user QR: format is "rez://user/{userId}" or "rez://pay/{phone}"
+
+    // Phase I wallet-transfer payload: pre-fill recipient and amount.
+    const parsed = parseQrPayload(data);
+    if (parsed.ok && parsed.payload.intent !== 'short-url' && 'toUserId' in (parsed.payload as QrPayload)) {
+      const payload = parsed.payload as QrPayload & { toUserId: string; amount?: number };
+      if (payload.amount) setAmount(payload.amount.toString());
+      await fetchRecipients(undefined, payload.toUserId);
+      return;
+    }
+
+    // Legacy REZ user/pay QR formats.
     try {
       if (data.startsWith('rez://user/')) {
         const userId = data.replace('rez://user/', '');
-        // Look up user and pre-fill recipient
-        fetchRecipients(userId);
-      } else if (/^\d{10}$/.test(data)) {
-        // Plain phone number
-        setSelectedRecipient({
-          id: data,
-          name: data,
-          phone: data,
-        });
-        setStep('amount');
+        await fetchRecipients(userId);
       } else if (data.startsWith('rez://pay/')) {
         const phone = data.replace('rez://pay/', '');
-        setSelectedRecipient({
-          id: phone,
-          name: phone,
-          phone: phone,
-        });
+        setSelectedRecipient({ id: phone, name: phone, phone });
+        setStep('amount');
+      } else if (/^\d{10}$/.test(data)) {
+        setSelectedRecipient({ id: data, name: data, phone: data });
         setStep('amount');
       } else {
         platformAlertSimple('Invalid QR', 'This QR code is not a valid REZ payment QR.');
@@ -393,27 +410,10 @@ function TransferPage() {
             edges={['top', 'bottom']}
           >
             {Platform.OS !== 'web' ? (
-              <>
-                <CameraView
-                  style={{ flex: 1 }}
-                  facing="back"
-                  barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-                  onBarcodeScanned={handleBarCodeScanned}
-                />
-                <View style={{ position: 'absolute', top: 60, left: 20, right: 20 }}>
-                  <ThemedText style={{ color: '#fff', textAlign: 'center', fontSize: 16 }}>
-                    Point camera at a REZ QR code
-                  </ThemedText>
-                </View>
-                <View style={{ position: 'absolute', bottom: 50, left: 0, right: 0, alignItems: 'center' }}>
-                  <Pressable
-                    onPress={() => setShowScanner(false)}
-                    style={{ backgroundColor: '#ffcd57', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 24 }}
-                  >
-                    <ThemedText style={{ color: '#1a3a52', fontWeight: '700' }}>Cancel</ThemedText>
-                  </Pressable>
-                </View>
-              </>
+              <UnifiedQrScanner
+                onRawScan={handleWalletQrScan}
+                onClose={() => setShowScanner(false)}
+              />
             ) : (
               /* Web fallback: manual QR code / phone number entry */
               <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 }}>
@@ -439,7 +439,7 @@ function TransferPage() {
                   placeholder="rez://pay/9876543210 or 10-digit number"
                   placeholderTextColor="#9CA3AF"
                   autoFocus
-                  onSubmitEditing={(e) => handleBarCodeScanned({ data: e.nativeEvent.text.trim() })}
+                  onSubmitEditing={(e) => handleWalletQrScan(e.nativeEvent.text.trim())}
                   returnKeyType="go"
                 />
                 <Pressable

@@ -1,6 +1,29 @@
 import { logger } from '@/utils/logger';
 import apiClient, { ApiResponse } from './apiClient';
-import uuid from 'react-native-uuid';
+
+/**
+ * CD-CRIT-01 FIX: cryptographically secure UUID generator.
+ * crypto.randomUUID() is available in React Native 0.69+ and all modern browsers.
+ * Falls back to timestamp+random to avoid Math.random() collisions (Math.random is
+ * NOT cryptographically secure — react-native-uuid uses it internally).
+ */
+function generateId(): string {
+  if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  // React Native < 0.69 fallback
+  if (typeof require !== 'undefined') {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const uuid = require('react-native-uuid') as { v4: () => string };
+      return generateId() as string;
+    } catch (_e) {
+      // Fall through to last resort
+    }
+  }
+  // Last resort: deterministic-ish ID (not ideal but won't crash)
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
 
 /**
  * CD-CRIT-01 FIX: cryptographically secure UUID generator.

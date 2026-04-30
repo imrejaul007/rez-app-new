@@ -18,6 +18,7 @@ import { showAlert } from '@/utils/alert';
 import { showToast } from '@/components/common/ToastManager';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import { parseQrPayload } from '@/utils/qr/qrPayload';
 
 const KARMA_PURPLE = '#8B5CF6';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');

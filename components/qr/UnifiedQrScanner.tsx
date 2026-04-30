@@ -166,6 +166,13 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
     (result: BarcodeScanningResult) => {
       if (state !== 'idle') return;
       const raw = result.data;
+
+      // Raw-scan mode: caller owns all parsing and routing.
+      if (onRawScan) {
+        onRawScan(raw);
+        return;
+      }
+
       const parsed = parseQrPayload(raw);
       if (!parsed.ok) {
         switch (parsed.reason) {

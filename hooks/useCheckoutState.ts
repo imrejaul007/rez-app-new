@@ -131,7 +131,7 @@ function groupItemsByStore(items: CheckoutItem[]) {
     }
     const group = storeMap.get(storeId)!;
     group.items.push(item);
-    group.subtotal += item.price * item.quantity;
+    group.subtotal = Math.round((group.subtotal + item.price * item.quantity) * 100) / 100;
   });
   return Array.from(storeMap.values());
 }
