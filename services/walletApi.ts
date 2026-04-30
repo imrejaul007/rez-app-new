@@ -1,5 +1,6 @@
 import { logger } from '@/utils/logger';
 import apiClient, { ApiResponse } from './apiClient';
+import uuid from 'react-native-uuid';
 
 /**
  * CD-CRIT-01 FIX: cryptographically secure UUID generator.
