@@ -147,7 +147,8 @@ export interface EarnRecord {
   verificationSignals: {
     qr_in: boolean;
     qr_out: boolean;
-    gps_match: boolean;
+    // FIX: Backend stores gps_match as Number (0-1) for precision. Updated from boolean to number.
+    gps_match: number;
     ngo_approved: boolean;
     photo_proof: boolean;
   };
@@ -237,6 +238,7 @@ class KarmaService {
 
   /**
    * Get karma level info
+   * FIX: Backend route is /api/karma/user/:userId/level, not /karma/level/:userId
    */
   async getKarmaLevel(userId: string): Promise<ApiResponse<LevelInfo>> {
     return apiClient.get<LevelInfo>(`/karma/user/${userId}/level`);
@@ -299,6 +301,7 @@ class KarmaService {
 
   /**
    * Get karma earn history
+   * FIX: Backend route is /api/karma/user/:userId/history, not /karma/history/:userId
    */
   async getKarmaHistory(userId: string, page = 1): Promise<ApiResponse<HistoryResult>> {
     return apiClient.get<HistoryResult>(`/karma/user/${userId}/history`, { page });
