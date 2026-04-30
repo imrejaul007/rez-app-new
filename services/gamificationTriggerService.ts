@@ -81,10 +81,15 @@ class GamificationTriggerService {
         }
       }
 
-      // Check for achievement unlocks
-      const achievementsResponse = await achievementApi.recalculateAchievements();
-      if (achievementsResponse.data) {
-        reward.achievements = achievementsResponse.data.filter((a) => a.unlocked);
+      // Check for achievement unlocks (CA-GAM-003: wrapped in try-catch)
+      try {
+        const achievementsResponse = await achievementApi.recalculateAchievements();
+        if (achievementsResponse.data) {
+          reward.achievements = achievementsResponse.data.filter((a) => a.unlocked);
+        }
+      } catch (achievementError) {
+        // Log error but continue - coins already awarded via Points API
+        console.warn('Achievement recalculation failed but coin reward proceeded', achievementError);
       }
 
       // M-16 FIX: Check for challenge completion and tier progress via API

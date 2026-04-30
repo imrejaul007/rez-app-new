@@ -215,6 +215,16 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     }
   }
 
+  // Fix: @rez/shared is not on npm — redirect to local src/shared/ stubs.
+  // The npm package is @karim4987498/shared (published under a different name).
+  if (moduleName === '@rez/shared') {
+    return { filePath: path.resolve(__dirname, 'src/shared/index.ts'), type: 'sourceFile' };
+  }
+  if (moduleName.startsWith('@rez/shared/')) {
+    const subPath = moduleName.replace('@rez/shared/', '');
+    return { filePath: path.resolve(__dirname, 'src/shared', subPath + '.ts'), type: 'sourceFile' };
+  }
+
   if (originalResolveRequest) {
     return originalResolveRequest(context, moduleName, platform);
   }

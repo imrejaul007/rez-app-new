@@ -182,7 +182,21 @@ class PaymentOrchestratorService {
       });
     }
 
-    return methods;
+    // CA-PAY-024 FIX: Filter all methods by amount and currency constraints
+    return methods.filter(method => {
+      // Check currency support if specified
+      if (method.supportedCurrencies && !method.supportedCurrencies.includes(currency)) {
+        return false;
+      }
+      // Check amount constraints
+      if (method.minAmount !== undefined && amount < method.minAmount) {
+        return false;
+      }
+      if (method.maxAmount !== undefined && amount > method.maxAmount) {
+        return false;
+      }
+      return true;
+    });
   }
 
   /**

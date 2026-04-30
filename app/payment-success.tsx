@@ -139,8 +139,11 @@ function PaymentSuccessPage() {
         const failedOrders: string[] = [];
 
         for (let i = 0; i < responses.length; i++) {
-          const response = responses[i];
+          const result = responses[i];
           const currentOrderId = orderIds[i];
+
+          // Handle settled promises - check for fulfilled or rejected
+          const response = result.status === 'fulfilled' ? result.value : null;
 
           if (response.success && response.data) {
             const orderData = response.data;

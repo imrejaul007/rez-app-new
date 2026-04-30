@@ -164,9 +164,11 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   // Note: AsyncStorage fallback used for compatibility; ideal solution is react-native-secure-store
   // For now, we store only the visibility preference (non-sensitive) and avoid storing actual balances.
   useEffect(() => {
-    AsyncStorage.getItem('@wallet_balance_hidden')
+    AsyncStorage.getItem('@wallet_screen_balance_hidden')
       .then((val) => {
-        if (val === 'true') setIsBalanceHidden(true);
+        if (isMounted() && val === 'true') {
+          setIsBalanceHidden(true);
+        }
       })
       .catch(() => {
         // CA-PAY-059: Log error to error reporter instead of silently failing

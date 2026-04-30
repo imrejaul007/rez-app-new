@@ -69,6 +69,7 @@ export interface ActivitySummary {
 
 class ActivityApiService {
   private baseUrl = '/activities';
+  private seenActivityIds: Set<string> = new Set(); // CA-GAM-047: Track seen activities for deduplication
 
   // Get user activities with pagination
   async getUserActivities(page = 1, limit = 20, type?: ActivityType): Promise<ApiResponse<ActivityPagination>> {

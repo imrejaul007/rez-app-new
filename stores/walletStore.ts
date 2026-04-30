@@ -193,6 +193,11 @@ export const useWalletStore = create<WalletStoreState>()(
           };
         });
       },
+
+      // Fixed CA-AUT-024: Reset wallet store on logout to prevent cache poisoning
+      reset: () => {
+        set(defaults);
+      },
     }),
     {
       name: 'rez-wallet-store', // Must match LEGACY_ASYNC_KEY in secureWalletStorage.ts

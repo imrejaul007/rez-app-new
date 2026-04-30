@@ -135,10 +135,19 @@ async function nativeSet(key: string, value: string): Promise<void> {
 
 /**
  * Delete a value on native: removes from both SecureStore and AsyncStorage.
+ * Handles concurrent deletes gracefully by ignoring "item not found" errors.
  */
 async function nativeDelete(key: string): Promise<void> {
   await secureDelete(key);
-  await AsyncStorage.removeItem(key);
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (error: any) {
+    // Ignore "not found" errors for already-deleted items
+    if (error?.message?.includes('item not found') || error?.message?.includes('not found')) {
+      return;
+    }
+    throw error;
+  }
 }
 
 // ── Public API ──

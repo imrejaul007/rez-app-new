@@ -22,7 +22,8 @@ function CoinRainOverlay({ visible, onComplete }: CoinRainOverlayProps) {
   const opacityAnim = useRef(new Animated.Value(0)).current;
 
   const coins = useMemo(() => {
-    return Array.from({ length: COIN_COUNT }, () => ({
+    return Array.from({ length: COIN_COUNT }, (_, idx) => ({
+      id: `coin-${idx}`,
       x: Math.random() * (SCREEN_WIDTH - 24),
       size: 18 + Math.random() * 14, // 18-32
       delay: Math.random() * 500,
@@ -99,7 +100,7 @@ function CoinRainOverlay({ visible, onComplete }: CoinRainOverlayProps) {
 
         return (
           <Animated.View
-            key={i}
+            key={coin.id}
             style={[
               styles.coinWrapper,
               {

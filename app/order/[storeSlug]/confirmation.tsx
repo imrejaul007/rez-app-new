@@ -8,12 +8,13 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
+import { Button } from '@rez/rez-ui';
 import { getWebOrder, WebOrderStatus } from '@/services/webOrderingApi';
 
 // ─── Status config ────────────────────────────────────────────────────────────
@@ -311,10 +312,12 @@ export default function ConfirmationScreen() {
               onPress={() =>
                 router.replace(`/order/${storeSlug}${order.tableNumber ? `?table=${order.tableNumber}` : ''}`)
               }
+              label="Order Again"
+              variant="primary"
+              textStyle={styles.orderAgainText}
             >
               <Ionicons name="add-circle-outline" size={20} color="#fff" />
-              <Text style={styles.orderAgainText}>Order Again</Text>
-            </TouchableOpacity>
+            </Button>
           )}
         </Animated.View>
 

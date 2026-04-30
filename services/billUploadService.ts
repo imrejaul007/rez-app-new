@@ -150,9 +150,9 @@ class BillUploadService {
         const xhr = new XMLHttpRequest();
         this.activeUploads.set(uploadId, xhr);
 
-        // Track upload progress
+        // CA-PAY-037 FIX: Guard against divide-by-zero in progress calculation
         xhr.upload.addEventListener('progress', (event) => {
-          if (event.lengthComputable && onProgress) {
+          if (event.lengthComputable && onProgress && event.total > 0) {
             const { speed, timeRemaining } = this.calculateUploadMetrics(
               uploadId,
               event.loaded,
@@ -182,6 +182,7 @@ class BillUploadService {
 
           if (xhr.status >= 200 && xhr.status < 300) {
             try {
+              // CA-PAY-036 FIX: Wrap JSON.parse in try-catch for malformed responses
               const response = JSON.parse(xhr.responseText);
               logger.info('✅ [BILL UPLOAD] Upload completed successfully');
               resolve({
@@ -195,6 +196,7 @@ class BillUploadService {
             }
           } else {
             try {
+              // CA-PAY-036 FIX: Safe JSON parse for error responses
               const errorResponse = JSON.parse(xhr.responseText);
               logger.error('❌ [BILL UPLOAD] Upload failed:', errorResponse as Error);
               resolve({
@@ -202,6 +204,8 @@ class BillUploadService {
                 error: errorResponse.message || `HTTP ${xhr.status}: ${xhr.statusText}`,
               });
             } catch (err) {
+              // CA-PAY-036 FIX: If error response is also malformed, return HTTP status
+              devLog.error('❌ [BILL UPLOAD] Failed to parse error response:', err);
               resolve({
                 success: false,
                 error: `HTTP ${xhr.status}: ${xhr.statusText}`,

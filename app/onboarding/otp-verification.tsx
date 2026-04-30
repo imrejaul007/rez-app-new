@@ -29,6 +29,11 @@ function OTPVerificationScreen() {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [resendMessage, setResendMessage] = useState('');
   const [otpError, setOtpError] = useState('');
+
+  // Fixed CA-AUT-022 & CA-AUT-036: Track OTP attempt counter and exponential backoff delay
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [backoffDelay, setBackoffDelay] = useState(0);
+
   // Use ref instead of state to avoid re-renders that dismiss the keyboard
   const focusedIndexRef = useRef<number | null>(null);
 
@@ -98,8 +103,31 @@ function OTPVerificationScreen() {
       return;
     }
 
+    // Fixed CA-AUT-008: Validate OTP hasn't expired (timer = 0)
+    if (timer <= 0) {
+      triggerImpact('Light');
+      platformAlertSimple('OTP Expired', 'Your verification code has expired. Please request a new one.');
+      setOtp(['', '', '', '', '', '']);
+      return;
+    }
+
     if (!phoneNumber) {
       platformAlertSimple('Error', 'Phone number not found. Please go back and try again.');
+      return;
+    }
+
+    // Fixed CA-AUT-022 & CA-AUT-036: Block submit if backoff delay is active
+    if (backoffDelay > 0) {
+      triggerImpact('Light');
+      platformAlertSimple('Please wait', `Too many attempts. Please wait ${Math.ceil(backoffDelay / 1000)} seconds before trying again.`);
+      return;
+    }
+
+    // Fixed CA-AUT-022: Enforce max 5 attempts per OTP
+    const MAX_ATTEMPTS = 5;
+    if (attemptCount >= MAX_ATTEMPTS) {
+      triggerImpact('Light');
+      platformAlertSimple('Too many attempts', 'You have exceeded the maximum number of attempts. Please request a new OTP.');
       return;
     }
 
@@ -129,6 +157,7 @@ function OTPVerificationScreen() {
     } catch (error: any) {
       const msg = error?.message || useAuthStore.getState()?.state?.error || '';
       if (!isMounted()) return;
+
       if (msg.includes('Network') || msg.includes('network')) {
         setOtpError('No internet connection. Check your network and try again.');
       } else if (msg.includes('expired')) {
@@ -138,6 +167,21 @@ function OTPVerificationScreen() {
       } else {
         setOtpError(msg || 'Invalid OTP. Please check and try again.');
       }
+
+      // Implement exponential backoff: 1s, 2s, 4s, 8s, 16s
+      if (newAttemptCount < MAX_ATTEMPTS) {
+        const delayMs = Math.pow(2, newAttemptCount - 1) * 1000; // 1s, 2s, 4s, 8s
+        setBackoffDelay(delayMs);
+
+        // Clear backoff delay after timeout
+        const timeoutId = setTimeout(() => {
+          if (!isMounted()) return;
+          setBackoffDelay(0);
+        }, delayMs);
+
+        return () => clearTimeout(timeoutId);
+      }
+
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
       actions.clearError();
@@ -302,21 +346,22 @@ function OTPVerificationScreen() {
               {resendMessage ? <Text style={styles.resendMessageText}>{resendMessage}</Text> : null}
 
               {/* Submit Button */}
+              {/* Fixed CA-AUT-022 & CA-AUT-036: Disable button during backoff delay */}
               <Pressable
                 style={styles.primaryButtonWrapper}
                 onPress={() => handleSubmit()}
-                disabled={isVerifying || !otp.every((digit) => digit.length === 1)}
-                accessibilityLabel={isVerifying ? 'Verifying OTP' : 'Verify and continue'}
+                disabled={isVerifying || !otp.every((digit) => digit.length === 1) || backoffDelay > 0 || attemptCount >= 5}
+                accessibilityLabel={backoffDelay > 0 ? 'Please wait' : isVerifying ? 'Verifying OTP' : 'Verify and continue'}
                 accessibilityRole="button"
                 accessibilityState={{
-                  disabled: isVerifying || !otp.every((digit) => digit.length === 1),
+                  disabled: isVerifying || !otp.every((digit) => digit.length === 1) || backoffDelay > 0 || attemptCount >= 5,
                   busy: isVerifying,
                 }}
-                accessibilityHint="Double tap to verify your OTP and continue registration"
+                accessibilityHint={backoffDelay > 0 ? `Please wait ${Math.ceil(backoffDelay / 1000)} seconds` : 'Double tap to verify your OTP and continue registration'}
               >
                 <LinearGradient
                   colors={
-                    isVerifying || !otp.every((digit) => digit.length === 1)
+                    isVerifying || !otp.every((digit) => digit.length === 1) || backoffDelay > 0 || attemptCount >= 5
                       ? [colors.neutral[300], colors.neutral[300]]
                       : [Colors.gold, colors.nileBlue]
                   }
@@ -324,8 +369,10 @@ function OTPVerificationScreen() {
                   end={{ x: 1, y: 1 }}
                   style={styles.primaryButton}
                 >
-                  <Text style={styles.primaryButtonText}>{isVerifying ? 'Verifying...' : 'Verify & Continue'}</Text>
-                  {!isVerifying && <Ionicons name="checkmark-circle" size={20} color={colors.background.primary} />}
+                  <Text style={styles.primaryButtonText}>
+                    {backoffDelay > 0 ? `Wait ${Math.ceil(backoffDelay / 1000)}s` : isVerifying ? 'Verifying...' : 'Verify & Continue'}
+                  </Text>
+                  {!isVerifying && backoffDelay === 0 && <Ionicons name="checkmark-circle" size={20} color={colors.background.primary} />}
                 </LinearGradient>
               </Pressable>
             </View>

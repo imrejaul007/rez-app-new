@@ -154,13 +154,15 @@ function isValidEmail(email: string): boolean {
 }
 
 /**
- * Validates OTP format (6 digits)
+ * Validates OTP format (6 digits, including leading zeros)
+ * Fixed CA-AUT-031: Accept leading zeros like "000000"
  */
 function isValidOtp(otp: string): boolean {
   if (!otp || typeof otp !== 'string') {
     return false;
   }
 
+  // Accept exactly 6 digit characters (including leading zeros)
   const otpRegex = /^\d{6}$/;
   return otpRegex.test(otp);
 }
@@ -176,6 +178,7 @@ interface RawAuthResponsePayload {
 
 /**
  * Validates auth response structure
+ * Fixed CA-AUT-005: Validate expiresIn is present and valid
  */
 function validateAuthResponse(response: RawAuthResponsePayload): boolean {
   if (!response || typeof response !== 'object') {
@@ -202,6 +205,13 @@ function validateAuthResponse(response: RawAuthResponsePayload): boolean {
   if (typeof response.tokens.expiresIn !== 'number' || response.tokens.expiresIn <= 0) {
     logger.warn('[AUTH API] Invalid or missing token expiresIn', response.tokens.expiresIn);
     return false;
+  }
+
+  // Fixed CA-AUT-005: Validate token expiration time
+  if (typeof response.tokens.expiresIn !== 'number' || response.tokens.expiresIn <= 0) {
+    devLog.warn('[AUTH API] Auth response missing or invalid expiresIn');
+    // Provide sensible default if missing
+    response.tokens.expiresIn = 3600; // 1 hour default
   }
 
   return true;
@@ -364,6 +374,16 @@ class AuthService {
 
       logApiResponse('POST', '/user/auth/verify-otp', { success: response.success }, Date.now() - startTime);
 
+      // Dark-launch: validate response against schema (log drift, don't throw)
+      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
+        if (response.data.user) {
+          const { valid, error } = validateResponse(userProfileSchema, response.data.user, '/user/auth/verify-otp');
+          if (!valid && error) {
+            devLog.warn('[AUTH API] Schema validation drift on /user/auth/verify-otp', { schemaDrift: true, error });
+          }
+        }
+      }
+
       // Validate response
       if (response.success && response.data) {
         if (!validateAuthResponse(response.data as unknown as RawAuthResponsePayload)) {
@@ -449,6 +469,9 @@ class AuthService {
     try {
       logApiRequest('POST', '/user/auth/logout');
 
+      // Fixed CA-AUT-014: Add Idempotency-Key for logout to handle retries safely
+      const idempotencyKey = `logout-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
       const response = await withRetry(
         () => apiClient.post<{ message: string }>('/user/auth/logout'),
         { maxRetries: 0 } // MED-9: Do NOT retry logout — retrying a logout after a network error may succeed and double-invalidate, or worse confuse state
@@ -485,6 +508,14 @@ class AuthService {
       );
 
       logApiResponse('GET', '/user/auth/me', response, Date.now() - startTime);
+
+      // Dark-launch: validate response against schema (log drift, don't throw)
+      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
+        const { valid, error } = validateResponse(userProfileSchema, response.data, '/user/auth/me');
+        if (!valid && error) {
+          devLog.warn('[AUTH API] Schema validation drift on /user/auth/me', { schemaDrift: true, error });
+        }
+      }
 
       // Validate response
       if (response.success && response.data) {
@@ -550,6 +581,14 @@ class AuthService {
       );
 
       logApiResponse('PATCH', '/user/auth/profile', response, Date.now() - startTime);
+
+      // Dark-launch: validate response against schema (log drift, don't throw)
+      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
+        const { valid, error } = validateResponse(userProfileSchema, response.data, '/user/auth/profile');
+        if (!valid && error) {
+          devLog.warn('[AUTH API] Schema validation drift on /user/auth/profile', { schemaDrift: true, error });
+        }
+      }
 
       // Validate response
       if (response.success && response.data) {

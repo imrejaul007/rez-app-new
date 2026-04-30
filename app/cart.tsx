@@ -517,19 +517,31 @@ function CartPage() {
       }, LOCK_CONFIG.UPDATE_INTERVAL);
     }
 
-    // Clear interval if no locked products
-    if (lockedProducts.length === 0 && timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
+    // Set up interval when we have locked products
+    // This will re-run whenever lockedProducts.length changes, ensuring fresh interval
+    timerRef.current = setInterval(() => {
+      setLockedProducts(prev => {
+        // Only update if there are still locked products
+        if (prev.length === 0) return prev;
 
+        const updated = updateLockedProductTimers(prev);
+
+        // Only update state if something actually changed
+        const hasChanges = updated.length !== prev.length ||
+          updated.some((item, i) => item.remainingTime !== prev[i]?.remainingTime);
+
+        return hasChanges ? updated : prev;
+      });
+    }, LOCK_CONFIG.UPDATE_INTERVAL);
+
+    // Cleanup function
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     };
-  }, [lockedProducts.length]); // Safe to ignore timeLeft changes
+  }, [lockedProducts.length]); // Re-run when locked products count changes
 
   const handleBuyNow = async () => {
     // C06: Guard — unauthenticated users must log in before checkout
@@ -742,7 +754,8 @@ function CartPage() {
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
-              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
+              // CA-CMC-041 fix: Ensure productItems is not empty before accessing first item
+              overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' && productItems.length > 0 ? (
                 <CardOffersSection
                   storeId={(productItems[0] as unknown as { store?: { id?: string } })?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}

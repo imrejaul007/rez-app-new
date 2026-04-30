@@ -164,7 +164,7 @@ function PostDetailScreen() {
     if (!post) return;
 
     try {
-      await Share.share({
+      const result = await Share.share({
         message: `Check out this post on ${BRAND.APP_NAME}! ${post.caption || ''}`,
         title: 'Share Post',
       });

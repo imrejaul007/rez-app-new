@@ -182,6 +182,24 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     };
   }, [d.currentStoreId]);
 
+  // Cleanup modals on component unmount to prevent state leaks
+  useEffect(() => {
+    return () => {
+      if (d.showAboutModal) {
+        d.handleCloseAboutModal?.();
+      }
+      if (d.showDealsModal) {
+        d.handleCloseDealsModal?.();
+      }
+      if (d.showReviewModal) {
+        d.handleCloseReviewModal?.();
+      }
+      if (d.showWriteReviewModal) {
+        d.handleCloseWriteReviewModal?.();
+      }
+    };
+  }, []);
+
   const styles = useMemo(() => createStyles(HORIZONTAL_PADDING, d.screenData), [HORIZONTAL_PADDING, d.screenData]);
 
   // CA-DSC-020 FIX: Memoize conditional style array to prevent unnecessary re-renders

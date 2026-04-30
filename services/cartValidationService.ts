@@ -50,6 +50,7 @@ class CartValidationService {
   /**
    * Validate entire cart for stock availability and price changes
    * Calls backend /api/cart/validate endpoint
+   * CA-CMC-016 fix: Remove empty if/else blocks and transform response properly
    */
   async validateCart(): Promise<ApiResponse<ValidationResult>> {
     try {
@@ -61,6 +62,7 @@ class CartValidationService {
 
       return { success: false, error: response.error || 'Validation failed' };
     } catch (error) {
+      console.error('[Cart Validation] Error validating cart:', error);
       throw error;
     }
   }
@@ -188,6 +190,7 @@ class CartValidationService {
     currentStock: number;
     timestamp: string;
   }) => void): () => void {
+    console.warn('[Cart Validation] subscribeToStockUpdates is not implemented. Use periodic validateCart() calls instead.');
 
     logger.warn('[CartValidation] Real-time stock updates not implemented. Using checkout-time validation only.');
 

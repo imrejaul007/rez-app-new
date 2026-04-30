@@ -59,6 +59,8 @@ export function useCartValidation(
 
   /**
    * Validate cart items against backend
+   * CA-CMC-026 fix: Don't return stale result if validation is in-flight; wait for fresh result
+   * CA-CMC-027 fix: Return explicit valid result for empty carts instead of null
    */
   const validateCart = useCallback(async (): Promise<ValidationResult | null> => {
     // CA-CMC-026 FIX: Don't return stale cached result while validation is in-flight.
@@ -80,6 +82,7 @@ export function useCartValidation(
       });
     }
 
+    // CA-CMC-027 fix: Return explicit valid result for empty carts instead of null
     if (cartState.items.length === 0) {
       // CA-CMC-027 FIX: Never return null for empty cart. Return explicit valid result.
       // Empty cart is valid, but downstream components may crash on null validationResult.
@@ -244,7 +247,10 @@ export function useCartValidation(
 
   /**
    * Auto-validate when cart changes
+   * CA-CMC-028 fix: Use ref-based debounce that survives rapid item changes
    */
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     if (autoValidate && cartState.items.length > 0) {
       // CA-CMC-028 FIX: Use ref-based debounce that doesn't reset on every items change.

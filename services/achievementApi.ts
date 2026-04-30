@@ -67,6 +67,9 @@ export interface AchievementProgress {
  * All display data (icon, category, reward, tier) comes from the API.
  */
 function mapAchievement(a: any): Achievement {
+  // CA-GAM-028: Validate progress is in 0-100 range
+  const progress = Math.min(Math.max(a.progress || 0, 0), 100);
+
   return {
     id: a._id || a.id,
     userId: a.user || '',
@@ -78,7 +81,7 @@ function mapAchievement(a: any): Achievement {
     category: a.category || 'General',
     tier: a.tier || 'bronze',
     unlocked: a.unlocked || false,
-    progress: a.progress || 0,
+    progress,
     unlockedDate: a.unlockedDate,
     currentValue: a.currentValue,
     targetValue: a.targetValue || 100,

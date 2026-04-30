@@ -154,6 +154,7 @@ function BillPaymentPage() {
     }
   }, [initialType, billTypes]);
 
+  // CA-PAY-028 FIX: Debounce rapid type changes to prevent multiple API calls
   // Fetch providers when type changes
   useEffect(() => {
     if (!selectedType) {
@@ -161,7 +162,8 @@ function BillPaymentPage() {
       return;
     }
     let cancelled = false;
-    (async () => {
+    // Debounce 300ms to prevent spam on rapid type selections
+    const timer = setTimeout(async () => {
       try {
         setLoadingProviders(true);
         setSelectedProvider(null);
@@ -182,9 +184,10 @@ function BillPaymentPage() {
       } finally {
         if (!cancelled) setLoadingProviders(false);
       }
-    })();
+    }, 300);
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedType]);

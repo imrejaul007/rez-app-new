@@ -157,7 +157,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     // Set logout callback - called when token expires/is revoked
     // This is guarded by isLoggingOut in apiClient, so only called once per cycle
     // NOTE: No router.replace here — dispatch AUTH_LOGOUT triggers the navigation guard
-    apiClient.setLogoutCallback(async () => {
+    const unregisterLogoutCallback = apiClient.setLogoutCallback(async () => {
       try {
         // Immediately clear API tokens to stop any further authenticated requests
         apiClient.setAuthToken(null);
@@ -177,6 +177,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         setHasExplicitlyLoggedOut(true);
       }
     });
+
+    // Fixed CA-AUT-029: Cleanup callback on unmount to prevent duplicate registrations
+    return () => {
+      if (typeof unregisterLogoutCallback === 'function') {
+        unregisterLogoutCallback();
+      }
+    };
   }, []);
 
   // Check auth status on app start (but not after explicit logout)
@@ -305,7 +312,16 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         referralCode?: string;
       } = { phoneNumber, flow };
       if (email) requestData.email = email;
-      if (referralCode) requestData.referralCode = referralCode;
+
+      // Fixed CA-AUT-012: Validate referral code format before sending
+      if (referralCode) {
+        // Validate: alphanumeric only, max 20 characters
+        const isValidReferralCode = /^[a-zA-Z0-9]{1,20}$/.test(referralCode);
+        if (!isValidReferralCode) {
+          throw new Error('Invalid referral code format. Must be alphanumeric and up to 20 characters.');
+        }
+        requestData.referralCode = referralCode;
+      }
 
       const response = await authService.sendOtp(requestData);
 
@@ -501,16 +517,19 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   const forceLogout = () => {
 
     try {
+      // Fixed CA-AUT-024: Reset wallet store on logout
+      useWalletStore.getState().reset();
+
       // Clear both localStorage and AsyncStorage via authStorage
       authStorage.clearAuthData().catch(() => { /* silently handle */ });
 
       // Clear API client token
       authService.setAuthToken(null);
       apiClient.setAuthToken(null);
-      
+
       // Force state update
       dispatch({ type: 'AUTH_LOGOUT' });
-      
+
       // Set explicit logout flag to prevent auto-restoration
       setHasExplicitlyLoggedOut(true);
 
@@ -800,13 +819,29 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     isRefreshingToken.current = true;
     let refreshSuccess = false;
 
-    // Create refresh promise
+    // Create refresh promise with timeout protection (CA-AUT-006)
     const refreshPromise = (async () => {
+      let timeoutHandle: NodeJS.Timeout | null = null;
       try {
-        const refreshToken = await authStorage.getRefreshToken();
+        // Create a timeout promise that rejects after 30 seconds
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          timeoutHandle = setTimeout(() => {
+            logger.warn('[AUTH] Token refresh timed out after 30s');
+            reject(new Error('Token refresh timeout'));
+          }, 30_000);
+        });
+
+        // Race between refresh and timeout
+        const refreshToken = await Promise.race([
+          authStorage.getRefreshToken(),
+          timeoutPromise
+        ]);
 
         if (refreshToken) {
-          const response = await authService.refreshToken(refreshToken);
+          const response = await Promise.race([
+            authService.refreshToken(refreshToken),
+            timeoutPromise
+          ]);
 
           // Check if API returned an error
           if (!response.success) {
@@ -894,6 +929,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
           return false; // Failed - transient error, keep session alive
         }
       } finally {
+        // Clear timeout if still pending
+        if (timeoutHandle) {
+          clearTimeout(timeoutHandle);
+        }
+
         // Reset refreshing flag
         isRefreshingToken.current = false;
         refreshPromiseRef.current = null;
