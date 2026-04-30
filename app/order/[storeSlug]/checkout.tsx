@@ -407,7 +407,7 @@ function CheckoutScreen() {
         <LinearGradient colors={['#1a3a52', '#1a3a52']} style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
-          </Button>
+          </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>Checkout</Text>
             <Text style={styles.headerSub}>{store?.name}</Text>
