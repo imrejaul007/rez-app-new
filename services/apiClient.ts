@@ -418,6 +418,15 @@ class ApiClient {
       //   1. Install react-native-cert-pinning or Expo secure transport
       //   2. Pin the API server's certificate SHA256 hash
       //   3. Validate cert on every request to /auth and /wallet endpoints
+
+      // APP-CHECK-001: Add Firebase App Check token to prevent API abuse
+      // This helps protect against bots and unauthorized access
+      const { getAppCheckToken } = await import('./AppCheckService');
+      const appCheckToken = await getAppCheckToken();
+      if (appCheckToken) {
+        requestHeaders['X-Firebase-AppCheck'] = appCheckToken;
+      }
+
       const response = await globalConcurrencyLimiter.execute(() => fetch(url, config));
       clearTimeout(timeoutId);
       if (slowWarningId) clearTimeout(slowWarningId);
