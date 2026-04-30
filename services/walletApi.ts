@@ -580,9 +580,9 @@ class WalletService {
   /**
    * Get wallet balance and status
    */
-  async getBalance(): Promise<ApiResponse<WalletBalanceResponse>> {
+  async getBalance(options?: { signal?: AbortSignal }): Promise<ApiResponse<WalletBalanceResponse>> {
     try {
-      return await apiClient.get<WalletBalanceResponse>('/wallet/balance');
+      return await apiClient.get<WalletBalanceResponse>('/wallet/balance', undefined, { signal: options?.signal });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] getBalance failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to fetch balance' } as unknown as ApiResponse<WalletBalanceResponse>;

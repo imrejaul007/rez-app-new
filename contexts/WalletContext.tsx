@@ -267,7 +267,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           setIsLoading(true);
         }
 
-        const response = await walletApi.getBalance();
+        // FIX 6: Pass abort signal so the fetch is cancelled on unmount/navigation
+        const response = await walletApi.getBalance({ signal: abortRef.current.signal });
 
         if (abortRef.current.signal.aborted) return;
 

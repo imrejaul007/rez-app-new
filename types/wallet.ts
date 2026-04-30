@@ -149,7 +149,7 @@ export interface CoinPromoDetails {
 export interface CoinBalance {
   /** Unique identifier for this coin entry (e.g. 'rez-0', 'promo-0') */
   id: string;
-  /** B02: Must be one of 'rez' | 'promo' | 'branded' | 'prive' — never anything else */
+  /** B02: Must be one of 'rez' | 'promo' | 'branded' | 'prive' | 'cashback' | 'referral' — never anything else */
   type: CoinType;
   name: string;
   amount: number;

@@ -20,6 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import ugcApi, { UGCComment } from '@/services/ugcApi';
 import { useToast } from '@/hooks/useToast';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { FlashList } from '@shopify/flash-list';
 import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';

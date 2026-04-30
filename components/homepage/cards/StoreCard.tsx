@@ -8,6 +8,7 @@ import {
   NativeSyntheticEvent,
   Platform,
 } from 'react-native';
+import TypedFlashList from '@/components/ui/TypedFlashList';
 import { FlashList } from '@shopify/flash-list';
 import TypedFlashList from '@/components/ui/TypedFlashList';
 import { Ionicons } from '@expo/vector-icons';

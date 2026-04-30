@@ -354,6 +354,28 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
         };
       }
 
+      // FIX 5: Enforce total cap across all coin types. Individual caps above
+      // limit each coin to maxAllowed independently, but the combined total can
+      // still exceed maxAllowed when multiple coin types are enabled.
+      let rezUsing = newCoins.rezCoins.using;
+      let promoUsing = newCoins.promoCoins.using;
+      let brandedUsing = newCoins.brandedCoins?.using || 0;
+      const total = rezUsing + promoUsing + brandedUsing;
+
+      if (total > maxAllowed && total > 0) {
+        const ratio = maxAllowed / total;
+        rezUsing = Math.floor(rezUsing * ratio);
+        promoUsing = Math.floor(promoUsing * ratio);
+        // Give remainder to branded to avoid rounding loss
+        brandedUsing = maxAllowed - rezUsing - promoUsing;
+
+        newCoins.rezCoins = { ...newCoins.rezCoins, using: rezUsing };
+        newCoins.promoCoins = { ...newCoins.promoCoins, using: promoUsing };
+        if (newCoins.brandedCoins) {
+          newCoins.brandedCoins = { ...newCoins.brandedCoins, using: brandedUsing };
+        }
+      }
+
       // Recalculate total
       newCoins.totalApplied =
         newCoins.rezCoins.using +

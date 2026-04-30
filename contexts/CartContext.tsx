@@ -80,6 +80,8 @@ export interface CartItemMetadata {
 // Typed card/bank offer applied to the cart
 export interface CartCardOffer {
   id?: string;
+  /** FIX 3: Coupon code associated with this card offer (used by setCardOffer to auto-apply) */
+  code?: string;
   bankName?: string;
   cardType?: string;
   discountType?: 'flat' | 'percent';
@@ -711,9 +713,9 @@ export function CartProvider({ children }: CartProviderProps) {
       // Invalidate cache on cart add
       await (await getCacheService()).invalidateByEvent({ type: 'cart:add' });
 
-      // Check stock before adding
+      // Check stock before adding (use itemsRef for up-to-date items)
       try {
-        const existingCartItem = state.items.find(i => i.id === item.id);
+        const existingCartItem = itemsRef.current.find(i => i.id === item.id);
         const requestedQty = (existingCartItem?.quantity ?? 0) + 1;
         const stockCheck = await cartValidationService.checkProductStock(item.id, requestedQty);
         if (stockCheck.success && stockCheck.data && !stockCheck.data.available) {
@@ -736,11 +738,14 @@ export function CartProvider({ children }: CartProviderProps) {
       // Track add_to_cart event
       try { analytics.trackEvent(ANALYTICS_EVENTS.ADD_TO_CART, { productId: item.id, productName: item.name, price: item.price, quantity: 1, totalValue: item.price }); } catch {}
 
-      // Calculate new items (same logic as reducer)
-      const currentItems = state.items;
+      // FIX 1: Read from itemsRef (updated synchronously) instead of state.items
+      // (stale closure). Two rapid addItem calls would otherwise both read the
+      // same pre-dispatch state.items, causing the second to overwrite the first
+      // in AsyncStorage.
+      const currentItems = itemsRef.current;
       const existingItem = currentItems.find(i => i.id === item.id);
       let newItems: CartItemWithQuantity[];
-      
+
       if (existingItem) {
         newItems = currentItems.map(i =>
           i.id === item.id
@@ -825,11 +830,10 @@ export function CartProvider({ children }: CartProviderProps) {
             // For non-quota errors, just log - don't throw
             logger.warn('🛒 [CartContext] Failed to save to storage (non-quota):', error);
           }
-        }
-      })().catch(() => {
-        // Final safety net - ensure no errors propagate
-        // This should never be reached, but just in case
-      });
+        })().catch(() => {
+          // Final safety net - ensure no errors propagate
+        });
+      }
 
       // Check if online
       if (state.isOnline) {
