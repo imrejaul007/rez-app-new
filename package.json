@@ -46,11 +46,8 @@
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.10",
     "@react-navigation/native": "^7.1.6",
-<<<<<<< HEAD
-=======
     "@rez/chat": "file:../packages/rez-chat-service",
     "@rez/shared-types": "file:../packages/shared-types",
->>>>>>> b428131e6ca1ecb0b1b5a15fad4e5063a2085687
     "@sentry/react-native": "~6.14.0",
     "@shopify/flash-list": "1.7.6",
     "@tanstack/react-query": "^5.90.21",
