@@ -14,7 +14,7 @@ import { Discount } from '@/services/discountsApi';
  * NOTE: This is the canonical format used by:
  *   - rez-backend / rez-merchant-service Store model (MongoDB 2dsphere index)
  *   - rez-app-consumer services (storesApi.ts location field)
- *   - rez-app-marchant StoreLocation.coordinates
+ *   - rez-app-merchant StoreLocation.coordinates
  *
  * When the backend returns coordinates as GeoJSON [lng, lat], components should
  * destructure as: `const [longitude, latitude] = coordinates;`
