@@ -430,6 +430,10 @@ class ApiClient {
       const response = await globalConcurrencyLimiter.execute(() => fetch(url, config));
       clearTimeout(timeoutId);
       if (slowWarningId) clearTimeout(slowWarningId);
+      // FIX 6: Clean up external signal listener
+      if (externalSignal && externalAbortHandler) {
+        externalSignal.removeEventListener('abort', externalAbortHandler);
+      }
       // OG-D006 FIX: Unregister now that the fetch has resolved.
       requestRegistry.unregister(registryId);
 

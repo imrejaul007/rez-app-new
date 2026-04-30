@@ -3,6 +3,10 @@
 // Type definitions for order management system
 
 // Canonical source: @rez/shared-types/src/orderStatuses.ts (OrderStatus)
+// FIX 7: Canonical 11 states only. Removed non-canonical states (failed_delivery,
+// return_requested, return_rejected) that the backend never sends.
+// Canonical states: placed, confirmed, preparing, ready, dispatched,
+// out_for_delivery, delivered, cancelling, cancelled, returned, refunded
 export type OrderStatus =
   | 'placed'
   | 'confirmed'
@@ -10,12 +14,9 @@ export type OrderStatus =
   | 'ready'
   | 'dispatched'
   | 'out_for_delivery'
-  | 'failed_delivery'
   | 'delivered'
   | 'cancelling'
   | 'cancelled'
-  | 'return_requested'
-  | 'return_rejected'
   | 'returned'
   | 'refunded';
 
