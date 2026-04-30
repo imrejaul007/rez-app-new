@@ -26,7 +26,6 @@
     "serve:render": "npx serve dist -p ${PORT:-3000} -s",
     "serve:web": "npx serve dist",
     "prepare": "husky",
-    "preinstall": "node scripts/preinstall.js",
     "format": "prettier --write 'app/**/*.ts' 'app/**/*.tsx'"
   },
   "main": "expo-router/entry",
@@ -122,6 +121,7 @@
     "@types/pako": "^2.0.4",
     "@types/react": "~19.0.10",
     "@types/react-native-uuid": "^1.4.0",
+    "@typescript-eslint/utils": "^8.0.0",
     "babel-plugin-module-resolver": "^5.0.2",
     "cross-env": "^10.1.0",
     "csstype": "3.1.3",
@@ -135,14 +135,13 @@
     "prettier": "^3.2.5",
     "react-test-renderer": "19.0.0",
     "ts-jest": "^29.4.5",
-    "typescript": "~5.8.3",
-    "@typescript-eslint/utils": "^8.0.0"
+    "typescript": "~5.8.3"
   },
   "private": true,
   "_dependencyNotes": {
-    "react-native-maps": "v1.20.1 \u2014 compatible with RN 0.79",
-    "@react-native-firebase/app": "^21.6.1 \u2014 requires google-services.json on Android (guarded in app.config.js)",
-    "@sentry/react-native": "~6.15.0 \u2014 updated for RN 0.79 / Expo 53"
+    "react-native-maps": "v1.20.1 — compatible with RN 0.79",
+    "@react-native-firebase/app": "^21.6.1 — requires google-services.json on Android (guarded in app.config.js)",
+    "@sentry/react-native": "~6.15.0 — updated for RN 0.79 / Expo 53"
   },
   "overrides": {
     "markdown-it": {
