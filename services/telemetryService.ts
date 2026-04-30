@@ -3,6 +3,7 @@ import uuid from "react-native-uuid";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import apiClient from './apiClient';
+import { v4 as uuidv4 } from 'uuid';
 
 // ============================================================================
 // Type Definitions
@@ -609,7 +610,7 @@ class TelemetryService {
    * Generate batch ID
    */
   private generateBatchId(): string {
-    return `batch_${Date.now()}_${uuid.v4()}`;
+    return `batch_${Date.now()}_${uuidv4()}`;
   }
 
   /**

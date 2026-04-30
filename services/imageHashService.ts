@@ -1,5 +1,6 @@
 /**
  * Image Hash Service
+import { createHash } from 'crypto';
  *
  * Provides image duplicate detection using SHA-256 hashing.
  * Compares uploaded images against previous uploads to prevent duplicates.

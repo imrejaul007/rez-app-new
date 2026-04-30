@@ -3,6 +3,7 @@ import uuid from "react-native-uuid";
 // BUG-059 FIX: Import regionStore to get the active currency dynamically.
 // Previously, trackAddToCart() hardcoded 'INR' regardless of selected region (AED, etc.).
 import { useRegionStore } from '@/stores/regionStore';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface AnalyticsEvent {
   name: string;
@@ -71,7 +72,7 @@ class AnalyticsService {
 
   private generateSessionId(): string {
     // BUG-091 FIX: .substr() is deprecated — use .substring() instead
-    return `session_${Date.now()}_${uuid.v4()}`;
+    return `session_${Date.now()}_${uuidv4()}`;
   }
 
   setUserId(userId: string) {

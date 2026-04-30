@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { logger } from '@/utils/logger';
+import { v4 as uuidv4 } from 'uuid';
 
 // ============================================================================
 // Types
@@ -157,7 +158,7 @@ class ErrorTrackingService {
    * Generate session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${uuid.v4()}`;
+    return `session_${Date.now()}_${uuidv4()}`;
   }
 
   /**
@@ -516,7 +517,7 @@ class ErrorTrackingService {
    * Generate error ID
    */
   private generateErrorId(): string {
-    return `error_${Date.now()}_${uuid.v4()}`;
+    return `error_${Date.now()}_${uuidv4()}`;
   }
 
   /**

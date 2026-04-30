@@ -3,6 +3,7 @@ import uuid from "react-native-uuid";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { telemetryService } from './telemetryService';
 import { errorReporter } from '../utils/errorReporter';
+import { v4 as uuidv4 } from 'uuid';
 
 // ============================================================================
 // Type Definitions
@@ -198,7 +199,7 @@ class BillUploadAnalytics {
    * Generate unique session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${uuid.v4()}`;
+    return `session_${Date.now()}_${uuidv4()}`;
   }
 
   /**

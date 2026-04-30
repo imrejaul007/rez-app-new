@@ -377,6 +377,7 @@ export const getTransactionIcon = (type: TransactionType): string => {
 export const getStatusColor = (status: TransactionStatus): string => {
   const colorMap: Record<string, string> = {
     success: '#ffcd57',
+    completed: '#ffcd57',
     pending: '#F59E0B',
     failed: '#EF4444',
     cancelled: '#6B7280',

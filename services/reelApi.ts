@@ -261,7 +261,7 @@ class ReelApiService {
    */
   async toggleLike(reelId: string): Promise<ApiResponse<{ liked: boolean; likesCount: number }>> {
     try {
-      const response = await apiClient.post<{ liked: boolean; likesCount: number }>(`/videos/${reelId}/like`);
+      const response = await apiClient.post<{ liked: boolean; likesCount: number } & Record<string, unknown>>(`/videos/${reelId}/like`);
 
       if (response.success && response.data) {
         const data = response.data;
@@ -286,7 +286,7 @@ class ReelApiService {
    */
   async toggleBookmark(reelId: string): Promise<ApiResponse<{ bookmarked: boolean }>> {
     try {
-      const response = await apiClient.post<{ bookmarked: boolean }>(`/videos/${reelId}/bookmark`);
+      const response = await apiClient.post<{ bookmarked: boolean } & Record<string, unknown>>(`/videos/${reelId}/bookmark`);
 
       if (response.success && response.data) {
         const data = response.data;
@@ -310,7 +310,7 @@ class ReelApiService {
    */
   async trackView(reelId: string): Promise<ApiResponse<{ viewsCount: number }>> {
     try {
-      const response = await apiClient.post<{ viewsCount: number }>(`/videos/${reelId}/view`);
+      const response = await apiClient.post<{ viewsCount: number } & Record<string, unknown>>(`/videos/${reelId}/view`);
 
       if (response.success) {
         const data = response.data as Record<string, unknown> | null | undefined;

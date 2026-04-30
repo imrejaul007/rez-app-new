@@ -8,6 +8,7 @@ import { billUploadService } from './billUploadService';
 import { imageHashService } from './imageHashService';
 import type { BillUploadData } from './billUploadService';
 import { BILL_UPLOAD_CONFIG } from '@/config/uploadConfig';
+import { v4 as uuidv4 } from 'uuid';
 
 // EventEmitter polyfill for React Native compatibility
 class EventEmitter {
@@ -857,7 +858,7 @@ class BillUploadQueueService extends EventEmitter {
    * Generate unique bill ID
    */
   private generateBillId(): string {
-    return `bill_${Date.now()}_${uuid.v4()}`;
+    return `bill_${Date.now()}_${uuidv4()}`;
   }
 
   /**

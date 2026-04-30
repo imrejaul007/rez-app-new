@@ -126,7 +126,7 @@ const generateSingleDealRecommendation = (
   if ((deal.discountValue ?? 0) >= 25) {
     confidence += 0.2;
     tags.push('High Value');
-    if (!reason) reason = `Exceptional ${deal.discountValue}% discount opportunity`;
+    if (!reason) reason = `Exceptional ${deal.discountValue ?? 0}% discount opportunity`;
   }
 
   // Expiring soon deals
@@ -199,7 +199,7 @@ const generateSingleDealRecommendation = (
 
   // Default reason if none set
   if (!reason) {
-    reason = `Save ${deal.discountValue}% on your purchase with this ${getCategoryDisplayName(deal.category)} deal`;
+    reason = `Save ${deal.discountValue ?? 0}% on your purchase with this ${getCategoryDisplayName(deal.category)} deal`;
   }
 
   return {
@@ -329,14 +329,14 @@ export const getSmartDealNotifications = (
       notifications.push({
         type: 'EXPIRING',
         deal,
-        message: `${deal.title} expires today! Don't miss out on ${deal.discountValue}% savings.`,
+        message: `${deal.title} expires today! Don't miss out on ${deal.discountValue ?? 0}% savings.`,
         urgency: 'HIGH',
       });
     } else if (daysLeft <= 3) {
       notifications.push({
         type: 'EXPIRING',
         deal,
-        message: `${deal.title} expires in ${daysLeft} days. Save ${deal.discountValue}% now!`,
+        message: `${deal.title} expires in ${daysLeft} days. Save ${deal.discountValue ?? 0}% now!`,
         urgency: 'MEDIUM',
       });
     }

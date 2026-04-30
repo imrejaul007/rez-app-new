@@ -475,7 +475,7 @@ export function useLoyaltyRedemption(options: UseLoyaltyRedemptionOptions = {}) 
     if (!state.balance) return 0;
     if (!state.balance.pointsToNextTier) return 100;
 
-    const tierRanges = {
+    const tierRanges: Record<string, [number, number]> = {
       Bronze: [0, 999],
       Silver: [1000, 4999],
       Gold: [5000, 9999],

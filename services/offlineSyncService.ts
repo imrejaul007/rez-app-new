@@ -3,6 +3,7 @@ import uuid from "react-native-uuid";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import { logger } from '@/utils/logger';
+import { v4 as uuidv4 } from 'uuid';
 
 // ─── EventEmitter (lightweight polyfill) ────────────────────
 
@@ -415,7 +416,7 @@ class OfflineSyncService extends EventEmitter {
   }
 
   private generateId(): string {
-    return `${Date.now()}-${uuid.v4()}`;
+    return `${Date.now()}-${uuidv4()}`;
   }
 }
 
