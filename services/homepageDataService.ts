@@ -107,8 +107,8 @@ class HomepageDataService {
   private lastBackendCheck: number = 0;
   private BACKEND_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes (for successful checks)
   private BACKEND_RETRY_INTERVAL = 15 * 1000; // 15 seconds (for failed checks - retry quickly)
-  private CACHE_TTL = 60 * 60 * 1000; // 1 hour cache TTL
-  private STALE_TTL = 30 * 60 * 1000; // 30 minutes before considering stale
+  private CACHE_TTL = 5 * 60 * 1000; // 5 minutes cache TTL (reduced from 1h to prevent product visibility lag)
+  private STALE_TTL = 2 * 60 * 1000; // 2 minutes before considering stale
 
   // Last userContext received from homepage batch (avoids separate /user-context call)
   private _lastUserContext: HomepageUserContext | null = null;
@@ -290,7 +290,8 @@ class HomepageDataService {
             const pickedForYouResponse = await recommendationService.getPickedForYou(20, userLocation);
             if (pickedForYouResponse.success && ((pickedForYouResponse.data as { recommendations?: unknown[] })?.recommendations?.length ?? 0) > 0) {
               // Transform recommendations to ProductItem format
-              return (pickedForYouResponse.data as { recommendations: RecommendationItem[] }).recommendations.map((rec) => ({
+              const recs = (pickedForYouResponse.data as { recommendations?: RecommendationItem[] })?.recommendations || [];
+              return recs.map((rec) => ({
                 ...rec,
                 recommendationReason: rec.recommendationReason || 'Recommended for you',
                 recommendationScore: rec.recommendationScore || 0.85,

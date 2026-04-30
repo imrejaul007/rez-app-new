@@ -209,7 +209,7 @@ const CURRENCY_FORMATTERS: Record<string, Intl.NumberFormat> = {
   AED: new Intl.NumberFormat('en-AE', { style: 'currency', currency: 'AED' }),
   INR: new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }),
   USD: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }),
-  EUR: new Intl.NumberFormat('en-EU', { style: 'currency', currency: 'EUR' }),
+  EUR: new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }),
   CNY: new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }),
 };
 
