@@ -47,9 +47,6 @@
     "@react-navigation/elements": "^2.3.10",
     "@react-navigation/native": "^7.1.6",
     "@rez/chat": "file:../packages/rez-chat-service",
-    // H5 FIX: Use local monorepo path instead of GitHub fork to prevent supply chain risk.
-    // The GitHub branch "2.0.0" could change. Pinning to the upstream monorepo path
-    // ensures consistency. For cross-repo consumers, publish @rez/shared-types to npm.
     "@rez/shared-types": "file:../packages/shared-types",
     "@sentry/react-native": "~6.14.0",
     "@shopify/flash-list": "1.7.6",
