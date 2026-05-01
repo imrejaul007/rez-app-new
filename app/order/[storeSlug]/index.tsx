@@ -20,7 +20,7 @@ import {
   Image,
   Pressable,
 } from 'react-native';
-import { Button } from '@rez/rez-ui';
+import { Button } from '@/components/ui/Button';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';

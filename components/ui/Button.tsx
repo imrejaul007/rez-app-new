@@ -19,7 +19,8 @@ type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'small' | 'medium' | 'large';
 
 interface ButtonProps {
-  title: string;
+  title?: string;
+  children?: React.ReactNode;
   onPress: () => void;
   variant?: ButtonVariant;
   size?: ButtonSize;
@@ -33,6 +34,7 @@ interface ButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   testID?: string;
+  label?: string; // Alias for title
 }
 
 const SIZE_CONFIG: Record<ButtonSize, { height: number; paddingH: number; iconSize: number }> = {
@@ -43,6 +45,7 @@ const SIZE_CONFIG: Record<ButtonSize, { height: number; paddingH: number; iconSi
 
 function Button({
   title,
+  children,
   onPress,
   variant = 'primary',
   size = 'medium',
@@ -56,7 +59,9 @@ function Button({
   style,
   textStyle: customTextStyle,
   testID,
+  label,
 }: ButtonProps) {
+  const buttonTitle = title || label;
   const { colors, shadows } = useTheme();
   const scaleAnim = useSharedValue(1);
   const sizeConfig = SIZE_CONFIG[size];
@@ -147,7 +152,7 @@ function Button({
         disabled={!isInteractive}
         accessibilityRole="button"
         accessibilityState={{ disabled: !isInteractive, busy: loading }}
-        accessibilityLabel={loading ? `${title}, loading` : title}
+        accessibilityLabel={loading ? `${buttonTitle}, loading` : buttonTitle}
         testID={testID}
       >
         {loading ? (
@@ -155,13 +160,15 @@ function Button({
             color={textColor}
             size={size === 'small' ? 'small' : 'large'}
           />
+        ) : children ? (
+          children
         ) : (
           <>
             {icon}
             {leftIcon && (
               <Ionicons name={leftIcon} size={sizeConfig.iconSize} color={textColor} />
             )}
-            <Text style={labelStyle}>{title}</Text>
+            <Text style={labelStyle}>{buttonTitle}</Text>
             {rightIcon && (
               <Ionicons name={rightIcon} size={sizeConfig.iconSize} color={textColor} />
             )}
