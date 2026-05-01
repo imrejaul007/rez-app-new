@@ -341,11 +341,9 @@ function WebOrderMenuScreen() {
         <TouchableOpacity
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backBtn}
-          label=""
-          variant="primary"
         >
           <Ionicons name="arrow-back" size={22} color="#fff" />
-        </Button>
+        </TouchableOpacity>
         <View style={{ flex: 1 }}>
           <Text style={styles.storeName} numberOfLines={1}>
             {store.name}
