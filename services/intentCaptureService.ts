@@ -1,10 +1,13 @@
 /**
  * RTMN Commerce Memory: Intent Capture Service
  * Captures user intents from rez-app-consumer for cross-app intelligence
+ *
+ * Also sends to REZ Mind Event Platform for unified intelligence
  */
 
 
 const INTENT_CAPTURE_URL = process.env.EXPO_PUBLIC_INTENT_CAPTURE_URL || '';
+const REZ_MIND_URL = process.env.EXPO_PUBLIC_REZ_MIND_URL || 'http://localhost:4008';
 
 // ── App Type Derivation ───────────────────────────────────────────────────────
 // Derive appType from the intentKey prefix so flights, trains, cabs, and hotels
@@ -263,3 +266,96 @@ export const intentCaptureService = {
   captureCabIntent,
   captureBillIntent,
 };
+
+// ── REZ Mind Integration ──────────────────────────────────────────────────────
+
+/**
+ * Send event to REZ Mind Event Platform (fire-and-forget)
+ */
+async function sendToRezMind(endpoint: string, data: Record<string, unknown>): Promise<void> {
+  try {
+    await fetch(`${REZ_MIND_URL}${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...data,
+        source: 'rez-app-consumer',
+        timestamp: new Date().toISOString(),
+      }),
+    });
+  } catch (error) {
+    console.debug('[REZ Mind] Event failed', error);
+  }
+}
+
+/**
+ * Capture consumer order event
+ */
+export async function captureOrderEvent(params: {
+  userId: string;
+  orderId: string;
+  merchantId?: string;
+  items?: Array<{ itemId: string; quantity: number; price: number }>;
+  totalAmount: number;
+}): Promise<void> {
+  await sendToRezMind('/webhook/consumer/order', {
+    user_id: params.userId,
+    order_id: params.orderId,
+    merchant_id: params.merchantId || '',
+    items: params.items || [],
+    total_amount: params.totalAmount,
+  });
+}
+
+/**
+ * Capture consumer search event
+ */
+export async function captureSearchEvent(params: {
+  userId: string;
+  query: string;
+  resultsCount?: number;
+  clickedItem?: string;
+}): Promise<void> {
+  await sendToRezMind('/webhook/consumer/search', {
+    user_id: params.userId,
+    query: params.query,
+    results_count: params.resultsCount || 0,
+    clicked_item: params.clickedItem,
+  });
+}
+
+/**
+ * Capture consumer view event
+ */
+export async function captureViewEvent(params: {
+  userId: string;
+  itemId: string;
+  itemName?: string;
+  durationSeconds?: number;
+}): Promise<void> {
+  await sendToRezMind('/webhook/consumer/view', {
+    user_id: params.userId,
+    item_id: params.itemId,
+    item_name: params.itemName,
+    duration_seconds: params.durationSeconds,
+  });
+}
+
+/**
+ * Capture consumer booking event
+ */
+export async function captureBookingEvent(params: {
+  userId: string;
+  bookingId: string;
+  serviceType: string;
+  merchantId?: string;
+  amount?: number;
+}): Promise<void> {
+  await sendToRezMind('/webhook/consumer/booking', {
+    user_id: params.userId,
+    booking_id: params.bookingId,
+    service_type: params.serviceType,
+    merchant_id: params.merchantId,
+    amount: params.amount,
+  });
+}
