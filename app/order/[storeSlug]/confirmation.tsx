@@ -312,12 +312,9 @@ export default function ConfirmationScreen() {
               onPress={() =>
                 router.replace(`/order/${storeSlug}${order.tableNumber ? `?table=${order.tableNumber}` : ''}`)
               }
-              label="Order Again"
-              variant="primary"
-              textStyle={styles.orderAgainText}
             >
               <Ionicons name="add-circle-outline" size={20} color="#fff" />
-            </Button>
+            </TouchableOpacity>
           )}
         </Animated.View>
 
