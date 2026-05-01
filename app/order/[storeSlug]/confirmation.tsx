@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeInDown, ZoomIn } from 'react-native-reanimated';
-import { Button } from '@rez/rez-ui';
+import { Button } from '@/components/ui/Button';
 import { getWebOrder, WebOrderStatus } from '@/services/webOrderingApi';
 
 // ─── Status config ────────────────────────────────────────────────────────────
