@@ -1,8 +1,5 @@
 /**
  * Error Reporter Utility
- */
-
-import uuid from 'react-native-uuid';
  *
  * Centralized error reporting and logging system.
  * Captures, categorizes, and reports errors to monitoring services.
