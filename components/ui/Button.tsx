@@ -58,7 +58,7 @@ function Button({
   rightIcon,
   haptic = true,
   style,
-  textStyl...(customTextStyle || {}),
+  textStyle = {} as StyleProp<TextStyle>,
   testID,
   label,
 }: ButtonProps) {
@@ -135,7 +135,7 @@ function Button({
     color: textColor,
     ...(size === 'small' ? typography.buttonSmall : typography.button),
     fontWeight: '600',
-    ...(typeof customTextStyle === 'object' ? customTextStyle : {}),
+    ...(typeof textStyle === 'object' ? textStyle : {}),
   };
 
   // LUCA: Animated style for scale transform
