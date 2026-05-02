@@ -169,6 +169,8 @@ function OTPVerificationScreen() {
       }
 
       // Implement exponential backoff: 1s, 2s, 4s, 8s, 16s
+      const newAttemptCount = attemptCount + 1;
+      setAttemptCount(newAttemptCount);
       if (newAttemptCount < MAX_ATTEMPTS) {
         const delayMs = Math.pow(2, newAttemptCount - 1) * 1000; // 1s, 2s, 4s, 8s
         setBackoffDelay(delayMs);

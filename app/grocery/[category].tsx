@@ -247,10 +247,10 @@ const GroceryCategoryPage: React.FC = () => {
           const newProducts = response.data.products || [];
           if (append) {
             if (!isMounted()) return;
-            setProducts((prev) => [...prev, ...newProducts]);
+            setProducts((prev) => [...prev, ...newProducts] as Product[]);
           } else {
             if (!isMounted()) return;
-            setProducts(newProducts);
+            setProducts(newProducts as Product[]);
           }
           if (!isMounted()) return;
           setPagination({

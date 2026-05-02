@@ -21,7 +21,9 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
+import { Button, Input } from '@/components/ui';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -435,7 +437,6 @@ function CheckoutScreen() {
               value={name}
               onChangeText={setName}
               editable={!sessionToken}
-              textStyle={styles.inputText}
             />
 
             {params.table ? (
@@ -451,7 +452,6 @@ function CheckoutScreen() {
               placeholder="Allergies, spice level, etc."
               value={instructions}
               onChangeText={setInstructions}
-              textStyle={styles.inputText}
             />
           </Animated.View>
 
@@ -473,7 +473,6 @@ function CheckoutScreen() {
                     onChangeText={setPhone}
                     keyboardType="phone-pad"
                     editable={!otpSent || otpResendCountdown > 0}
-                    textStyle={styles.inputText}
                   />
                 </View>
 
@@ -642,9 +641,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#111827',
     marginBottom: 12,
-  },
-  inputText: {
-    color: '#111827',
   },
   backLinkButton: {
     backgroundColor: 'transparent',

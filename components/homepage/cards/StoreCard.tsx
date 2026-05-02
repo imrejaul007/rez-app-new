@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import TypedFlashList from '@/components/ui/TypedFlashList';
 import { FlashList } from '@shopify/flash-list';
-import TypedFlashList from '@/components/ui/TypedFlashList';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
