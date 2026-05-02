@@ -23,7 +23,7 @@
     "check:backend": "node scripts/check-backend.js",
     "verify:qr-sync": "npx tsx scripts/verify-qr-parser-sync.ts",
     "build:render": "npx expo export --platform web",
-    "serve:render": "npx serve dist -p ${PORT:-3000} -s",
+    "serve:render": "npx serve dist -p ${PORT:-3000}",
     "serve:web": "npx serve dist",
     "prepare": "husky",
     "format": "prettier --write 'app/**/*.ts' 'app/**/*.tsx'"
