@@ -17,7 +17,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { ThemedText } from '@/components/ThemedText';
 import { DetailPageSkeleton } from '@/components/skeletons';
-import ordersApi from '@/services/ordersApi';
+import ordersApi, { OrderItem } from '@/services/ordersApi';
 import { useGetCurrencySymbol, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
@@ -133,7 +133,7 @@ function PaymentSuccessPage() {
 
       try {
         const orderPromises = orderIds.map((id: string) => ordersApi.getOrderById(id));
-        const responses = await Promise.all(orderPromises);
+        const responses = await Promise.allSettled(orderPromises);
 
         const fetchedOrders: OrderDetails[] = [];
         const failedOrders: string[] = [];
@@ -143,7 +143,8 @@ function PaymentSuccessPage() {
           const currentOrderId = orderIds[i];
 
           // Handle settled promises - check for fulfilled or rejected
-          const response = result.status === 'fulfilled' ? result.value : null;
+          const settledResult = result.status === 'fulfilled' ? result.value : null;
+          const response = settledResult ?? null;
 
           if (response.success && response.data) {
             const orderData = response.data;
@@ -178,7 +179,7 @@ function PaymentSuccessPage() {
               storeId: extractedStoreId,
               storeName:
                 extractedStoreName !== null && extractedStoreName !== undefined ? extractedStoreName : undefined,
-              items: (orderData.items || []).map((item) => ({
+              items: (orderData.items || []).map((item: OrderItem) => ({
                 name: item.product?.name || '',
                 quantity: item.quantity,
                 price: item.totalPrice,

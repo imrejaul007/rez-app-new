@@ -512,7 +512,7 @@ function CheckoutScreen() {
                       label={otpResendCountdown > 0 ? `Resend in ${otpResendCountdown}s` : 'Resend OTP'}
                       variant="secondary"
                       style={{ marginTop: 10 }}
-                      textStyle={[styles.resendText, otpResendCountdown > 0 && { color: '#9CA3AF' }]}
+                      textStyle={[styles.resendText, otpResendCountdown > 0 ? { color: '#9CA3AF' } : null]}
                     />
                   </>
                 )}

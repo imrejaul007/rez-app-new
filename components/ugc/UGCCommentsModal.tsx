@@ -22,7 +22,6 @@ import ugcApi, { UGCComment } from '@/services/ugcApi';
 import { useToast } from '@/hooks/useToast';
 import TypedFlashList from '@/components/ui/TypedFlashList';
 import { FlashList } from '@shopify/flash-list';
-import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useAuth } from '@/contexts/AuthContext';

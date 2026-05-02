@@ -68,6 +68,9 @@ export interface UnifiedQrScannerProps {
    *  typed payload, OR after a JSON payload has been successfully
    *  parsed. Useful for analytics. */
   onScanned?: (payload: QrPayload, routeTarget: RouteTarget | null) => void;
+  /** Optional — raw scan mode: caller handles all QR parsing and routing.
+   *  Called with the raw string data from the QR code. */
+  onRawScan?: (raw: string) => void;
   /** Optional — called when we could not make sense of the QR. The
    *  default behavior is to log + show "Not a ReZ code" in the UI. */
   onError?: (message: string) => void;

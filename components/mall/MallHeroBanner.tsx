@@ -33,7 +33,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { MallBanner } from '../../types/mall.types';
 import TypedFlashList from '@/components/ui/TypedFlashList';
 import { FlashList } from '@shopify/flash-list';
-import TypedFlashList from '@/components/ui/TypedFlashList';
 import { colors } from '@/constants/theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
