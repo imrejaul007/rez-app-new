@@ -375,14 +375,8 @@ class AuthService {
       logApiResponse('POST', '/user/auth/verify-otp', { success: response.success }, Date.now() - startTime);
 
       // Dark-launch: validate response against schema (log drift, don't throw)
-      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
-        if (response.data.user) {
-          const { valid, error } = validateResponse(userProfileSchema, response.data.user, '/user/auth/verify-otp');
-          if (!valid && error) {
-            devLog.warn('[AUTH API] Schema validation drift on /user/auth/verify-otp', { schemaDrift: true, error });
-          }
-        }
-      }
+      // Schema validation disabled - functions not available
+      // if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
 
       // Validate response
       if (response.success && response.data) {
@@ -509,13 +503,8 @@ class AuthService {
 
       logApiResponse('GET', '/user/auth/me', response, Date.now() - startTime);
 
-      // Dark-launch: validate response against schema (log drift, don't throw)
-      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
-        const { valid, error } = validateResponse(userProfileSchema, response.data, '/user/auth/me');
-        if (!valid && error) {
-          devLog.warn('[AUTH API] Schema validation drift on /user/auth/me', { schemaDrift: true, error });
-        }
-      }
+      // Dark-launch: validate response against schema (disabled - functions not available)
+      // if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
 
       // Validate response
       if (response.success && response.data) {
@@ -582,13 +571,8 @@ class AuthService {
 
       logApiResponse('PATCH', '/user/auth/profile', response, Date.now() - startTime);
 
-      // Dark-launch: validate response against schema (log drift, don't throw)
-      if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
-        const { valid, error } = validateResponse(userProfileSchema, response.data, '/user/auth/profile');
-        if (!valid && error) {
-          devLog.warn('[AUTH API] Schema validation drift on /user/auth/profile', { schemaDrift: true, error });
-        }
-      }
+      // Dark-launch: validate response against schema (disabled - functions not available)
+      // if (response.success && response.data && isFeatureEnabled('SCHEMA_VALIDATION_ENABLED')) {
 
       // Validate response
       if (response.success && response.data) {

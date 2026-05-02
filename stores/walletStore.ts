@@ -196,7 +196,20 @@ export const useWalletStore = create<WalletStoreState>()(
 
       // Fixed CA-AUT-024: Reset wallet store on logout to prevent cache poisoning
       reset: () => {
-        set(defaults);
+        set({
+          walletData: null,
+          rezBalance: 0,
+          totalBalance: 0,
+          availableBalance: 0,
+          brandedCoins: [],
+          savingsInsights: { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
+          refreshWallet: async () => {},
+          rawBackendData: null,
+          isLoading: false,
+          isRefreshing: false,
+          error: null,
+          pendingDeltaStack: [],
+        });
       },
     }),
     {

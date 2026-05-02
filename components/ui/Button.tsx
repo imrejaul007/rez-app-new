@@ -130,7 +130,7 @@ function Button({
     }),
   };
 
-  const labelStyle = {
+  const labelStyle: any = {
     textAlign: 'center',
     color: textColor,
     fontSize: 14,

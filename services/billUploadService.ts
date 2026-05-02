@@ -205,7 +205,7 @@ class BillUploadService {
               });
             } catch (err) {
               // CA-PAY-036 FIX: If error response is also malformed, return HTTP status
-              devLog.error('❌ [BILL UPLOAD] Failed to parse error response:', err);
+              logger.error('[BILL UPLOAD] Failed to parse error response:', err);
               resolve({
                 success: false,
                 error: `HTTP ${xhr.status}: ${xhr.statusText}`,

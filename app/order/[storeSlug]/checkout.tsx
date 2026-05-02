@@ -507,7 +507,7 @@ function CheckoutScreen() {
                     </Button>
 
                     <Button
-                      onPress={otpResendCountdown === 0 ? handleSendOtp : undefined}
+                      onPress={() => otpResendCountdown === 0 && handleSendOtp()}
                       disabled={otpResendCountdown > 0}
                       label={otpResendCountdown > 0 ? `Resend in ${otpResendCountdown}s` : 'Resend OTP'}
                       variant="secondary"

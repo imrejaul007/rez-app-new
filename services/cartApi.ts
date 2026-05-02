@@ -260,15 +260,15 @@ function validateCart(cart: any): boolean {
   // CA-CMC-015: Validate each item has required fields
   for (const item of cart.items) {
     if (!item || typeof item !== 'object') {
-      devLog.warn('[CART API] Cart contains invalid item (not an object)');
+      logger.warn('[CART API] Cart contains invalid item (not an object)');
       return false;
     }
     if (!item.product || !item.product._id) {
-      devLog.warn('[CART API] Cart item missing required product._id field');
+      logger.warn('[CART API] Cart item missing required product._id field');
       return false;
     }
     if (typeof item.quantity !== 'number' || item.quantity < 1) {
-      devLog.warn('[CART API] Cart item has invalid quantity');
+      logger.warn('[CART API] Cart item has invalid quantity');
       return false;
     }
   }

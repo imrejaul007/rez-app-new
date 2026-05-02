@@ -54,6 +54,7 @@ export function useCartValidation(
 
   const validationTimerRef = useRef<any>(null);
   const isValidatingRef = useRef(false);
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastValidatedItemsRef = useRef<any[]>([]);
 
   /**
@@ -248,8 +249,6 @@ export function useCartValidation(
    * Auto-validate when cart changes
    * CA-CMC-028 fix: Use ref-based debounce that survives rapid item changes
    */
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
   useEffect(() => {
     if (autoValidate && cartState.items.length > 0) {
       // CA-CMC-028 FIX: Use ref-based debounce that doesn't reset on every items change.

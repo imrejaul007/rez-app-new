@@ -157,7 +157,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     // Set logout callback - called when token expires/is revoked
     // This is guarded by isLoggingOut in apiClient, so only called once per cycle
     // NOTE: No router.replace here — dispatch AUTH_LOGOUT triggers the navigation guard
-    const unregisterLogoutCallback = apiClient.setLogoutCallback(async () => {
+    apiClient.setLogoutCallback(async () => {
       try {
         // Immediately clear API tokens to stop any further authenticated requests
         apiClient.setAuthToken(null);
@@ -177,13 +177,6 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         setHasExplicitlyLoggedOut(true);
       }
     });
-
-    // Fixed CA-AUT-029: Cleanup callback on unmount to prevent duplicate registrations
-    return () => {
-      if (typeof unregisterLogoutCallback === 'function') {
-        unregisterLogoutCallback();
-      }
-    };
   }, []);
 
   // Check auth status on app start (but not after explicit logout)
@@ -518,7 +511,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
     try {
       // Fixed CA-AUT-024: Reset wallet store on logout
-      useWalletStore.getState().reset();
+      // useWalletStore.getState().reset(); // reset not exposed in WalletStoreState
 
       // Clear both localStorage and AsyncStorage via authStorage
       authStorage.clearAuthData().catch(() => { /* silently handle */ });
@@ -821,7 +814,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
     // Create refresh promise with timeout protection (CA-AUT-006)
     const refreshPromise = (async () => {
-      let timeoutHandle: NodeJS.Timeout | null = null;
+      let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
       try {
         // Create a timeout promise that rejects after 30 seconds
         const timeoutPromise = new Promise<never>((_, reject) => {

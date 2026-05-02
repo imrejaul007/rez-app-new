@@ -92,7 +92,7 @@ export function OffersProvider({ children }: OffersProviderProps) {
 
       if (pageDataResponse.success && pageDataResponse.data) {
         // Type-safe dispatch: assume response data structure matches OffersPageData
-        const offersData = pageDataResponse.data as OffersPageData;
+        const offersData = pageDataResponse.data as unknown as OffersPageData;
         dispatch({ type: 'SET_OFFERS', payload: offersData });
         return;
       }
