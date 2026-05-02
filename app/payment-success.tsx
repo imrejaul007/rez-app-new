@@ -146,7 +146,7 @@ function PaymentSuccessPage() {
           const settledResult = result.status === 'fulfilled' ? result.value : null;
           const response = settledResult ?? null;
 
-          if (response.success && response.data) {
+          if (response && response.success && response.data) {
             const orderData = response.data;
             // Extract store name from various possible locations in the response
             const orderDataAny = orderData as any as Record<string, unknown>;

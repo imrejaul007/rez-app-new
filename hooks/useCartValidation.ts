@@ -54,7 +54,6 @@ export function useCartValidation(
 
   const validationTimerRef = useRef<any>(null);
   const isValidatingRef = useRef(false);
-  const debounceTimerRef = useRef<any>(null);
   const lastValidatedItemsRef = useRef<any[]>([]);
 
   /**

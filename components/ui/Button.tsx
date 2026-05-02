@@ -130,12 +130,11 @@ function Button({
     }),
   };
 
-  const labelStyle: TextStyle = {
+  const labelStyle = {
     textAlign: 'center',
     color: textColor,
-    ...(size === 'small' ? typography.buttonSmall : typography.button),
+    fontSize: 14,
     fontWeight: '600',
-    ...(typeof textStyle === 'object' ? textStyle : {}),
   };
 
   // LUCA: Animated style for scale transform

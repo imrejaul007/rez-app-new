@@ -104,6 +104,7 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
   onClose,
   onManualEntry,
   onLegacyQrCode,
+  onRawScan,
 }) => {
   const router = useRouter();
   const [permission, requestPermission] = useCameraPermissions();
@@ -171,7 +172,7 @@ export const UnifiedQrScanner: React.FC<UnifiedQrScannerProps> = ({
       const raw = result.data;
 
       // Raw-scan mode: caller owns all parsing and routing.
-      if (onRawScan) {
+      if (typeof onRawScan === 'function') {
         onRawScan(raw);
         return;
       }

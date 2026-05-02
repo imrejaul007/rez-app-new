@@ -209,7 +209,7 @@ function validateAuthResponse(response: RawAuthResponsePayload): boolean {
 
   // Fixed CA-AUT-005: Validate token expiration time
   if (typeof response.tokens.expiresIn !== 'number' || response.tokens.expiresIn <= 0) {
-    devLog.warn('[AUTH API] Auth response missing or invalid expiresIn');
+    logger.warn('[AUTH API] Auth response missing or invalid expiresIn');
     // Provide sensible default if missing
     response.tokens.expiresIn = 3600; // 1 hour default
   }
