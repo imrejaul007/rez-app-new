@@ -468,6 +468,9 @@ export function CartProvider({ children }: CartProviderProps) {
   // (dispatch + cartService.addToCart + loadCart interleaved).
   const addItemLocks = useRef<Record<string, Promise<void> | undefined>>({});
 
+  // Stable-ref pattern: keep itemsRef.current in sync with state.items without causing re-renders
+  const itemsRef = useRef<CartItemWithQuantity[]>(state.items);
+
   // Actions - Define functions before useEffects
   const loadCart = useCallback(async () => {
     // Module-level dedup: skip if loaded very recently (DeferredProvider remounts)
@@ -501,6 +504,7 @@ export function CartProvider({ children }: CartProviderProps) {
             image?: string | { uri?: string };
             price?: number;
             originalPrice?: number;
+            discountedPrice?: number;
             discount?: number;
             lockedQuantity?: number;
             quantity: number;
@@ -771,10 +775,10 @@ export function CartProvider({ children }: CartProviderProps) {
         try {
           const optimizedItems = optimizeCartForStorage(newItems);
           const cartData = JSON.stringify(optimizedItems);
-          
+
           // Check size before saving
           const sizeInMB = estimateStringSize(cartData) / (1024 * 1024);
-          if (sizeInMB > 3) { // Lower threshold to 3MB
+          if (sizeInMB > 3) {
             logger.warn('🛒 [CartContext] Cart data too large, limiting to last 20 items');
             const limitedItems = optimizedItems.slice(-20);
             await serializeStorageOp(async () => {
@@ -789,7 +793,7 @@ export function CartProvider({ children }: CartProviderProps) {
           // Handle quota exceeded error - don't throw, just log
           if (error?.name === 'QuotaExceededError' || error?.message?.includes('quota')) {
             logger.warn('🛒 [CartContext] Storage quota exceeded when adding item (handled gracefully)');
-            
+
             // Aggressively clean up storage
             try {
               const storageKeysToClean = [
@@ -798,42 +802,42 @@ export function CartProvider({ children }: CartProviderProps) {
                 '@billUpload:queue',
                 '@billUpload:state',
               ];
-              
+
               for (const key of storageKeysToClean) {
                 try {
                   await AsyncStorage.removeItem(key);
-                } catch (cleanupError) {
+                } catch {
                   // Ignore cleanup errors
                 }
               }
-              
+
               // Also cleanup analytics events to free more space
               try {
                 await (await getBillAnalytics()).cleanupOldEvents(100);
-              } catch (analyticsError) {
+              } catch {
                 // Ignore analytics cleanup errors
               }
-              
+
               // Try to save only last 15 items (very aggressive)
-              const optimizedItems = optimizeCartForStorage(newItems);
-              const limitedItems = optimizedItems.slice(-15);
+              const optItems = optimizeCartForStorage(newItems);
+              const limitedItems = optItems.slice(-15);
               await serializeStorageOp(async () => {
                 await AsyncStorage.setItem(CART_STORAGE_KEY, JSON.stringify(limitedItems));
               });
               logger.warn('🛒 [CartContext] Saved only last 15 items after cleanup');
-            } catch (retryError) {
+            } catch {
               // If still fails, just log - don't throw
               // Item is already in state, will sync with backend
               logger.warn('🛒 [CartContext] Storage completely full, item added to memory only');
             }
           } else {
             // For non-quota errors, just log - don't throw
-            logger.warn('🛒 [CartContext] Failed to save to storage (non-quota):', error);
+            logger.warn('🛒 [CartContext] Failed to save to storage:', error);
           }
-        })().catch(() => {
-          // Final safety net - ensure no errors propagate
-        });
-      }
+        }
+      })().catch(() => {
+        // Final safety net - ensure no errors propagate
+      });
 
       // Check if online
       if (state.isOnline) {
@@ -1227,6 +1231,11 @@ export function CartProvider({ children }: CartProviderProps) {
       if (unsubscribe) unsubscribe();
     };
   }, [syncWithServer]);
+
+  // Keep itemsRef.current in sync with state.items for use in closures
+  useEffect(() => {
+    itemsRef.current = state.items;
+  }, [state.items]);
 
   // Save cart to storage whenever it changes (debounced to avoid rapid I/O)
   const cartSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
