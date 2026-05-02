@@ -235,8 +235,8 @@ const HotelBookingFlow: React.FC<HotelBookingFlowProps> = ({
       // FIX-BIZOS-001: Use Hotel OTA API for proper hotel booking flow
       // Get user info from auth store
       const authState = useAuthStore.getState()?.state?.user;
-      const userName = authState?.name || contactName || 'Guest';
-      const userPhone = authState?.phone || contactPhone || '';
+      const userName = authState?.profile?.firstName || contactName || 'Guest';
+      const userPhone = authState?.phoneNumber || contactPhone || '';
 
       // Create booking hold via Hotel OTA API
       const holdResponse = await holdBooking({
