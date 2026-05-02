@@ -27,11 +27,13 @@ import { useSocket } from '@/contexts/SocketContext';
 import { MessagingSocketEvents } from '@/types/messaging.types';
 import { ChatSkeleton } from '@/components/skeletons';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useAuthUser } from '@/stores/selectors';
 
 function MessagesIndexPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { socket } = useSocket();
+  const user = useAuthUser();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,6 +175,10 @@ function MessagesIndexPage() {
     loadConversations(1, false);
   };
 
+  const handleAIChatPress = useCallback(() => {
+    router.push('/messages/ai-chat');
+  }, [router]);
+
   const renderEmpty = useCallback(() => {
     if (loading) {
       return <ChatSkeleton />;
@@ -224,6 +230,12 @@ function MessagesIndexPage() {
 
           <View style={styles.headerButton} />
         </View>
+
+        {/* AI Chat Button */}
+        <Pressable style={styles.aiChatButton} onPress={handleAIChatPress}>
+          <Ionicons name="bulb" size={16} color="white" />
+          <ThemedText style={styles.aiChatButtonText}>AI Help</ThemedText>
+        </Pressable>
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
@@ -354,6 +366,22 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'white',
     paddingVertical: 0,
+  },
+  aiChatButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 205, 87, 0.9)',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginBottom: 12,
+    alignSelf: 'flex-start',
+    gap: 6,
+  },
+  aiChatButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.secondary[600],
   },
   filterContainer: {
     flexDirection: 'row',
