@@ -97,6 +97,12 @@ module.exports = {
           data: [{ scheme: 'https', host: 'now.rez.money', pathPrefix: '/' }],
           category: ['BROWSABLE', 'DEFAULT'],
         },
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [{ scheme: 'https', host: 'adsqr.rezapp.com', pathPrefix: '/' }],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
       ],
       permissions: [
         'android.permission.INTERNET',
@@ -203,6 +209,7 @@ module.exports = {
       apiUrl: process.env.EXPO_PUBLIC_API_BASE_URL,
       eas: {
         projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID || 'cf84e3b3-4a96-4c9b-a438-465c29fbf720',
+        schemes: ['rezapp', 'https://rezapp.com', 'https://now.rez.money', 'https://adsqr.rezapp.com'],
       },
       router: {
         origin: false,
