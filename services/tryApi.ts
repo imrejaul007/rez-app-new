@@ -179,7 +179,7 @@ interface ScoreData {
   leaderboardCity?: string;
 }
 
-interface Mission {
+export interface Mission {
   id: string;
   title: string;
   description: string;

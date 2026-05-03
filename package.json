@@ -30,6 +30,7 @@
   },
   "main": "expo-router/entry",
   "dependencies": {
+    "@rez/loyalty-client": "file:../packages/rez-loyalty-client",
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/poppins": "^0.4.1",
     "@expo/cli": "^0.24.24",

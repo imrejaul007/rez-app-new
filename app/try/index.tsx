@@ -1,41 +1,36 @@
 /**
- * ReZ TRY — Home Screen (Trial Store)
+ * ReZ TRY — Home Screen (Trial Store) — Simplified UX
  *
  * Layout (top → bottom):
  *   Sticky Header (64px) — title + live coin pill + buy button
- *   Mission / Streak Card (110px) — primary retention block
+ *   Surprise Card (120px) — gamification / curiosity loop (always visible)
  *   Category Chips (56px) — horizontal scroll, filters feed instantly
- *   Surprise Trial Card (120px) — gamification / curiosity loop
  *   Try Near You Grid — 2-column, primary supply zone
  *   Trending Trials Carousel — horizontal scroll, social proof
- *   Limited Slots Section — urgency / conversion engine
- *   Trial Bundles Section — ARPU driver
- *   New Merchants Section — supply growth
+ *   Campaign Card — conditional (shown only if active campaign exists)
+ *   Bundles Upsell — conditional (shown only if coins < 200 AND no active bundle)
+ *   Leaderboard Teaser — conditional (shown only if user in top 20%)
  *   Floating Explorer Score widget — bottom-right
  */
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
-  FlatList,
   Pressable,
   RefreshControl,
   ActivityIndicator,
   Image,
   Dimensions,
   Platform,
-  TouchableOpacity,
 } from 'react-native';
 import Animated, {
   useSharedValue,
   withTiming,
-  withSpring,
   withRepeat,
   useAnimatedStyle,
-  interpolate,
   FadeIn,
   FadeInDown,
   SlideInRight,
@@ -47,14 +42,28 @@ import * as Location from 'expo-location';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
-import type { TrialCard } from '@/services/tryApi';
+import type { TrialCard, Campaign } from '@/services/tryApi';
+import {
+  MOCK_TRIALS,
+  MOCK_COINS,
+  MOCK_SCORE,
+  MOCK_CAMPAIGNS,
+  MOCK_MY_BUNDLES,
+  MOCK_SURPRISE,
+} from '@/utils/mocks/tryMockData';
+
+// New Simplified UX Components
+import {
+  ProfileDrawer,
+  CoinBalancePill,
+} from './components';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 const GRID_GAP = 12;
 const CARD_W = (SCREEN_W - spacing.lg * 2 - GRID_GAP) / 2;
 const TRENDING_CARD_W = 260;
 
-// ─── Category Chips ───────────────────────────────────────────────────────────
+// ─── Category Chips ────────────────────────────────────────────────────────────
 const CATEGORIES = [
   { key: 'all', label: 'All', emoji: '✨' },
   { key: 'beauty', label: 'Beauty', emoji: '💅' },
@@ -90,7 +99,7 @@ function SkeletonCard({ half = false }: { half?: boolean }) {
   );
 }
 
-// ─── 2-column grid card ───────────────────────────────────────────────────────
+// ─── 2-column grid card ──────────────────────────────────────────────────────
 function GridTrialCard({ item, onPress }: { item: TrialCard; onPress: () => void }) {
   const isLimited = item.slotsRemaining <= 3;
   const isNew = !item.rating || item.rating === 0;
@@ -187,30 +196,6 @@ function TrendingCard({ item, onPress }: { item: TrialCard; onPress: () => void 
   );
 }
 
-// ─── Limited slot row card ─────────────────────────────────────────────────────
-function LimitedSlotCard({ item, onPress }: { item: TrialCard; onPress: () => void }) {
-  return (
-    <Pressable style={styles.limitedCard} onPress={onPress}>
-      <Image source={{ uri: item.image }} style={styles.limitedImage} />
-      <View style={styles.limitedBody}>
-        <Text style={styles.limitedTitle} numberOfLines={1}>
-          {item.title}
-        </Text>
-        <Text style={styles.limitedMerchant}>{item.merchant.name}</Text>
-        <View style={styles.limitedBottomRow}>
-          <View style={styles.urgencyPill}>
-            <Ionicons name="flame" size={11} color="#fff" />
-            <Text style={styles.urgencyText}>Only {item.slotsRemaining} slots</Text>
-          </View>
-          <View style={styles.coinPill}>
-            <Text style={styles.coinPillText}>🪙 {item.coinPrice}</Text>
-          </View>
-        </View>
-      </View>
-    </Pressable>
-  );
-}
-
 // ─── Section header ────────────────────────────────────────────────────────────
 function SectionHeader({
   title,
@@ -246,19 +231,21 @@ export default function TryHomeScreen() {
   const [allTrials, setAllTrials] = useState<TrialCard[]>([]);
   const [filteredTrials, setFilteredTrials] = useState<TrialCard[]>([]);
   const [coinBalance, setCoinBalance] = useState(0);
-  const [missionProgress, setMissionProgress] = useState({
-    label: 'Try 2 cafés this week',
-    current: 1,
-    total: 2,
-    reward: 50,
-  });
-  const [explorerScore, setExplorerScore] = useState({ score: 0, tier: 'Curious', streak: 0 });
-  // Pre-select category if navigated from a category chip (e.g. from TryBeforeYouBuyCard)
+  const [explorerScore, setExplorerScore] = useState({ score: 0, tier: 'Curious', streak: 0, percentile: 100 });
   const [activeCat, setActiveCat] = useState(() => params.category || 'all');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [locationPermission, setLocationPermission] = useState(false);
   const [location, setLocation] = useState<LocationCoords | null>(null);
+
+  // ─── Conditional visibility states ──────────────────────────────────────────
+  const [showBundlesUpsell, setShowBundlesUpsell] = useState(false);
+  const [showLeaderboardTeaser, setShowLeaderboardTeaser] = useState(false);
+  const [activeCampaign, setActiveCampaign] = useState<Campaign | null>(null);
+  const [surpriseHint, setSurpriseHint] = useState('Beauty ✨');
+
+  // ─── Profile Drawer state ──────────────────────────────────────────────────
+  const [drawerVisible, setDrawerVisible] = useState(false);
 
   // Floating widget pulse
   const floatScale = useSharedValue(1);
@@ -268,12 +255,30 @@ export default function TryHomeScreen() {
   }, []);
   const floatAnim = useAnimatedStyle(() => ({ transform: [{ scale: floatScale.value }] }));
 
+  // ── Determine conditional visibility based on user data ─────────────────────
+  const evaluateConditionalStates = useCallback(
+    (coins: number, percentile: number, hasActiveBundle: boolean, campaigns: Campaign[]) => {
+      // Bundles upsell: show only if coins < 200 AND no active bundle
+      setShowBundlesUpsell(coins < 200 && !hasActiveBundle);
+
+      // Leaderboard teaser: show only if user in top 20% (percentile <= 20)
+      setShowLeaderboardTeaser(percentile <= 20);
+
+      // Campaign: show first active campaign if any
+      const firstActiveCampaign = campaigns.find((c) => !c.isCompleted && new Date(c.endsAt) > new Date());
+      setActiveCampaign(firstActiveCampaign || null);
+    },
+    [],
+  );
+
   // ── Initialise location + data ─────────────────────────────────────────────
   useEffect(() => {
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
+          // Use mock data when location is denied
+          await loadWithMockData();
           setLoading(false);
           return;
         }
@@ -283,44 +288,85 @@ export default function TryHomeScreen() {
         setLocation(coords);
         await loadAll(coords);
       } catch {
+        await loadWithMockData();
         setLoading(false);
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const loadWithMockData = async () => {
+    // Apply mock data for all states
+    setAllTrials(MOCK_TRIALS);
+    setFilteredTrials(activeCat && activeCat !== 'all'
+      ? MOCK_TRIALS.filter((t) => t.category.toLowerCase().includes(activeCat))
+      : MOCK_TRIALS
+    );
+    setCoinBalance(MOCK_COINS.totalBalance);
+    setExplorerScore({
+      score: MOCK_SCORE.score,
+      tier: MOCK_SCORE.tier,
+      streak: MOCK_SCORE.stats.currentStreak,
+      percentile: MOCK_SCORE.leaderboardPercentile || 100,
+    });
+    evaluateConditionalStates(
+      MOCK_COINS.totalBalance,
+      MOCK_SCORE.leaderboardPercentile || 100,
+      MOCK_MY_BUNDLES.length > 0,
+      MOCK_CAMPAIGNS,
+    );
+    // Set surprise hint from mock
+    setSurpriseHint(`${MOCK_SURPRISE.category} ${MOCK_SURPRISE.categoryEmoji || '✨'}`);
+  };
+
   const loadAll = useCallback(
     async (coords?: LocationCoords) => {
       const target = coords || location;
       if (!target) return;
       try {
-        const [feed, coinsData, scoreData] = await Promise.allSettled([
+        const [feed, coinsData, scoreData, myBundlesData, campaignsData] = await Promise.allSettled([
           tryApi.getFeed(target.lat, target.lng),
           tryApi.getCoins(),
           tryApi.getScore(),
+          tryApi.getMyBundles(),
+          tryApi.getCampaigns(target.lat.toString()), // city param
         ]);
+
         if (feed.status === 'fulfilled') {
           setAllTrials(feed.value);
-          // Apply the active category filter (may have been set via URL param)
           setFilteredTrials(
             activeCat && activeCat !== 'all'
               ? feed.value.filter((t) => t.category.toLowerCase().includes(activeCat))
               : feed.value,
           );
         }
-        if (coinsData.status === 'fulfilled') setCoinBalance(coinsData.value.totalBalance);
+
+        if (coinsData.status === 'fulfilled') {
+          setCoinBalance(coinsData.value.totalBalance);
+        }
+
         if (scoreData.status === 'fulfilled') {
+          const percentile = scoreData.value.leaderboardPercentile ?? 100;
           setExplorerScore({
             score: scoreData.value.score,
-            tier: (scoreData.value as any).currentTier ?? scoreData.value.tier,
-            streak: (scoreData.value as any).dayStreak ?? scoreData.value.stats?.currentStreak,
+            tier: scoreData.value.tier,
+            streak: scoreData.value.stats?.currentStreak ?? 0,
+            percentile,
           });
+        }
+
+        if (scoreData.status === 'fulfilled' && coinsData.status === 'fulfilled') {
+          const hasActiveBundle = myBundlesData.status === 'fulfilled' && (myBundlesData.value?.length ?? 0) > 0;
+          const campaigns = campaignsData.status === 'fulfilled' ? campaignsData.value ?? [] : [];
+          const percentile = scoreData.value?.leaderboardPercentile ?? 100;
+
+          evaluateConditionalStates(coinsData.value.totalBalance, percentile, hasActiveBundle, campaigns);
         }
       } finally {
         setLoading(false);
       }
     },
-    [location, activeCat],
+    [location, activeCat, evaluateConditionalStates],
   );
 
   const handleRefresh = async () => {
@@ -329,7 +375,7 @@ export default function TryHomeScreen() {
     setRefreshing(false);
   };
 
-  // ── Category filter ────────────────────────────────────────────────────────
+  // ── Category filter ─────────────────────────────────────────────────────────
   const handleCatSelect = (key: string) => {
     setActiveCat(key);
     if (key === 'all') {
@@ -345,8 +391,6 @@ export default function TryHomeScreen() {
     .filter((t) => t.ratingCount && t.ratingCount > 0)
     .sort((a, b) => (b.ratingCount || 0) - (a.ratingCount || 0))
     .slice(0, 8);
-  const limitedTrials = allTrials.filter((t) => t.slotsRemaining <= 4).slice(0, 5);
-  const newMerchants = allTrials.filter((t) => !t.rating || t.rating === 0).slice(0, 6);
 
   const go = (trialId: string) => router.push(`/try/${trialId}`);
 
@@ -358,9 +402,9 @@ export default function TryHomeScreen() {
           <Text style={styles.permEmoji}>📍</Text>
           <Text style={styles.permTitle}>Location Required</Text>
           <Text style={styles.permSub}>We need your location to show trials near you</Text>
-          <TouchableOpacity style={styles.permBtn} onPress={() => router.back()}>
+          <Pressable style={styles.permBtn} onPress={() => router.back()}>
             <Text style={styles.permBtnText}>Go Back</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </SafeAreaView>
     );
@@ -371,18 +415,11 @@ export default function TryHomeScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* ── Sticky Header ─────────────────────────────────────────────────── */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Pressable onPress={() => router.back()} hitSlop={8}>
-            <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
-          </Pressable>
-          <Text style={styles.headerTitle}>🔥 ReZ TRY</Text>
-        </View>
-        <Pressable style={styles.coinHeaderPill} onPress={() => router.push('/try/coins')}>
-          <Text style={styles.coinHeaderText}>🪙 {coinBalance}</Text>
-          <View style={styles.buyBtn}>
-            <Ionicons name="add" size={14} color="#fff" />
-          </View>
+        <Pressable onPress={() => setDrawerVisible(true)} hitSlop={8}>
+          <Ionicons name="menu" size={24} color={colors.text.primary} />
         </Pressable>
+        <Text style={styles.headerTitle}>ReZ Try</Text>
+        <CoinBalancePill balance={coinBalance} onPress={() => setDrawerVisible(true)} />
       </View>
 
       {/* ── Main scroll ───────────────────────────────────────────────────── */}
@@ -393,38 +430,28 @@ export default function TryHomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.brand.purple} />
         }
       >
-        {/* ── Mission / Streak Card ──────────────────────────────────────── */}
+        {/* ── Surprise Trial Card (always visible) ─────────────────────────── */}
         <Animated.View entering={FadeInDown.delay(60).duration(350)}>
-          <Pressable style={styles.missionCard} onPress={() => router.push('/try/missions')}>
+          <Pressable style={styles.surpriseCard} onPress={() => router.push('/try/surprise')}>
             <LinearGradient
-              colors={[colors.brand.purple, '#5b21b6']}
+              colors={['#1e1b4b', '#312e81']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              style={styles.missionGradient}
+              style={styles.surpriseGradient}
             >
-              <View style={styles.missionTop}>
-                <View>
-                  <Text style={styles.missionLabel}>📋 Weekly Mission</Text>
-                  <Text style={styles.missionGoal}>{missionProgress.label}</Text>
+              <View style={styles.surpriseLeft}>
+                <View style={styles.surpriseBadge}>
+                  <Text style={styles.surpriseBadgeText}>⭐ THIS WEEK</Text>
                 </View>
-                <View style={styles.missionReward}>
-                  <Text style={styles.missionRewardText}>+{missionProgress.reward}</Text>
-                  <Text style={styles.missionRewardSub}>coins</Text>
+                <Text style={styles.surpriseTitle}>Surprise Trial</Text>
+                <Text style={styles.surpriseSub}>Category hint: {surpriseHint}</Text>
+              </View>
+              <View style={styles.surpriseRight}>
+                <View style={styles.revealBtn}>
+                  <Text style={styles.revealBtnText}>Reveal 🎁</Text>
                 </View>
+                <Text style={styles.surpriseCost}>60 🪙 + ₹19</Text>
               </View>
-              <View style={styles.progressBarBg}>
-                <View
-                  style={[
-                    styles.progressBarFill,
-                    {
-                      width: `${Math.min(100, (missionProgress.current / missionProgress.total) * 100)}%` as any,
-                    },
-                  ]}
-                />
-              </View>
-              <Text style={styles.missionMeta}>
-                {missionProgress.current}/{missionProgress.total} completed · Streak 🔥 {explorerScore.streak} days
-              </Text>
             </LinearGradient>
           </Pressable>
         </Animated.View>
@@ -446,35 +473,9 @@ export default function TryHomeScreen() {
           </ScrollView>
         </Animated.View>
 
-        {/* ── Surprise Trial Card ────────────────────────────────────────── */}
-        <Animated.View entering={FadeInDown.delay(140).duration(350)}>
-          <Pressable style={styles.surpriseCard} onPress={() => router.push('/try/surprise')}>
-            <LinearGradient
-              colors={['#1e1b4b', '#312e81']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.surpriseGradient}
-            >
-              <View style={styles.surpriseLeft}>
-                <View style={styles.surpriseBadge}>
-                  <Text style={styles.surpriseBadgeText}>⭐ THIS WEEK</Text>
-                </View>
-                <Text style={styles.surpriseTitle}>Surprise Trial</Text>
-                <Text style={styles.surpriseSub}>Category hint: Beauty ✨</Text>
-              </View>
-              <View style={styles.surpriseRight}>
-                <View style={styles.revealBtn}>
-                  <Text style={styles.revealBtnText}>Reveal 🎁</Text>
-                </View>
-                <Text style={styles.surpriseCost}>60 🪙 + ₹19</Text>
-              </View>
-            </LinearGradient>
-          </Pressable>
-        </Animated.View>
-
         {/* ── Try Near You — 2-column grid ───────────────────────────────── */}
         <View>
-          <SectionHeader emoji="📍" title="Try Near You" onSeeAll={() => router.push('/near-u')} />
+          <SectionHeader emoji="📍" title="Try Near You" onSeeAll={() => router.push('/try/near-you')} />
           {loading ? (
             <View style={styles.gridRow}>
               <SkeletonCard half />
@@ -514,80 +515,104 @@ export default function TryHomeScreen() {
           </View>
         )}
 
-        {/* ── Limited Slots — urgency engine ─────────────────────────────── */}
-        {(limitedTrials.length > 0 || loading) && (
-          <View>
-            <SectionHeader emoji="⏳" title="Ending Soon" accent />
-            {loading
-              ? [1, 2].map((k) => (
-                  <View
-                    key={k}
-                    style={[
-                      styles.limitedCard,
-                      { backgroundColor: colors.background.secondary, height: 80, marginBottom: 10 },
-                    ]}
-                  />
-                ))
-              : limitedTrials.map((item, i) => (
-                  <Animated.View key={item.id} entering={FadeInDown.delay(i * 40).duration(300)}>
-                    <LimitedSlotCard item={item} onPress={() => go(item.id)} />
-                  </Animated.View>
-                ))}
-          </View>
+        {/* ── Campaign Card (conditional) ────────────────────────────────── */}
+        {activeCampaign && (
+          <Animated.View entering={FadeInDown.delay(160).duration(350)}>
+            <Pressable style={styles.campaignCard} onPress={() => router.push('/try/campaigns')}>
+              <Image
+                source={{ uri: activeCampaign.image || 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800' }}
+                style={styles.campaignImage}
+              />
+              <LinearGradient colors={['transparent', 'rgba(0,0,0,0.85)']} style={styles.campaignGradient} />
+              <View style={styles.campaignContent}>
+                <View style={styles.campaignBadge}>
+                  <Text style={styles.campaignBadgeText}>ACTIVE CAMPAIGN</Text>
+                </View>
+                <Text style={styles.campaignTitle}>{activeCampaign.title}</Text>
+                <Text style={styles.campaignGoal}>{activeCampaign.goal}</Text>
+                <View style={styles.campaignReward}>
+                  <Text style={styles.campaignRewardText}>🎁 {activeCampaign.reward}</Text>
+                </View>
+                {activeCampaign.progress && (
+                  <View style={styles.campaignProgressRow}>
+                    <View style={styles.campaignProgressBar}>
+                      <View
+                        style={[
+                          styles.campaignProgressFill,
+                          { width: `${(activeCampaign.progress.completed / activeCampaign.progress.target) * 100}%` },
+                        ]}
+                      />
+                    </View>
+                    <Text style={styles.campaignProgressText}>
+                      {activeCampaign.progress.completed}/{activeCampaign.progress.target}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            </Pressable>
+          </Animated.View>
         )}
 
-        {/* ── Trial Bundles / Passes ─────────────────────────────────────── */}
-        <View>
-          <SectionHeader emoji="🎫" title="Trial Bundles" onSeeAll={() => router.push('/try/bundles')} />
-          <Pressable style={styles.bundleCard} onPress={() => router.push('/try/bundles')}>
-            <LinearGradient
-              colors={['#065f46', '#047857']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.bundleGradient}
-            >
-              <View style={styles.bundleLeft}>
-                <Text style={styles.bundleTag}>BEST VALUE</Text>
-                <Text style={styles.bundleTitle}>Wellness Week Pack</Text>
-                <View style={styles.bundleItems}>
-                  <Text style={styles.bundleItem}>✓ 3 trials included</Text>
-                  <Text style={styles.bundleItem}>✓ 100 bonus coins</Text>
-                  <Text style={styles.bundleItem}>✓ Valid 7 days</Text>
+        {/* ── Trial Bundles Upsell (conditional) ─────────────────────────── */}
+        {showBundlesUpsell && (
+          <Animated.View entering={FadeInDown.delay(180).duration(350)}>
+            <Pressable style={styles.bundleCard} onPress={() => router.push('/try/bundles')}>
+              <LinearGradient
+                colors={['#065f46', '#047857']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.bundleGradient}
+              >
+                <View style={styles.bundleLeft}>
+                  <Text style={styles.bundleTag}>BEST VALUE</Text>
+                  <Text style={styles.bundleTitle}>Wellness Week Pack</Text>
+                  <View style={styles.bundleItems}>
+                    <Text style={styles.bundleItem}>✓ 3 trials included</Text>
+                    <Text style={styles.bundleItem}>✓ 100 bonus coins</Text>
+                    <Text style={styles.bundleItem}>✓ Valid 7 days</Text>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.bundleRight}>
-                <Text style={styles.bundlePrice}>₹199</Text>
-                <Text style={styles.bundlePriceSub}>save 40%</Text>
-                <View style={styles.bundleCTA}>
-                  <Text style={styles.bundleCTAText}>Buy Pack</Text>
+                <View style={styles.bundleRight}>
+                  <Text style={styles.bundlePrice}>₹199</Text>
+                  <Text style={styles.bundlePriceSub}>save 40%</Text>
+                  <View style={styles.bundleCTA}>
+                    <Text style={styles.bundleCTAText}>Buy Pack</Text>
+                  </View>
                 </View>
-              </View>
-            </LinearGradient>
-          </Pressable>
-        </View>
-
-        {/* ── New Merchants ──────────────────────────────────────────────── */}
-        {(newMerchants.length > 0 || loading) && (
-          <View>
-            <SectionHeader emoji="🆕" title="New on ReZ" />
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.carouselRow}>
-              {loading
-                ? [1, 2, 3].map((k) => <SkeletonCard key={k} />)
-                : newMerchants.map((item, i) => (
-                    <Animated.View key={item.id} entering={SlideInRight.delay(i * 50).duration(300)}>
-                      <TrendingCard item={item} onPress={() => go(item.id)} />
-                    </Animated.View>
-                  ))}
-            </ScrollView>
-          </View>
+              </LinearGradient>
+            </Pressable>
+          </Animated.View>
         )}
 
-        {/* ── Quick Nav chips row ────────────────────────────────────────── */}
+        {/* ── Leaderboard Teaser (conditional — top 20% only) ─────────────── */}
+        {showLeaderboardTeaser && (
+          <Animated.View entering={FadeInDown.delay(200).duration(350)}>
+            <Pressable style={styles.leaderboardCard} onPress={() => router.push('/try/leaderboard')}>
+              <LinearGradient
+                colors={['#78350f', '#92400e']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.leaderboardGradient}
+              >
+                <View style={styles.leaderboardLeft}>
+                  <Text style={styles.leaderboardTag}>🏆 TOP 20%</Text>
+                  <Text style={styles.leaderboardTitle}>You're ranked!</Text>
+                  <Text style={styles.leaderboardSub}>
+                    Your score: {explorerScore.score} pts
+                  </Text>
+                </View>
+                <View style={styles.leaderboardRight}>
+                  <Ionicons name="trophy" size={40} color="#FFD700" />
+                </View>
+              </LinearGradient>
+            </Pressable>
+          </Animated.View>
+        )}
+
+        {/* ── Quick nav chips row ────────────────────────────────────────── */}
         <View style={styles.quickNavRow}>
           {[
-            { label: '🏆 Leaderboard', route: '/try/leaderboard' },
             { label: '📋 Missions', route: '/try/missions' },
-            { label: '🏅 Badges', route: '/try/badges' },
             { label: '📅 My Bookings', route: '/try/history' },
             { label: '🎯 Campaigns', route: '/try/campaigns' },
           ].map((item) => (
@@ -614,6 +639,19 @@ export default function TryHomeScreen() {
           </View>
         </Pressable>
       </Animated.View>
+
+      {/* ── Profile Drawer ─────────────────────────────────────────────────── */}
+      <ProfileDrawer
+        visible={drawerVisible}
+        onClose={() => setDrawerVisible(false)}
+        coins={coinBalance}
+        score={explorerScore.score}
+        tier={explorerScore.tier}
+        activeMission={null}
+        badges={[]}
+        leaderboardPercentile={explorerScore.percentile}
+        city={location ? 'Your Area' : undefined}
+      />
     </SafeAreaView>
   );
 }
@@ -658,19 +696,6 @@ const styles = StyleSheet.create({
 
   // Scroll
   scrollContent: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.xl },
-
-  // Mission card
-  missionCard: { borderRadius: borderRadius.xl, overflow: 'hidden' },
-  missionGradient: { padding: spacing.base, gap: spacing.sm },
-  missionTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  missionLabel: { fontSize: 11, fontWeight: '600', color: 'rgba(255,255,255,0.7)', marginBottom: 4 },
-  missionGoal: { fontSize: 15, fontWeight: '700', color: '#fff', maxWidth: '80%' },
-  missionReward: { alignItems: 'center' },
-  missionRewardText: { fontSize: 20, fontWeight: '800', color: '#FFD700' },
-  missionRewardSub: { fontSize: 11, color: 'rgba(255,255,255,0.7)' },
-  progressBarBg: { height: 6, backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 3 },
-  progressBarFill: { height: 6, backgroundColor: '#FFD700', borderRadius: 3 },
-  missionMeta: { fontSize: 11, color: 'rgba(255,255,255,0.65)', fontWeight: '500' },
 
   // Category chips
   chipsRow: { gap: spacing.sm, paddingVertical: spacing.xs },
@@ -816,32 +841,51 @@ const styles = StyleSheet.create({
   trendingOriginal: { fontSize: 11, color: 'rgba(255,255,255,0.5)', textDecorationLine: 'line-through' },
   carouselRow: { paddingRight: spacing.lg },
 
-  // Limited slots
-  limitedCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.errorScale[50],
-    borderRadius: borderRadius.lg,
+  // Campaign card
+  campaignCard: {
+    height: 160,
+    borderRadius: borderRadius.xl,
     overflow: 'hidden',
-    marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.errorScale[100],
   },
-  limitedImage: { width: 80, height: 80 },
-  limitedBody: { flex: 1, padding: spacing.md, gap: 4 },
-  limitedTitle: { fontSize: 14, fontWeight: '700', color: colors.text.primary },
-  limitedMerchant: { fontSize: 12, color: colors.text.secondary },
-  limitedBottomRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 4 },
-  urgencyPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: colors.error,
+  campaignImage: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' },
+  campaignGradient: { ...StyleSheet.absoluteFillObject },
+  campaignContent: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: spacing.base,
+    gap: spacing.xs,
+  },
+  campaignBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.brand.purple,
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
     borderRadius: 6,
   },
-  urgencyText: { fontSize: 10, fontWeight: '700', color: '#fff' },
+  campaignBadgeText: { fontSize: 9, fontWeight: '800', color: '#fff', letterSpacing: 0.5 },
+  campaignTitle: { fontSize: 16, fontWeight: '800', color: '#fff' },
+  campaignGoal: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
+  campaignReward: {
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginTop: 2,
+  },
+  campaignRewardText: { fontSize: 12, fontWeight: '700', color: '#FFD700' },
+  campaignProgressRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: 2 },
+  campaignProgressBar: {
+    flex: 1,
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  campaignProgressFill: { height: '100%', backgroundColor: '#FFD700', borderRadius: 2 },
+  campaignProgressText: { fontSize: 10, color: 'rgba(255,255,255,0.8)', fontWeight: '600' },
 
   // Bundle card
   bundleCard: { borderRadius: borderRadius.xl, overflow: 'hidden' },
@@ -862,6 +906,15 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   bundleCTAText: { fontSize: 13, fontWeight: '800', color: '#065f46' },
+
+  // Leaderboard teaser card
+  leaderboardCard: { borderRadius: borderRadius.xl, overflow: 'hidden' },
+  leaderboardGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.base },
+  leaderboardLeft: { flex: 1, gap: spacing.xs },
+  leaderboardTag: { fontSize: 10, fontWeight: '800', color: '#FFD700', letterSpacing: 1 },
+  leaderboardTitle: { fontSize: 18, fontWeight: '800', color: '#fff' },
+  leaderboardSub: { fontSize: 12, color: 'rgba(255,255,255,0.75)' },
+  leaderboardRight: { paddingLeft: spacing.base },
 
   // Quick nav
   quickNavRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },

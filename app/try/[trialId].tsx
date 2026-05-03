@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,21 +7,22 @@ import {
   Pressable,
   SafeAreaView,
   Image,
-  Modal,
   ActivityIndicator,
-  FlatList,
+  Dimensions,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { colors, spacing, borderRadius } from '@/constants/theme';
-import { tryApi } from '@/services/tryApi';
+import { tryApi, TrialCard } from '@/services/tryApi';
+import { MOCK_TRIALS } from '@/utils/mocks/tryMockData';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { logger } from '@/utils/logger';
 
 // Bangalore city-centre as a safe fallback when location access is denied
 const FALLBACK_GEO = { lat: 12.9716, lng: 77.5946 };
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 async function getBookingGeo(): Promise<{ lat: number; lng: number }> {
   try {
@@ -34,61 +35,43 @@ async function getBookingGeo(): Promise<{ lat: number; lng: number }> {
   }
 }
 
-interface TrialDetails {
-  id: string;
-  title: string;
-  category: string;
-  merchant: {
-    id: string;
-    name: string;
-    image?: string;
-  };
-  images: string[];
-  description: string;
-  terms: string;
-  coinPrice: number;
-  commitmentFee: number;
-  originalPrice: number;
-  validDuration: string;
-  rewards: {
-    coinsEarned: number;
-    brandedCoinsEarned: number;
-  };
-  rating?: number;
-  ratingCount?: number;
-}
-
-interface BookingModalState {
-  visible: boolean;
-  loading: boolean;
-  error?: string;
-}
+// Mock availability data (in production, this would come from the API)
+const MOCK_AVAILABILITY = {
+  availableToday: true,
+  slotsRemaining: 8,
+  nextSlot: '10:00 AM',
+};
 
 function TrialDetailScreen() {
   const router = useRouter();
-  const { trialId } = useLocalSearchParams<any>();
-  const [trial, setTrial] = useState<TrialDetails | null>(null);
+  const { trialId } = useLocalSearchParams<{ trialId: string }>();
+  const [trial, setTrial] = useState<TrialCard | null>(null);
   const [loading, setLoading] = useState(true);
-  const [coinBalance, setCoinBalance] = useState(0);
-  const [bookingModal, setBookingModal] = useState<BookingModalState>({ visible: false, loading: false });
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [termsExpanded, setTermsExpanded] = useState(false);
 
   useEffect(() => {
     const loadTrialDetails = async () => {
       try {
-        // Fetch trial details from API - removed mock data
         if (!trialId) {
           setLoading(false);
           return;
         }
 
-        // Fetch trial details from API
-        const trialDetails = await tryApi.getTrialDetails(trialId);
-        setTrial(trialDetails as any);
-
-        // Fetch coin balance
-        const coinsData = await tryApi.getCoins();
-        setCoinBalance(coinsData.totalBalance);
+        // Fetch trial details from API with mock fallback
+        let trialDetails: TrialCard | null = null;
+        try {
+          trialDetails = await tryApi.getTrialDetails(trialId);
+        } catch (apiErr) {
+          // Fallback to mock data for development
+          if (__DEV__) {
+            logger.debug('[TRY MOCK] getTrialDetails failed, using mock data');
+            trialDetails = MOCK_TRIALS.find((t) => t.id === trialId) || null;
+          }
+        }
+        setTrial(trialDetails);
       } catch (err: any) {
         if (__DEV__) logger.error('Failed to load trial details:', err);
       } finally {
@@ -99,23 +82,11 @@ function TrialDetailScreen() {
     loadTrialDetails();
   }, [trialId]);
 
-  const handleBookPress = () => {
-    if (coinBalance < (trial?.coinPrice || 0)) {
-      setBookingModal({
-        visible: true,
-        loading: false,
-        error: 'Not enough Trial Coins. Top up?',
-      });
-      return;
-    }
+  const handleBookNow = useCallback(async () => {
+    if (!trial || bookingLoading) return;
 
-    setBookingModal({ visible: true, loading: false });
-  };
-
-  const handleConfirmBooking = async () => {
-    if (!trial) return;
-
-    setBookingModal((prev) => ({ ...prev, loading: true, error: undefined }));
+    setBookingLoading(true);
+    setBookingError(null);
 
     try {
       // Step 1 — Create a Razorpay order for the commitment fee
@@ -128,32 +99,25 @@ function TrialDetailScreen() {
       // Step 2 — Open Razorpay native checkout to collect payment
       let paymentId: string;
       try {
-        // react-native-razorpay is a native module; require() lazily so the
-        // module doesn't crash on web (metro shim handles the web case).
         const RazorpayCheckout = require('react-native-razorpay').default;
         const paymentResponse = await RazorpayCheckout.open({
           description: `Trial commitment fee — ${trial.title}`,
           currency: 'INR',
           key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
-          amount: order.amount, // already in paise from backend
+          amount: order.amount,
           order_id: order.razorpayOrderId,
           name: 'ReZ TRY',
           prefill: { name: '', contact: '' },
-          theme: { color: '#1a3a52' }, // Nile Blue
+          theme: { color: '#1a3a52' },
         });
         paymentId = paymentResponse.razorpay_payment_id;
       } catch (paymentErr: any) {
-        // Code 2 = user cancelled — treat as soft cancel (no error toast)
+        // Code 2 = user cancelled
         if (paymentErr?.code === 2) {
-          setBookingModal((prev) => ({ ...prev, loading: false }));
-        } else {
-          setBookingModal((prev) => ({
-            ...prev,
-            loading: false,
-            error: 'Payment failed. Please try again.',
-          }));
+          setBookingLoading(false);
+          return;
         }
-        return;
+        throw new Error('Payment failed. Please try again.');
       }
 
       // Step 3 — Confirm the booking with the verified payment ID
@@ -164,31 +128,23 @@ function TrialDetailScreen() {
         userGeo,
       });
 
-      setBookingModal({ visible: false, loading: false });
       if (bookingResponse?.data?.bookingId) {
         router.push(`/try/booking/${bookingResponse.data.bookingId}`);
       } else {
-        if (__DEV__) logger.error('No booking ID in response: ' + JSON.stringify(bookingResponse));
-        setBookingModal((prev) => ({
-          ...prev,
-          loading: false,
-          error: 'Booking confirmed but something went wrong. Check My Bookings.',
-        }));
+        throw new Error('Booking confirmed but navigation failed. Check My Bookings.');
       }
     } catch (err: any) {
-      setBookingModal((prev) => ({
-        ...prev,
-        loading: false,
-        error: 'Booking failed. Please try again.',
-      }));
+      setBookingError(err?.message || 'Booking failed. Please try again.');
+      setBookingLoading(false);
     }
-  };
+  }, [trial, bookingLoading, router]);
 
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.brand.purple} />
+          <Text style={styles.loadingText}>Loading trial...</Text>
         </View>
       </SafeAreaView>
     );
@@ -197,268 +153,215 @@ function TrialDetailScreen() {
   if (!trial) {
     return (
       <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          </Pressable>
+          <Text style={styles.headerTitle}>Trial Details</Text>
+          <View style={{ width: 40 }} />
+        </View>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Failed to load trial details</Text>
-          <Pressable style={styles.button} onPress={() => router.back()}>
-            <Text style={styles.buttonText}>Go Back</Text>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
+          <Text style={styles.errorTitle}>Trial Not Found</Text>
+          <Text style={styles.errorText}>This trial may no longer be available.</Text>
+          <Pressable style={styles.errorButton} onPress={() => router.back()}>
+            <Text style={styles.errorButtonText}>Go Back</Text>
           </Pressable>
         </View>
       </SafeAreaView>
     );
   }
 
-  const canAfford = coinBalance >= trial.coinPrice;
+  const images = trial.images?.length ? trial.images : [trial.image];
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()}>
+        <Pressable onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Trial Details</Text>
-        <View style={{ width: 24 }} />
+        <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+      >
         {/* Image Carousel */}
-        {trial.images && trial.images.length > 0 && (
-          <View style={styles.imageCarouselContainer}>
-            <ScrollView
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              scrollEventThrottle={16}
-              onMomentumScrollEnd={(event) => {
-                const contentOffsetX = event.nativeEvent.contentOffset.x;
-                const index = Math.round(contentOffsetX / 400);
-                setCurrentImageIndex(index);
-              }}
-            >
-              {trial.images.map((image, idx) => (
-                <Image
-                  key={idx}
-                  source={{ uri: image }}
-                  style={styles.carouselImage}
-                  accessibilityIgnoresInvertColors
-                />
-              ))}
-            </ScrollView>
-            <View style={styles.imagePagination}>
-              {trial.images.map((_, idx) => (
+        <View style={styles.carouselContainer}>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(event) => {
+              const contentOffsetX = event.nativeEvent.contentOffset.x;
+              const index = Math.round(contentOffsetX / SCREEN_WIDTH);
+              setCurrentImageIndex(index);
+            }}
+          >
+            {images.map((image, idx) => (
+              <Image
+                key={idx}
+                source={{ uri: image }}
+                style={styles.carouselImage}
+                accessibilityIgnoresInvertColors
+              />
+            ))}
+          </ScrollView>
+          {images.length > 1 && (
+            <View style={styles.pagination}>
+              {images.map((_, idx) => (
                 <View
                   key={idx}
-                  style={[styles.paginationDot, idx === currentImageIndex ? styles.paginationDotActive : null]}
+                  style={[styles.paginationDot, idx === currentImageIndex && styles.paginationDotActive]}
                 />
               ))}
             </View>
-          </View>
-        )}
-
-        {/* Title and Merchant */}
-        <View style={styles.section}>
-          <View style={styles.titleSection}>
-            <View style={styles.titleRow}>
-              <Text style={styles.title}>{trial.title}</Text>
-              {trial.rating && trial.rating > 0 && (
-                <View style={styles.ratingBadge}>
-                  <Ionicons name="star" size={14} color="#FFD700" />
-                  <Text style={styles.ratingText}>{trial.rating}</Text>
-                </View>
-              )}
-            </View>
-            <Text style={styles.category}>{trial.category}</Text>
-          </View>
-
-          {/* Merchant Info */}
-          <Pressable style={styles.merchantCard}>
-            {trial.merchant.image && <Image source={{ uri: trial.merchant.image }} style={styles.merchantImage} />}
-            <View style={styles.merchantInfo}>
-              <Text style={styles.merchantName}>{trial.merchant.name}</Text>
-              <Text style={styles.merchantAction}>View Offers →</Text>
-            </View>
-          </Pressable>
+          )}
         </View>
 
-        {/* Description and Terms */}
+        {/* Merchant Info */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>About This Trial</Text>
-          <Text style={styles.description}>{trial.description}</Text>
-
-          <Text style={[styles.sectionTitle, { marginTop: spacing.md }]}>Terms & Conditions</Text>
-          <Text style={styles.termsText}>{trial.terms}</Text>
-
-          <Text style={[styles.sectionTitle, { marginTop: spacing.md }]}>Valid For</Text>
-          <View style={styles.validityTag}>
-            <Ionicons name="time-outline" size={16} color={colors.brand.purple} />
-            <Text style={styles.validityText}>{trial.validDuration}</Text>
-          </View>
-        </View>
-
-        {/* Pricing Breakdown */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Pricing</Text>
-          <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Coin Price:</Text>
-            <Text style={styles.priceValue}>{trial.coinPrice} 🪙</Text>
-          </View>
-          <View style={styles.priceRow}>
-            <Text style={styles.priceLabel}>Commitment Fee:</Text>
-            <Text style={styles.priceValue}>₹{trial.commitmentFee}</Text>
-          </View>
-          <View style={[styles.priceRow, styles.originalPriceRow]}>
-            <Text style={styles.priceLabel}>Original Price:</Text>
-            <Text style={styles.originalPrice}>₹{trial.originalPrice}</Text>
-          </View>
-
-          <View style={styles.savingsBox}>
-            <Ionicons name="trending-down" size={20} color={colors.successScale[500]} />
-            <View>
-              <Text style={styles.savingsLabel}>You Save</Text>
-              <Text style={styles.savingsAmount}>₹{trial.originalPrice - trial.commitmentFee}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Rewards Info */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Earn on Completion</Text>
-          <View style={styles.rewardItem}>
-            <Ionicons name="star" size={20} color={colors.brand.purple} />
-            <View style={styles.rewardInfo}>
-              <Text style={styles.rewardLabel}>ReZ Coins</Text>
-              <Text style={styles.rewardAmount}>+{trial.rewards.coinsEarned} coins</Text>
-            </View>
-          </View>
-          <View style={styles.rewardItem}>
-            <Ionicons name="gift" size={20} color={colors.brand.orange} />
-            <View style={styles.rewardInfo}>
-              <Text style={styles.rewardLabel}>Brand Coins</Text>
-              <Text style={styles.rewardAmount}>+{trial.rewards.brandedCoinsEarned} coins</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Upsell Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>After Your Trial</Text>
-          <Text style={styles.upsellText}>Explore exclusive offers from {trial.merchant.name}</Text>
-          <Pressable style={styles.upsellButton}>
-            <Text style={styles.upsellButtonText}>Browse All Offers →</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-
-      {/* Bottom Sticky Button */}
-      <View style={styles.bottomButtonContainer}>
-        {!canAfford ? (
-          <View style={styles.insufficientCoinsBox}>
-            <Ionicons name="warning" size={20} color={colors.error} />
-            <Text style={styles.insufficientText}>Not enough coins</Text>
-            <Pressable style={styles.topUpButton} onPress={() => router.push('/try/coins')}>
-              <Text style={styles.topUpButtonText}>Top Up</Text>
-            </Pressable>
-          </View>
-        ) : (
-          <Pressable style={styles.bookButton} onPress={handleBookPress}>
-            <LinearGradient
-              colors={['#1a3a52', '#FFC857']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.bookButtonGradient}
-            >
-              <Text style={styles.bookButtonText}>
-                Book Trial for {trial.coinPrice} 🪙 + ₹{trial.commitmentFee}
-              </Text>
-            </LinearGradient>
-          </Pressable>
-        )}
-      </View>
-
-      {/* Booking Confirmation Modal */}
-      <Modal
-        visible={bookingModal.visible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setBookingModal({ visible: false, loading: false })}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {bookingModal.error && bookingModal.error.includes('Not enough') ? (
-              // Not Enough Coins Modal
-              <>
-                <Ionicons name="alert-circle" size={48} color={colors.error} />
-                <Text style={styles.modalTitle}>Not Enough Coins</Text>
-                <Text style={styles.modalText}>You need {trial.coinPrice} coins to book this trial</Text>
-                <Text style={styles.modalBalance}>Current Balance: {coinBalance} 🪙</Text>
-
-                <Pressable
-                  style={styles.modalButton}
-                  onPress={() => {
-                    setBookingModal({ visible: false, loading: false });
-                    router.push('/try/coins');
-                  }}
-                >
-                  <Text style={styles.modalButtonText}>Buy More Coins</Text>
-                </Pressable>
-
-                <Pressable
-                  style={[styles.modalButton, styles.modalButtonSecondary]}
-                  onPress={() => setBookingModal({ visible: false, loading: false })}
-                >
-                  <Text style={styles.modalButtonSecondaryText}>Go Back</Text>
-                </Pressable>
-              </>
-            ) : (
-              // Confirm Booking Modal
-              <>
-                <Ionicons name="checkmark-circle" size={48} color={colors.brand.purple} />
-                <Text style={styles.modalTitle}>Confirm Your Booking</Text>
-
-                <View style={styles.bookingSummary}>
-                  <View style={styles.summaryRow}>
-                    <Text style={styles.summaryLabel}>Trial Coins</Text>
-                    <Text style={styles.summaryValue}>{trial.coinPrice} 🪙</Text>
-                  </View>
-                  <View style={styles.summaryRow}>
-                    <Text style={styles.summaryLabel}>Commitment Fee</Text>
-                    <Text style={styles.summaryValue}>₹{trial.commitmentFee}</Text>
-                  </View>
-                  <View style={styles.summaryDivider} />
-                  <View style={styles.summaryRow}>
-                    <Text style={styles.summaryTotal}>Total</Text>
-                    <Text style={styles.summaryTotal}>
-                      {trial.coinPrice} 🪙 + ₹{trial.commitmentFee}
-                    </Text>
-                  </View>
-                </View>
-
-                <Text style={styles.disclaimerText}>💳 Commitment fee is non-refundable</Text>
-
-                <Pressable
-                  style={[styles.modalButton, bookingModal.loading ? styles.modalButtonDisabled : null]}
-                  onPress={handleConfirmBooking}
-                  disabled={bookingModal.loading}
-                >
-                  {bookingModal.loading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={styles.modalButtonText}>Confirm & Pay</Text>
-                  )}
-                </Pressable>
-
-                <Pressable
-                  style={[styles.modalButton, styles.modalButtonSecondary]}
-                  onPress={() => setBookingModal({ visible: false, loading: false })}
-                  disabled={bookingModal.loading}
-                >
-                  <Text style={styles.modalButtonSecondaryText}>Cancel</Text>
-                </Pressable>
-              </>
+          <Text style={styles.trialTitle}>{trial.title}</Text>
+          <View style={styles.metaRow}>
+            {trial.rating && trial.rating > 0 ? (
+              <View style={styles.ratingContainer}>
+                <Ionicons name="star" size={16} color="#FFD700" />
+                <Text style={styles.ratingText}>{trial.rating}</Text>
+                {trial.ratingCount && (
+                  <Text style={styles.ratingCount}>({trial.ratingCount} reviews)</Text>
+                )}
+              </View>
+            ) : null}
+            {trial.distance !== undefined && (
+              <View style={styles.distanceContainer}>
+                <Ionicons name="location-outline" size={16} color={colors.text.tertiary} />
+                <Text style={styles.distanceText}>
+                  {trial.distance} {trial.distanceUnit || 'km'}
+                </Text>
+              </View>
             )}
           </View>
+
+          {/* Merchant Card */}
+          <Pressable style={styles.merchantCard}>
+            {trial.merchant.image && (
+              <Image source={{ uri: trial.merchant.image }} style={styles.merchantImage} />
+            )}
+            <View style={styles.merchantInfo}>
+              <Text style={styles.merchantName}>{trial.merchant.name}</Text>
+              <Text style={styles.merchantAction}>View Offers</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+          </Pressable>
         </View>
-      </Modal>
+
+        {/* Booking Card */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Book This Trial</Text>
+          <View style={styles.bookingCard}>
+            <View style={styles.priceRow}>
+              <Text style={styles.priceLabel}>Original Price</Text>
+              <Text style={styles.originalPrice}>₹{trial.originalPrice}</Text>
+            </View>
+            <View style={styles.priceRow}>
+              <Text style={styles.priceLabel}>You Pay</Text>
+              <Text style={styles.coinPrice}>{trial.coinPrice} coins</Text>
+            </View>
+            <View style={styles.priceRow}>
+              <Text style={styles.priceLabel}>Commitment</Text>
+              <Text style={styles.commitmentText}>₹{trial.commitmentFee} (refunded)</Text>
+            </View>
+
+            <View style={styles.divider} />
+
+            {bookingError && (
+              <View style={styles.errorBanner}>
+                <Ionicons name="alert-circle" size={16} color={colors.error} />
+                <Text style={styles.errorBannerText}>{bookingError}</Text>
+              </View>
+            )}
+
+            <Pressable
+              style={[styles.bookButton, bookingLoading && styles.bookButtonDisabled]}
+              onPress={handleBookNow}
+              disabled={bookingLoading}
+            >
+              {bookingLoading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text style={styles.bookButtonText}>
+                  Book for ₹{trial.commitmentFee}
+                  <Text style={styles.arrowIcon}> →</Text>
+                </Text>
+              )}
+            </Pressable>
+          </View>
+        </View>
+
+        {/* What's Included */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>What's Included</Text>
+          <View style={styles.includesList}>
+            <View style={styles.includeItem}>
+              <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+              <Text style={styles.includeText}>Full treatment/service</Text>
+            </View>
+            <View style={styles.includeItem}>
+              <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+              <Text style={styles.includeText}>Expert consultation</Text>
+            </View>
+            <View style={styles.includeItem}>
+              <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+              <Text style={styles.includeText}>Product sample</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Availability */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Availability</Text>
+          <View style={styles.availabilityCard}>
+            <View style={styles.availabilityBadge}>
+              <View style={[styles.availabilityDot, { backgroundColor: colors.success }]} />
+              <Text style={styles.availabilityText}>Available Today</Text>
+            </View>
+            <Text style={styles.slotsText}>{MOCK_AVAILABILITY.slotsRemaining} slots remaining</Text>
+          </View>
+        </View>
+
+        {/* Terms */}
+        <View style={styles.section}>
+          <Pressable
+            style={styles.termsHeader}
+            onPress={() => setTermsExpanded(!termsExpanded)}
+          >
+            <Text style={styles.sectionTitle}>Terms</Text>
+            <Ionicons
+              name={termsExpanded ? 'chevron-up' : 'chevron-down'}
+              size={20}
+              color={colors.text.tertiary}
+            />
+          </Pressable>
+          {termsExpanded && (
+            <View style={styles.termsContent}>
+              <Text style={styles.termsText}>
+                • Commitment fee is fully refunded upon completing the trial.{'\n'}
+                • Please arrive on time for your scheduled appointment.{'\n'}
+                • This trial is valid for {trial.validDuration || '7 days'} from booking.{'\n'}
+                • One trial per customer per merchant.{'\n'}
+                • The merchant reserves the right to refuse service in case of misconduct.
+              </Text>
+            </View>
+          )}
+        </View>
+
+        {/* Bottom Spacer for CTA */}
+        <View style={styles.bottomSpacer} />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -479,25 +382,26 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
     borderBottomWidth: 1,
     borderBottomColor: colors.border.default,
   },
+  backButton: {
+    padding: spacing.xs,
+  },
   headerTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.text.primary,
   },
   scrollContent: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingBottom: spacing.xl,
   },
-  imageCarouselContainer: {
-    marginHorizontal: -spacing.lg,
+  carouselContainer: {
     marginBottom: spacing.lg,
   },
   carouselImage: {
-    width: 400,
+    width: SCREEN_WIDTH,
     height: 250,
     backgroundColor: colors.background.secondary,
   },
-  imagePagination: {
+  pagination: {
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 6,
@@ -515,41 +419,43 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
     width: 24,
   },
   section: {
+    paddingHorizontal: spacing.lg,
     marginBottom: spacing.lg,
-    gap: spacing.md,
   },
-  titleSection: {
-    gap: spacing.sm,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  title: {
+  trialTitle: {
     fontSize: 22,
     fontWeight: '700',
     color: colors.text.primary,
-    flex: 1,
+    marginBottom: spacing.sm,
   },
-  ratingBadge: {
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+    marginBottom: spacing.md,
+  },
+  ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: colors.warningScale[50],
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.md,
   },
   ratingText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
     color: colors.text.primary,
   },
-  category: {
+  ratingCount: {
+    fontSize: 12,
+    color: colors.text.tertiary,
+  },
+  distanceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  distanceText: {
     fontSize: 14,
-    color: colors.text.secondary,
-    fontWeight: '500',
+    color: colors.text.tertiary,
   },
   merchantCard: {
     flexDirection: 'row',
@@ -562,8 +468,8 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
     borderColor: colors.brand.purpleLight,
   },
   merchantImage: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: borderRadius.md,
   },
   merchantInfo: {
@@ -583,288 +489,170 @@ const styles = StyleSheet.create<{ [key: string]: any }>({
     fontSize: 16,
     fontWeight: '700',
     color: colors.text.primary,
-    marginTop: spacing.lg,
+    marginBottom: spacing.md,
   },
-  description: {
-    fontSize: 14,
-    color: colors.text.secondary,
-    lineHeight: 20,
-  },
-  termsText: {
-    fontSize: 13,
-    color: colors.text.tertiary,
-    lineHeight: 18,
-    fontStyle: 'italic',
-  },
-  validityTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.tint.purple,
-    borderRadius: borderRadius.md,
+  bookingCard: {
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.brand.purpleLight,
-  },
-  validityText: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: colors.brand.purple,
+    borderColor: colors.border.default,
   },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  originalPriceRow: {
-    paddingBottomWidth: 1,
-    paddingBottomColor: colors.border.default,
-    marginBottomWidth: spacing.md,
+    marginBottom: spacing.sm,
   },
   priceLabel: {
     fontSize: 14,
     color: colors.text.secondary,
   },
-  priceValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
   originalPrice: {
     fontSize: 14,
-    fontWeight: '600',
-    color: colors.text.secondary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
-  savingsBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.successScale[50],
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: colors.successScale[200],
-    marginTop: spacing.md,
-  },
-  savingsLabel: {
-    fontSize: 12,
-    color: colors.text.secondary,
-  },
-  savingsAmount: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.successScale[500],
-  },
-  rewardItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.background.secondary,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.sm,
-  },
-  rewardInfo: {
-    flex: 1,
-  },
-  rewardLabel: {
-    fontSize: 13,
-    color: colors.text.secondary,
-  },
-  rewardAmount: {
+  coinPrice: {
     fontSize: 14,
     fontWeight: '600',
     color: colors.text.primary,
-    marginTop: 2,
   },
-  upsellText: {
-    fontSize: 13,
-    color: colors.text.secondary,
-  },
-  upsellButton: {
-    paddingVertical: spacing.md,
-    alignItems: 'center',
-    backgroundColor: colors.tint.purple,
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: colors.brand.purpleLight,
-  },
-  upsellButtonText: {
+  commitmentText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: colors.brand.purple,
+    fontWeight: '500',
+    color: colors.success,
   },
-  bottomButtonContainer: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.default,
-    backgroundColor: colors.background.primary,
+  divider: {
+    height: 1,
+    backgroundColor: colors.border.default,
+    marginVertical: spacing.md,
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    padding: spacing.md,
+    backgroundColor: colors.errorScale[50],
+    borderRadius: borderRadius.sm,
+    marginBottom: spacing.md,
+  },
+  errorBannerText: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.error,
   },
   bookButton: {
+    backgroundColor: colors.nileBlue,
+    paddingVertical: spacing.md + 2,
     borderRadius: borderRadius.md,
-    overflow: 'hidden',
-  },
-  bookButtonGradient: {
-    paddingVertical: spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bookButtonDisabled: {
+    opacity: 0.7,
   },
   bookButtonText: {
     fontSize: 16,
     fontWeight: '700',
     color: '#fff',
   },
-  insufficientCoinsBox: {
+  arrowIcon: {
+    fontSize: 16,
+  },
+  includesList: {
+    gap: spacing.sm,
+  },
+  includeItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.errorScale[50],
-    borderRadius: borderRadius.md,
-    borderWidth: 1,
-    borderColor: colors.errorScale[200],
+    gap: spacing.sm,
   },
-  insufficientText: {
-    flex: 1,
+  includeText: {
+    fontSize: 14,
+    color: colors.text.secondary,
+  },
+  availabilityCard: {
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
+  availabilityBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+  availabilityDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  availabilityText: {
     fontSize: 14,
     fontWeight: '600',
-    color: colors.error,
+    color: colors.success,
   },
-  topUpButton: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.error,
-    borderRadius: borderRadius.sm,
+  slotsText: {
+    fontSize: 13,
+    color: colors.text.tertiary,
+    marginLeft: spacing.lg,
   },
-  topUpButtonText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#fff',
+  termsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  termsContent: {
+    marginTop: spacing.sm,
+  },
+  termsText: {
+    fontSize: 13,
+    color: colors.text.secondary,
+    lineHeight: 20,
+  },
+  bottomSpacer: {
+    height: spacing.xl,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: spacing.md,
+  },
+  loadingText: {
+    fontSize: 14,
+    color: colors.text.secondary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: spacing.xl,
     gap: spacing.md,
+  },
+  errorTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text.primary,
   },
   errorText: {
-    fontSize: 16,
-    color: colors.text.secondary,
-  },
-  button: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.brand.purple,
-    borderRadius: borderRadius.md,
-  },
-  buttonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#fff',
-  },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: colors.background.primary,
-    borderTopLeftRadius: borderRadius.lg,
-    borderTopRightRadius: borderRadius.lg,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
-    gap: spacing.md,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.text.primary,
-    marginTop: spacing.md,
-  },
-  modalText: {
     fontSize: 14,
     color: colors.text.secondary,
     textAlign: 'center',
   },
-  modalBalance: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.brand.purple,
-  },
-  bookingSummary: {
-    width: '100%',
-    backgroundColor: colors.background.secondary,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    marginVertical: spacing.md,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  summaryLabel: {
-    fontSize: 13,
-    color: colors.text.secondary,
-  },
-  summaryValue: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.text.primary,
-  },
-  summaryDivider: {
-    height: 1,
-    backgroundColor: colors.border.default,
-    marginVertical: spacing.sm,
-  },
-  summaryTotal: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.text.primary,
-  },
-  disclaimerText: {
-    fontSize: 12,
-    color: colors.text.tertiary,
-    fontStyle: 'italic',
-  },
-  modalButton: {
-    width: '100%',
+  errorButton: {
+    paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     backgroundColor: colors.brand.purple,
     borderRadius: borderRadius.md,
-    alignItems: 'center',
+    marginTop: spacing.md,
   },
-  modalButtonDisabled: {
-    opacity: 0.6,
-  },
-  modalButtonText: {
+  errorButtonText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#fff',
-  },
-  modalButtonSecondary: {
-    backgroundColor: colors.background.secondary,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-  },
-  modalButtonSecondaryText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.text.primary,
   },
 });
