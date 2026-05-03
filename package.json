@@ -28,7 +28,7 @@
     "prepare": "husky",
     "format": "prettier --write 'app/**/*.ts' 'app/**/*.tsx'"
   },
-  "main": "expo-router/entry",
+  // "main": "expo-router/entry" - removed for Render static deployment
   "dependencies": {
     "@rez/loyalty-client": "file:../packages/rez-loyalty-client",
     "@expo-google-fonts/inter": "^0.4.2",
