@@ -92,6 +92,48 @@ export function routeFromPayload(
         },
       };
 
+    // Phase II route mappings
+    case 'room-hub':
+      return {
+        pathname: '/room-service/[hotelId]/[roomId]',
+        params: {
+          hotelId: payload.hotelId,
+          roomId: payload.roomId,
+          token: payload.token,
+          ...(payload.checkIn ? { checkIn: payload.checkIn } : {}),
+          ...(payload.checkOut ? { checkOut: payload.checkOut } : {}),
+        },
+      };
+
+    case 'menu-qr':
+      return {
+        pathname: '/store/[storeSlug]/menu',
+        params: {
+          storeSlug: payload.storeSlug,
+          ...(payload.tableNumber ? { tableNumber: payload.tableNumber } : {}),
+        },
+      };
+
+    case 'rez-now':
+      return {
+        pathname: '/store/[storeSlug]',
+        params: {
+          storeSlug: payload.storeSlug,
+          ...(payload.page ? { page: payload.page } : {}),
+        },
+      };
+
+    case 'ad-campaign':
+      return {
+        pathname: '/campaign/[campaignId]',
+        params: {
+          campaignId: payload.campaignId,
+          rewardType: payload.rewardType,
+          ...(payload.adId ? { adId: payload.adId } : {}),
+          ...(payload.merchantId ? { merchantId: payload.merchantId } : {}),
+        },
+      };
+
     case 'short-url':
       // Caller fetches the inflated payload via the backend, then calls
       // routeFromPayload again. Returning null here signals "route on the
