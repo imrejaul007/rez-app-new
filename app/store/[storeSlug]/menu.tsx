@@ -226,7 +226,7 @@ const MenuPageScreen: React.FC = () => {
               {
                 id: 'item-2',
                 name: 'Soup of the Day',
-                description: 'Ask your server for today's selection',
+                description: "Ask your server for today's selection",
                 price: 6.99,
                 category: 'appetizers',
                 isAvailable: true,
