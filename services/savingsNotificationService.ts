@@ -97,8 +97,33 @@ class SavingsNotificationService {
   private handleNotificationTap(data?: SavingsNotificationData['data']): void {
     if (!data) return;
 
-    // Navigation would be handled by the app's deep link handler
-    logger.info('[SavingsNotification] Tapped', { type: data });
+    // Import and call the global deep link handler
+    try {
+      const { handleNotificationDeepLink } = require('@/utils/notificationDeepLinkHandler');
+      handleNotificationDeepLink(data as any);
+    } catch (e) {
+      logger.error('[SavingsNotification] Failed to handle tap', { error: e });
+    }
+  }
+
+  /**
+   * Get deep link path based on notification type
+   */
+  private getDeepLink(type: SavingsNotificationType, data?: SavingsNotificationData['data']): string {
+    switch (type) {
+      case 'streak_reminder':
+      case 'streak_achieved':
+      case 'savings_milestone':
+        return '/savings';
+      case 'goal_progress':
+      case 'goal_completed':
+        return data?.goalId ? `/savings/goals/${data.goalId}` : '/savings/goals';
+      case 'insight_available':
+      case 'recommendation_action':
+        return '/savings';
+      default:
+        return '/savings';
+    }
   }
 
   /**
@@ -110,7 +135,10 @@ class SavingsNotificationService {
         content: {
           title: notification.title,
           body: notification.body,
-          data: notification.data,
+          data: {
+            ...notification.data,
+            deepLink: this.getDeepLink(notification.type, notification.data),
+          },
           sound: true,
         },
         trigger: null, // Send immediately
