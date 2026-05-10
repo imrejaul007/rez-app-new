@@ -270,7 +270,7 @@ function SavedAddressesPage() {
 
   const handleBackPress = useCallback(() => {
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
   }, [router]);
 
   const handleAddAddress = useCallback(() => {

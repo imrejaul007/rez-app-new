@@ -242,7 +242,7 @@ const ProductionProductCarousel = ({ products, isLoading, error }: ProductionPro
       : product.category?._id || product.category?.id || '';
     
     // ProductPage expects: cardId, cardType, category as query params
-    router.push(`/product-page?cardId=${productId}&cardType=product&category=${categoryId}`);
+    router.push(`/product-page?cardId=${productId}&cardType=product&category=${categoryId}` as any);
   };
 
   const renderDots = () => (

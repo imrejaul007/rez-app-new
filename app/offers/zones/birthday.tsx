@@ -149,11 +149,11 @@ function BirthdayZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as any as string);
+    router.push(`/offers/${offer._id}` as any);
   };
 
   const handleUpdateProfile = () => {
-    router.push('/profile/edit' as any as string);
+    router.push('/profile/edit' as any);
   };
 
   const renderSkeletonCard = () => (

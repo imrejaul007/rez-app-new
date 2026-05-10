@@ -816,7 +816,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                       marginTop: 16,
                       alignItems: 'center',
                     }}
-                    onPress={() => router.push(`/waitlist/${storeId}`)}
+                    onPress={() => router.push(`/waitlist/${storeId}` as any)}
                     accessibilityRole="button"
                     accessibilityLabel="Join waitlist for this store"
                   >

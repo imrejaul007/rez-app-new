@@ -186,7 +186,7 @@ const TournamentDetail = () => {
   const handlePlayGame = () => {
     if (!tournament) return;
     const route = GAME_TYPE_ROUTES[tournament.gameType] || '/games';
-    router.push(route as any as string);
+    router.push(route as any);
   };
 
   const icon = tournament ? GAME_TYPE_ICONS[tournament.gameType] || '🏆' : '🏆';

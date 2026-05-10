@@ -127,7 +127,7 @@ const GroceryPage: React.FC = () => {
       // Process categories
       if (categoriesRes.success && categoriesRes.data) {
         const groceryCategory = (categoriesRes.data as any as ApiCategory[]).find(
-          (cat) => cat.slug === 'grocery' || (cat.name as any as string)?.toLowerCase().includes('grocery'),
+          (cat) => cat.slug === 'grocery' || (cat.name as any)?.toLowerCase().includes('grocery'),
         );
 
         if (
@@ -262,7 +262,7 @@ const GroceryPage: React.FC = () => {
   // Handle search
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}&category=grocery`);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}&category=grocery` as any);
     }
   };
 
@@ -348,7 +348,7 @@ const GroceryPage: React.FC = () => {
           <Text style={styles.sectionTitle}>Categories</Text>
           <View style={styles.categoriesGrid}>
             {categories.map((cat) => (
-              <Pressable key={cat.id} style={styles.categoryCard} onPress={() => router.push(`/grocery/${cat.id}`)}>
+              <Pressable key={cat.id} style={styles.categoryCard} onPress={() => router.push(`/grocery/${cat.id}` as any)}>
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                   <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                 </View>
@@ -363,7 +363,7 @@ const GroceryPage: React.FC = () => {
         <View style={styles.quickActionsContainer}>
           <Pressable
             style={[styles.quickAction, { backgroundColor: colors.tint.amberLight }]}
-            onPress={() => router.push('/deals')}
+            onPress={() => router.push('/deals' as any)}
           >
             <Text style={styles.quickActionIcon}>🔥</Text>
             <Text style={styles.quickActionTitle}>Hot Deals</Text>
@@ -371,7 +371,7 @@ const GroceryPage: React.FC = () => {
           </Pressable>
           <Pressable
             style={[styles.quickAction, { backgroundColor: '#E0E7FF' }]}
-            onPress={() => router.push('/grocery/compare')}
+            onPress={() => router.push('/grocery/compare' as any)}
           >
             <Text style={styles.quickActionIcon}>⚖️</Text>
             <Text style={styles.quickActionTitle}>Compare</Text>
@@ -394,7 +394,7 @@ const GroceryPage: React.FC = () => {
               <Ionicons name="flash" size={20} color={Colors.warning} />
               <Text style={styles.sectionTitle}>Quick Delivery</Text>
             </View>
-            <Pressable onPress={() => router.push('/grocery/quick')}>
+            <Pressable onPress={() => router.push('/grocery/quick' as any)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -403,7 +403,7 @@ const GroceryPage: React.FC = () => {
               <Pressable
                 key={store.id}
                 style={styles.quickStoreCard}
-                onPress={() => router.push(`/MainStorePage?storeId=${store.id}`)}
+                onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
               >
                 <View style={styles.quickBadge}>
                   <Ionicons name="flash" size={10} color="#FCD34D" />
@@ -432,7 +432,7 @@ const GroceryPage: React.FC = () => {
               <Pressable
                 key={store.id}
                 style={styles.storeCard}
-                onPress={() => router.push(`/MainStorePage?storeId=${store.id}`)}
+                onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
               >
                 <CachedImage source={store.image || ''} style={styles.storeImage} />
                 <View style={styles.cashbackBadge}>
@@ -464,7 +464,7 @@ const GroceryPage: React.FC = () => {
             <Text style={styles.promoEmoji}>🛒</Text>
             <Text style={styles.promoTitle}>First Order? Get {currencySymbol}100 Off</Text>
             <Text style={styles.promoSubtitle}>+ Free delivery on orders above {currencySymbol}199</Text>
-            <Pressable style={styles.promoButton} onPress={() => router.push('/deals')}>
+            <Pressable style={styles.promoButton} onPress={() => router.push('/deals' as any)}>
               <Text style={styles.promoButtonText}>Order Now</Text>
             </Pressable>
           </LinearGradient>

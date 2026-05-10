@@ -116,7 +116,7 @@ function BirthdayRewardsPage() {
   }, [isAuthenticated, loadBirthdayData]);
 
   const handleClaimGift = (deal: BirthdayDeal) => {
-    router.push(`/offers/${deal.id}` as any as string);
+    router.push(`/offers/${deal.id}` as any);
   };
 
   const renderGiftCard = (deal: BirthdayDeal) => (

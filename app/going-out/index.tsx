@@ -37,12 +37,12 @@ function GoingOutPage() {
 
   const handleProductPress = (product: GoingOutProduct) => {
     router.push(
-      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as any as string,
+      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as any,
     );
   };
 
   const handleViewAllSection = (sectionId: string) => {
-    router.push(`/going-out/section/${sectionId}` as any as string);
+    router.push(`/going-out/section/${sectionId}` as any);
   };
 
   const handleHideSearch = () => {

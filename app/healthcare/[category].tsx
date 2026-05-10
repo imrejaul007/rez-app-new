@@ -239,7 +239,7 @@ const HealthcareCategoryPage: React.FC = () => {
         storeName: store.name,
         fee: store.metadata?.consultationFee || 500,
       },
-    } as any as string);
+    } as any);
   };
 
   const renderStoreCard = (store: Store) => {
@@ -250,7 +250,7 @@ const HealthcareCategoryPage: React.FC = () => {
       <Pressable
         key={store._id}
         style={styles.itemCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${store._id}` as any as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${store._id}` as any)}
         accessibilityRole="button"
         accessibilityLabel={`${store.name}${store.metadata?.specialization ? `, ${store.metadata.specialization}` : ''}, ${store.location.city}, rating ${store.ratings.average.toFixed(1)}${cashback > 0 ? `, ${cashback}% cashback` : ''}`}
       >

@@ -234,7 +234,7 @@ function BookingPage() {
   // Deep-link parameter validation guard
   if (!storeId || typeof storeId !== 'string') {
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
     return null;
   }
 
@@ -477,7 +477,7 @@ function BookingPage() {
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
   };
 
   // Calculate end time based on service duration
@@ -559,13 +559,13 @@ function BookingPage() {
   // Handle navigation after adding to cart
   const handleViewCart = () => {
     setShowAddedToCartModal(false);
-    router.push('/cart');
+    router.push('/cart' as any);
   };
 
   const handleContinueShopping = () => {
     setShowAddedToCartModal(false);
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
   };
 
   const getCategoryName = () => {

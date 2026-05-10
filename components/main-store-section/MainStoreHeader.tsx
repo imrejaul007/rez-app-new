@@ -77,9 +77,9 @@ function MainStoreHeader({
   const handleCoinPress = () => {
     triggerImpact('Light');
     if (Platform.OS === 'ios') {
-      setTimeout(() => router.push('/coins'), 50);
+      setTimeout(() => router.push('/coins' as any), 50);
     } else {
-      router.push('/coins');
+      router.push('/coins' as any);
     }
   };
 

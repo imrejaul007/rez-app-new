@@ -125,7 +125,7 @@ function StoreHeader({
   const handleBackPress = () => {
     triggerImpact('Medium');
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
   };
 
   const handleSharePress = async () => {
@@ -143,19 +143,19 @@ function StoreHeader({
 
   const handleCartPress = () => {
     triggerImpact('Light');
-    router.push('/cart');
+    router.push('/cart' as any);
   };
 
   const handleCoinPress = () => {
     triggerImpact('Light');
-    router.push('/coins');
+    router.push('/coins' as any);
   };
 
   const handleFavoritePress = useCallback(async () => {
     triggerImpact('Medium');
 
     if (!isAuthenticated) {
-      router.push('/sign-in');
+      router.push('/sign-in' as any);
       return;
     }
 

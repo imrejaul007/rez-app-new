@@ -412,7 +412,7 @@ const StoreListPage: React.FC = () => {
           cardType: 'product',
           storeId: store.storeId,
         },
-      } as any as string);
+      } as any);
     },
     [router],
   );
@@ -421,7 +421,7 @@ const StoreListPage: React.FC = () => {
   const handleStoreSelect = useCallback(
     (store: StoreResult) => {
       // Navigate to store page
-      router.push(`/MainStorePage?storeId=${store.storeId}`);
+      router.push(`/MainStorePage?storeId=${store.storeId}` as any);
     },
     [router],
   );

@@ -67,7 +67,7 @@ function StoreBottomActionBar({
     if (onScanPayEarn) {
       onScanPayEarn();
     } else {
-      router.push('/pay-in-store');
+      router.push('/pay-in-store' as any);
     }
   };
 
@@ -76,7 +76,7 @@ function StoreBottomActionBar({
     if (onWallet) {
       onWallet();
     } else {
-      router.push('/wallet-screen');
+      router.push('/wallet-screen' as any);
     }
   };
 
@@ -88,7 +88,7 @@ function StoreBottomActionBar({
       router.push({
         pathname: '/CardOffersPage',
         params: { storeId: storeId || '' },
-      } as any as string);
+      } as any);
     }
   };
 
@@ -100,7 +100,7 @@ function StoreBottomActionBar({
       onOrderFood();
     } else {
       // Navigate to the menu tab of this store
-      router.push(`/MainStorePage?storeId=${storeId || ''}&tab=menu` as any as string);
+      router.push(`/MainStorePage?storeId=${storeId || ''}&tab=menu` as any);
     }
   };
 
@@ -132,7 +132,7 @@ function StoreBottomActionBar({
       router.push({
         pathname: '/pay-in-store/enter-amount',
         params: { storeId: storeId || '', storeName: storeName || '' },
-      } as any as string);
+      } as any);
     }
   };
 

@@ -159,7 +159,7 @@ function LowestPricePage() {
         <Pressable
           style={styles.productCard}
           onPress={() =>
-            router.push(`/product-page?cardId=${bestSeller.productId}&cardType=product` as any as string)
+            router.push(`/product-page?cardId=${bestSeller.productId}&cardType=product` as any)
           }
         >
           {maxSaving > 0 && (
@@ -227,7 +227,7 @@ function LowestPricePage() {
             )}
             <Pressable
               style={styles.shopButton}
-              onPress={() => router.push(`/MainStorePage?storeId=${bestSeller.storeId}` as any as string)}
+              onPress={() => router.push(`/MainStorePage?storeId=${bestSeller.storeId}` as any)}
             >
               <LinearGradient colors={[colors.brand.sky, colors.brand.skyDark]} style={styles.shopButtonGradient}>
                 <ThemedText style={styles.shopButtonText}>Shop Now</ThemedText>

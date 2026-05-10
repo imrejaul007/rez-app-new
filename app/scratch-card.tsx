@@ -267,7 +267,7 @@ function ScratchCardPage() {
     return (
       <FeatureErrorBoundary
         featureName="Scratch Card"
-        onSecondaryAction={() => router.push('/games' as any as string)}
+        onSecondaryAction={() => router.push('/games' as any)}
         secondaryActionLabel="Back to Games"
         secondaryActionIcon="game-controller"
       >
@@ -319,7 +319,7 @@ function ScratchCardPage() {
     return (
       <FeatureErrorBoundary
         featureName="Scratch Card"
-        onSecondaryAction={() => router.push('/games' as any as string)}
+        onSecondaryAction={() => router.push('/games' as any)}
         secondaryActionLabel="Back to Games"
         secondaryActionIcon="game-controller"
       >
@@ -351,7 +351,7 @@ function ScratchCardPage() {
   return (
     <FeatureErrorBoundary
       featureName="Scratch Card"
-      onSecondaryAction={() => router.push('/games' as any as string)}
+      onSecondaryAction={() => router.push('/games' as any)}
       secondaryActionLabel="Back to Games"
       secondaryActionIcon="game-controller"
       onReset={() => checkEligibility()}
@@ -473,7 +473,7 @@ function ScratchCardPage() {
                 {(prize?.type === 'coins' || (prize?.type as string) === 'coin') && (
                   <Pressable
                     style={[styles.actionButton, { backgroundColor: Colors.success, marginTop: Spacing.md }]}
-                    onPress={() => router.push('/wallet-screen')}
+                    onPress={() => router.push('/wallet-screen' as any)}
                     accessibilityLabel="View wallet"
                     accessibilityRole="button"
                   >

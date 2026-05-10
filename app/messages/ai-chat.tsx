@@ -217,7 +217,7 @@ function AIChatScreen() {
     <AIChatProvider
       merchantId="rez-app"
       userId={user.id}
-      userName={user.name}
+      userName={user.profile?.firstName || user.email || user.phoneNumber}
       userEmail={user.email}
     >
       <AIChatContent />

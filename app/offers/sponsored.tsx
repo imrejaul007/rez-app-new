@@ -162,7 +162,7 @@ function SponsoredCashbackPage() {
 
   const renderOffer = useCallback(
     ({ item }: { item: SponsoredOffer }) => (
-      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any as string)}>
+      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any)}>
         <View style={styles.sponsoredBadge}>
           <Ionicons name="megaphone" size={12} color={Colors.gold} />
           <ThemedText style={styles.sponsoredText}>Sponsored</ThemedText>

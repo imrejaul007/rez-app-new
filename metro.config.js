@@ -58,6 +58,9 @@ process.env.METRO_FILE_MAP_WATCHER_HEALTH_CHECK_TIMEOUT = '120000';
 // RESOLVER OPTIMIZATIONS
 // =============================================================================
 
+// Preserve the original resolveRequest before replacing resolver
+const originalResolveRequestFromDefault = config.resolver.resolveRequest;
+
 config.resolver = {
   ...config.resolver,
   blockList: [
@@ -87,6 +90,9 @@ config.resolver = {
     // Block storybook/docs if present
     /\.storybook\/.*/,
     /\.stories\.(js|jsx|ts|tsx)$/,
+    // Block utility files in app/try/components from being treated as routes
+    /app\/try\/components\/.*Utils\.ts$/,
+    /app\/try\/components\/index\.ts$/,
   ],
   hasteImplModulePath: undefined,
 };
@@ -161,7 +167,7 @@ const localforageFilePath = path.resolve(
   __dirname, 'node_modules/localforage/dist/localforage.js'
 );
 
-const originalResolveRequest = config.resolver.resolveRequest;
+const originalResolveRequest = originalResolveRequestFromDefault;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   // Fix: @sentry/integrations requires localforage whose dist file Metro can't resolve
   if (moduleName === 'localforage') {
@@ -239,6 +245,16 @@ config.server = {
   ...config.server,
   enhanceMiddleware: (middleware) => middleware,
 };
+
+// =============================================================================
+// ENTRY POINT CONFIGURATION (Required for expo-router)
+// =============================================================================
+// NOTE: We do NOT override resolveRequest again here. The expo-router entry
+// point is handled by the standard expo-router setup. Adding another override
+// would lose all the shims defined above (react-native-reanimated, @sentry, etc.)
+//
+// The original entry point override was causing: "Element type is invalid:
+// got: object" because it broke the module resolution chain.
 
 // =============================================================================
 // SUPPRESS KNOWN HARMLESS WARNINGS (bundler-level only)

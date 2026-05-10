@@ -98,7 +98,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const spin = (interpolate(rotate.value, [0, 1], [0, 360]) as any as string) + 'deg';
+  const spin = (interpolate(rotate.value, [0, 1], [0, 360]) as any) + 'deg';
 
   return (
     <Animated.View
@@ -343,7 +343,7 @@ const Quiz = () => {
     return { text: 'Keep Practicing!', icon: 'refresh' as const, color: COLORS.textMuted };
   };
 
-  const progressWidth = (interpolate(progressAnim.value, [0, 1], [0, 100]) as any as string) + '%';
+  const progressWidth = (interpolate(progressAnim.value, [0, 1], [0, 100]) as any) + '%';
 
   return (
     <View style={styles.container}>

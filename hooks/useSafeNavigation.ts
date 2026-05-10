@@ -2,13 +2,14 @@
 // React hook for safe navigation with error handling and fallbacks
 
 import { useEffect, useCallback, useRef, useState } from 'react';
-import { useRouter, useSegments, Href } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import { Platform, BackHandler } from 'react-native';
 import { navigationService } from '@/services/navigationService';
 import {
   NavigationOptions,
   NavigationResult,
   NavigationEvent,
+  RoutePath,
 } from '@/types/navigation.types';
 import {
   getPlatform,
@@ -45,7 +46,7 @@ export const useSafeNavigation = () => {
    */
   const navigate = useCallback(
     async (
-      route: Href,
+      route: RoutePath,
       options?: NavigationOptions
     ): Promise<NavigationResult> => {
       setIsNavigating(true);
@@ -63,7 +64,7 @@ export const useSafeNavigation = () => {
    * Safe go back function
    */
   const goBack = useCallback(
-    async (fallbackRoute?: Href): Promise<NavigationResult> => {
+    async (fallbackRoute?: RoutePath): Promise<NavigationResult> => {
       setIsNavigating(true);
       try {
         const result = await navigationService.goBack(
@@ -82,7 +83,7 @@ export const useSafeNavigation = () => {
    */
   const replace = useCallback(
     async (
-      route: Href,
+      route: RoutePath,
       options?: NavigationOptions
     ): Promise<NavigationResult> => {
       setIsNavigating(true);
@@ -101,7 +102,7 @@ export const useSafeNavigation = () => {
    */
   const navigateWithConfirmation = useCallback(
     async (
-      route: Href,
+      route: RoutePath,
       message: string,
       options?: NavigationOptions
     ): Promise<NavigationResult | null> => {
@@ -123,21 +124,21 @@ export const useSafeNavigation = () => {
    * Go to home
    */
   const goToHome = useCallback(async (): Promise<NavigationResult> => {
-    return replace('/(tabs)' as Href);
+    return replace('/(tabs)' as RoutePath);
   }, [replace]);
 
   /**
    * Go to profile
    */
   const goToProfile = useCallback(async (): Promise<NavigationResult> => {
-    return navigate('/profile' as Href);
+    return navigate('/profile' as RoutePath);
   }, [navigate]);
 
   /**
    * Go to previous screen with auto-fallback
    */
   const goBackOrFallback = useCallback(
-    async (fallbackRoute?: Href): Promise<NavigationResult> => {
+    async (fallbackRoute?: RoutePath): Promise<NavigationResult> => {
       if (canGoBack) {
         return goBack(fallbackRoute);
       } else {

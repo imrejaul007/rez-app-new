@@ -29,7 +29,7 @@ import {
   UserLoyaltyCard,
   PaymentMethodsCard,
   StoreBottomActionBar,
-} from './MainStoreSection';
+} from '@/components/main-store-section';
 import MerchantLoyaltyCard from '@/components/gamification/MerchantLoyaltyCard';
 import { TierName } from '@/components/gamification/VisitProgressBar';
 import { MainStorePageProps } from '@/types/mainstore';

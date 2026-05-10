@@ -115,7 +115,7 @@ function AllCollectionsPage() {
   const handleCollectionPress = useCallback(
     (collection: MallCollection) => {
       const slug = collection.slug || collection._id || collection.id;
-      if (slug) router.push(`/mall/collection/${slug}` as any as string);
+      if (slug) router.push(`/mall/collection/${slug}` as any);
     },
     [router],
   );

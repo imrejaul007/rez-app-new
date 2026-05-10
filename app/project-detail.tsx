@@ -543,7 +543,7 @@ function ProjectDetailPage() {
                             submissionId: userSubmission._id,
                             projectId: projectId,
                           },
-                        } as any as string);
+                        } as any);
                       }}
                       accessible={true}
                       accessibilityLabel="View full submission details"

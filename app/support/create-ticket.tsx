@@ -111,7 +111,7 @@ function CreateTicketPage() {
 
       if (response.success && response.data?.ticket) {
         platformAlertSimple('Success', 'Your support ticket has been created.');
-        router.replace(`/support/ticket/${response.data.ticket._id}` as any as string);
+        router.replace(`/support/ticket/${response.data.ticket._id}` as any);
       } else {
         platformAlertSimple('Error', 'Failed to create ticket. Please try again.');
       }
@@ -138,7 +138,7 @@ function CreateTicketPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
@@ -212,7 +212,7 @@ function CreateTicketPage() {
               <View style={styles.selfResolutionActions}>
                 <Pressable
                   style={styles.selfResWaitBtn}
-                  onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                  onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
                 >
                   <ThemedText style={styles.selfResWaitText}>Wait</ThemedText>
                 </Pressable>

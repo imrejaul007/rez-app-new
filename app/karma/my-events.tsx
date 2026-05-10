@@ -128,7 +128,7 @@ function EmptyState({ tab, router }: { tab: Tab; router: ReturnType<typeof useRo
         {tab === 'upcoming' ? 'Join an event to start your impact journey' : 'Complete events to see your history here'}
       </Text>
       {tab === 'upcoming' && (
-        <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore' as unknown as string)}>
+        <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore' as any)}>
           <Text style={styles.exploreBtnText}>Explore Events</Text>
         </Pressable>
       )}

@@ -108,7 +108,7 @@ export default function SurpriseScreen() {
 
   const handleBookNow = () => {
     if (data?.trial) {
-      router.push(`/try/${data.trial.id}`);
+      router.push(`/try/${data.trial.id}` as any);
     }
   };
 
@@ -263,7 +263,7 @@ export default function SurpriseScreen() {
               <View style={styles.bookedBanner}>
                 <Ionicons name="checkmark-circle" size={20} color={colors.successScale[500]} />
                 <Text style={styles.bookedText}>Already Booked ✓</Text>
-                <Pressable style={styles.bookedLink} onPress={() => router.push('/try/history')}>
+                <Pressable style={styles.bookedLink} onPress={() => router.push('/try/history' as any)}>
                   <Text style={styles.bookedLinkText}>View QR →</Text>
                 </Pressable>
               </View>

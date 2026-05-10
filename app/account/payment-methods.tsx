@@ -627,7 +627,7 @@ function PaymentMethodsManagementPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             accessibilityHint="Double tap to return to previous screen"

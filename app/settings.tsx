@@ -397,7 +397,7 @@ function SettingsPage() {
       style={styles.settingsItem}
       onPress={() => {
         if (item.route) {
-          router.push(item.route as any as string);
+          router.push(item.route as any);
         } else if (item.onPress) {
           item.onPress();
         }

@@ -14,8 +14,8 @@ import {
   getMissionVisibility,
   needsToBuyCoins,
   getCoinTier,
-} from '../components';
-import { shouldShowBundlesUpsell } from '../components/bundleUtils';
+} from '@/components/try';
+import { shouldShowBundlesUpsell } from '@/components/try/bundleUtils';
 
 // =============================================================================
 // TYPES

@@ -151,7 +151,7 @@ function RootLayout() {
           },
         } as any);
       } else {
-        router.push('/pay-in-store' as any as string);
+        router.push('/pay-in-store' as any);
       }
       return;
     }
@@ -198,7 +198,7 @@ function RootLayout() {
           },
         } as any);
       } else {
-        router.push('/pay-in-store' as any as string);
+        router.push('/pay-in-store' as any);
       }
       return;
     }
@@ -247,7 +247,7 @@ function RootLayout() {
     // 3. Generic route deep links (notification-tapped links, etc.)
     if (path && path !== '') {
       try {
-        router.push(`/${path}` as any as string);
+        router.push(`/${path}` as any);
       } catch {
         // Ignore navigation errors if route doesn't exist
       }
@@ -304,7 +304,7 @@ function RootLayout() {
 
             if (data?.route && typeof data.route === 'string') {
               try {
-                router.push(data.route as any as string);
+                router.push(data.route as any);
               } catch {
                 // Ignore if route is invalid
               }

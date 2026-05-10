@@ -138,7 +138,7 @@ function ImageDetailScreen() {
   // Navigate to product
   const handleProductPress = useCallback(
     (product: DiscoverProduct) => {
-      router.push(`/product-page?cardId=${product._id}&cardType=product&source=image`);
+      router.push(`/product-page?cardId=${product._id}&cardType=product&source=image` as any);
     },
     [router],
   );

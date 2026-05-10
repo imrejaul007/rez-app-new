@@ -615,7 +615,7 @@ function FlightDetailsPage() {
           {flight.store && (
             <Pressable
               style={s.airlineCard}
-              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as any as string)}
+              onPress={() => router.push(`/MainStorePage?storeId=${flight.store.id}` as any)}
             >
               {flight.store.logo ? (
                 <CachedImage source={flight.store.logo} style={s.airlineLogo} contentFit="contain" />

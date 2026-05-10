@@ -237,7 +237,7 @@ function SharedCategoryPage() {
     ({ item }: { item: any }) => (
       <Pressable
         style={styles.resultCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${item._id || item.id}` as any as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${item._id || item.id}` as any)}
       >
         <CachedImage
           source={item.banner?.[0] || item.logo || undefined}
@@ -277,7 +277,7 @@ function SharedCategoryPage() {
     ({ item }: { item: any }) => (
       <Pressable
         style={styles.resultCard}
-        onPress={() => router.push(`/product-page?id=${item._id || item.id}` as any as string)}
+        onPress={() => router.push(`/product-page?id=${item._id || item.id}` as any)}
       >
         <CachedImage source={item.images?.[0]?.url || item.image} style={styles.resultImage} contentFit="cover" />
         <View style={styles.resultContent}>

@@ -619,7 +619,6 @@ export type {
   ScoreData,
   BookingRequest,
   BookingResponse,
-  Mission,
   CategoryBadge,
   BadgesData,
   LeaderboardEntry,

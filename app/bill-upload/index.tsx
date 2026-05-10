@@ -191,7 +191,7 @@ function BillUploadPage() {
 
           {/* Pending Queue Banner */}
           {hasPendingUploads && isOnline && (
-            <Pressable style={styles.queueBanner} onPress={() => router.push('/bill-history')}>
+            <Pressable style={styles.queueBanner} onPress={() => router.push('/bill-history' as any)}>
               <View style={styles.queueBannerLeft}>
                 <Ionicons name="cloud-upload" size={20} color="#2196F3" />
                 <Text style={styles.queueBannerText}>

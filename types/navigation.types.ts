@@ -19,6 +19,13 @@ export type NavigationMethod = 'push' | 'replace' | 'back' | 'dismiss';
 export type NavigationStatus = 'success' | 'failed' | 'fallback';
 
 /**
+ * Route path type - accepts any string path for flexibility with dynamic routes.
+ * The router validates routes at runtime, so this allows TypeScript to accept
+ * any string while still being type-safe at runtime.
+ */
+export type RoutePath = string;
+
+/**
  * Navigation history entry
  */
 export interface NavigationHistoryEntry {
@@ -32,7 +39,7 @@ export interface NavigationHistoryEntry {
  * Navigation options
  */
 export interface NavigationOptions {
-  fallbackRoute?: Href;
+  fallbackRoute?: RoutePath;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
   animate?: boolean;
@@ -91,7 +98,7 @@ export interface NavigationEventListener {
 export interface RouteConfig {
   path: string;
   requiresAuth?: boolean;
-  fallback?: Href;
+  fallback?: RoutePath;
   guards?: NavigationGuard[];
   metadata?: Record<string, any>;
 }
@@ -111,7 +118,7 @@ export interface NavigationState {
  * Back button configuration
  */
 export interface BackButtonConfig {
-  fallbackRoute?: Href;
+  fallbackRoute?: RoutePath;
   onPress?: () => void;
   showConfirmation?: boolean;
   confirmationMessage?: string;
@@ -148,7 +155,7 @@ export interface NavigationAnalyticsEvent {
  */
 export interface NavigationQueueItem {
   id: string;
-  route: Href;
+  route: RoutePath;
   options: NavigationOptions;
   priority: number;
   timestamp: number;
@@ -192,9 +199,9 @@ export class NavigationError extends Error {
  * Navigation service interface
  */
 export interface INavigationService {
-  navigate(route: Href, options?: NavigationOptions): Promise<NavigationResult>;
-  goBack(fallbackRoute?: Href): Promise<NavigationResult>;
-  replace(route: Href, options?: NavigationOptions): Promise<NavigationResult>;
+  navigate(route: RoutePath, options?: NavigationOptions): Promise<NavigationResult>;
+  goBack(fallbackRoute?: RoutePath): Promise<NavigationResult>;
+  replace(route: RoutePath, options?: NavigationOptions): Promise<NavigationResult>;
   canGoBack(): boolean;
   getCurrentRoute(): string;
   getHistory(): NavigationHistoryEntry[];

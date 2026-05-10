@@ -191,12 +191,12 @@ const ProductionStoreList = ({ stores, isLoading, error, onRefresh }: Production
 
   const handleStorePress = (store: FashionStore) => {
     // Navigate to store detail page with storeId query parameter
-    router.push(`/MainStorePage?storeId=${store._id}`);
+    router.push(`/MainStorePage?storeId=${store._id}` as any);
   };
 
   const handleViewAllPress = () => {
     // Navigate to stores listing page - backend now handles 'all' category
-    router.push('/StoreListPage');
+    router.push('/StoreListPage' as any);
   };
 
   // Loading skeleton

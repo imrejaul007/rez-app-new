@@ -101,7 +101,7 @@ const AllCampaignsPage: React.FC = () => {
   };
 
   const handleCampaignPress = (campaign: Campaign) => {
-    router.push(`/deals/${campaign.campaignId || campaign._id}` as any as string);
+    router.push(`/deals/${campaign.campaignId || campaign._id}` as any);
   };
 
   const formatDate = (dateString: string) => {
@@ -153,7 +153,7 @@ const AllCampaignsPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={22} color={COLORS.white} />

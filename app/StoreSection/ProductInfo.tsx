@@ -109,7 +109,7 @@ export default memo(function ProductScreen({
 
       // Navigate to cart after short delay for feedback
       setTimeout(() => {
-        router.push('/cart');
+        router.push('/cart' as any);
       }, 800);
     } catch (error: any) {
       throw error; // Re-throw so LockProductSection can handle it
@@ -206,7 +206,7 @@ export default memo(function ProductScreen({
     animateTo(half);
     const storeId = dynamicData?.store?._id || dynamicData?.store?.id || dynamicData?.storeId;
     if (storeId) {
-      router.push(`/booking?storeId=${storeId}` as any as string);
+      router.push(`/booking?storeId=${storeId}` as any);
     }
   };
 

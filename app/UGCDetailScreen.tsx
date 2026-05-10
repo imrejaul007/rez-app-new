@@ -485,7 +485,7 @@ function UGCDetailScreen() {
     if (!isAuthenticated) {
       showAlert('Sign In Required', 'Please sign in to like videos', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign In', onPress: () => router.push('/sign-in') },
+        { text: 'Sign In', onPress: () => router.push('/sign-in' as any) },
       ]);
       return;
     }
@@ -524,7 +524,7 @@ function UGCDetailScreen() {
     if (!isAuthenticated) {
       showAlert('Sign In Required', 'Please sign in to save videos', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign In', onPress: () => router.push('/sign-in') },
+        { text: 'Sign In', onPress: () => router.push('/sign-in' as any) },
       ]);
       return;
     }
@@ -556,7 +556,7 @@ function UGCDetailScreen() {
     if (!isAuthenticated) {
       showAlert('Sign In Required', 'Please sign in to follow creators', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign In', onPress: () => router.push('/sign-in') },
+        { text: 'Sign In', onPress: () => router.push('/sign-in' as any) },
       ]);
       return;
     }
@@ -840,7 +840,7 @@ function UGCDetailScreen() {
             <Ionicons name={isMuted ? 'volume-mute' : 'volume-high'} size={22} color={colors.text.inverse} />
           </Pressable>
 
-          <Pressable style={styles.topBarButton} onPress={() => router.push('/cart')}>
+          <Pressable style={styles.topBarButton} onPress={() => router.push('/cart' as any)}>
             <Ionicons name="bag-outline" size={22} color={colors.text.inverse} />
             {(cartState.items ?? []).length > 0 && (
               <View style={styles.cartBadge}>
@@ -859,7 +859,7 @@ function UGCDetailScreen() {
             onPress={() => {
               const creatorId = video?.creator?._id || (video?.creator as any)?.id;
               if (creatorId) {
-                router.push(`/creator/${creatorId}` as any as string);
+                router.push(`/creator/${creatorId}` as any);
               }
             }}
           >

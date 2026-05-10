@@ -148,7 +148,7 @@ function BrandsPage() {
       router.push({
         pathname: '/brand/[name]',
         params: { name: brand.id },
-      } as any as string);
+      } as any);
     },
     [router],
   );
@@ -213,7 +213,7 @@ function BrandsPage() {
         <View style={styles.headerTop}>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="chevron-back" size={24} color={colors.text.inverse} />
           </Pressable>

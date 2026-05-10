@@ -67,7 +67,7 @@ function SavedOffersScreen() {
 
   const handleOfferPress = (offer: any) => {
     const offerId = offer._id || offer.id;
-    router.push(`/offers/${offerId}`);
+    router.push(`/offers/${offerId}` as any);
   };
 
   if (!isAuthenticated) {
@@ -129,7 +129,7 @@ function SavedOffersScreen() {
           <Ionicons name="bookmark-outline" size={64} color={colors.border.default} />
           <ThemedText style={styles.emptyTitle}>No Saved Offers</ThemedText>
           <ThemedText style={styles.emptySubtitle}>Tap the bookmark icon on any offer to save it here</ThemedText>
-          <Pressable style={styles.browseButton} onPress={() => router.push('/offers')}>
+          <Pressable style={styles.browseButton} onPress={() => router.push('/offers' as any)}>
             <ThemedText style={styles.browseButtonText}>Browse Offers</ThemedText>
           </Pressable>
         </View>

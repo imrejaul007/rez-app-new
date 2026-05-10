@@ -260,7 +260,7 @@ function CreatorsPage() {
   }, [page, totalPages, loadingMore, fetchCreators]);
 
   const renderCreatorCard = useCallback(
-    ({ item }: { item: Creator }) => <CreatorCard creator={item} onPress={() => router.push(`/creator/${item.id}`)} />,
+    ({ item }: { item: Creator }) => <CreatorCard creator={item} onPress={() => router.push(`/creator/${item.id}` as any)} />,
     [router],
   );
 
@@ -309,7 +309,7 @@ function CreatorsPage() {
             {loading ? 'Loading...' : `${total} creator${total !== 1 ? 's' : ''}`}
           </Text>
         </View>
-        <Pressable onPress={() => router.push('/creator-apply')}>
+        <Pressable onPress={() => router.push('/creator-apply' as any)}>
           <LinearGradient
             colors={['#9333EA', colors.brand.pink]}
             start={{ x: 0, y: 0 }}

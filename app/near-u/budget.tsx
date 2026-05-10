@@ -73,7 +73,7 @@ export default function BudgetScreen() {
                 router.push({
                   pathname: '/StoreListPage',
                   params: { maxPrice: f.maxPrice, sort: 'price_low' },
-                } as any as string)
+                } as any)
               }
             >
               <Text style={styles.pillEmoji}>{f.emoji}</Text>
@@ -93,7 +93,7 @@ export default function BudgetScreen() {
                 router.push({
                   pathname: '/StoreListPage',
                   params: { category: cat.id, maxPrice: 199, sort: 'price_low' },
-                } as any as string)
+                } as any)
               }
             >
               <Text style={styles.catEmoji}>{cat.emoji}</Text>
@@ -109,7 +109,7 @@ export default function BudgetScreen() {
             router.push({
               pathname: '/StoreListPage',
               params: { maxPrice: BUDGET_DEALS_MAX_DISPLAY_PRICE, sort: 'price_low' },
-            } as any as string)
+            } as any)
           }
         >
           <Text style={styles.allDealsBtnText}>See all deals under ₹{BUDGET_DEALS_MAX_DISPLAY_PRICE}</Text>

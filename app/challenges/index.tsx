@@ -97,7 +97,7 @@ function ChallengesPage() {
       router.replace({
         pathname: '/sign-in',
         params: { returnTo: '/challenges' },
-      } as any as string);
+      } as any);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, user]);
@@ -386,7 +386,7 @@ function ChallengesPage() {
           style={styles.challengeCard}
           onPress={() => {
             // Navigate to challenge detail page
-            router.push(`/challenges/${challenge._id}` as any as string);
+            router.push(`/challenges/${challenge._id}` as any);
           }}
         >
           <LinearGradient
@@ -509,7 +509,7 @@ function ChallengesPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
@@ -519,7 +519,7 @@ function ChallengesPage() {
               <Text style={styles.headerSubtitle}>Complete tasks, earn rewards!</Text>
             </View>
 
-            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any as string)}>
+            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any)}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                 style={styles.coinsBadgeGradient}

@@ -85,7 +85,7 @@ export default function NearYouScreen() {
   };
 
   const handleTrialPress = (trialId: string) => {
-    router.push(`/try/${trialId}`);
+    router.push(`/try/${trialId}` as any);
   };
 
   const renderTrial = ({ item }: { item: TrialCard }) => (

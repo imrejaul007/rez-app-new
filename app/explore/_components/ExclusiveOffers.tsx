@@ -73,7 +73,7 @@ const ExclusiveOffers = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as any as string);
+    router.push(path as any);
   };
 
   // Loading state

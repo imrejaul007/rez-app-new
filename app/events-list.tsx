@@ -82,7 +82,7 @@ function EventsListPage() {
       router.push({
         pathname: '/EventPage',
         params: { id: event.id },
-      } as any as string);
+      } as any);
     },
     [router],
   );

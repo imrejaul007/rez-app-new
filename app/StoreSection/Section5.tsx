@@ -390,7 +390,7 @@ function Section5({ discountData, storeInfo, dynamicData, cardType }: Section5Pr
                     style={styles.modalButtonSecondary}
                     onPress={() => {
                       hideModal();
-                      router.push('/wishlist');
+                      router.push('/wishlist' as any);
                     }}
                   >
                     <Ionicons name="heart-outline" size={18} color={colors.lightMustard} />

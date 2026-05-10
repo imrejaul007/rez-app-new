@@ -90,7 +90,7 @@ function DefenceVerifyPage() {
       router.push({
         pathname: '/onboarding/verification-success',
         params: { zone: 'defence', type: 'provisional' },
-      } as any as string);
+      } as any);
     } catch (e: any) {
       const msg = e?.message || 'Verification failed. Please try again.';
       if (!isMounted()) return;

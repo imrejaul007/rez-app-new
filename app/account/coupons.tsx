@@ -311,7 +311,7 @@ function CouponsPage() {
     } else if (categories.length === 1 && typeof categories[0] === 'object') {
       router.push(`/explore/category/${(categories[0] as any)._id || (categories[0] as any).id}` as any);
     } else {
-      router.push('/explore');
+      router.push('/explore' as any);
     }
   };
 
@@ -482,7 +482,7 @@ function CouponsPage() {
                     key={store._id}
                     onPress={(e) => {
                       e.stopPropagation();
-                      router.push(`/MainStorePage?storeId=${store._id}` as any as string);
+                      router.push(`/MainStorePage?storeId=${store._id}` as any);
                     }}
                   >
                     <ThemedText style={s.storeLink} numberOfLines={1}>
@@ -609,7 +609,7 @@ function CouponsPage() {
                     key={store._id}
                     onPress={(e) => {
                       e.stopPropagation();
-                      router.push(`/MainStorePage?storeId=${store._id}` as any as string);
+                      router.push(`/MainStorePage?storeId=${store._id}` as any);
                     }}
                   >
                     <ThemedText style={s.storeLink} numberOfLines={1}>
@@ -759,7 +759,7 @@ function CouponsPage() {
                             onPress={() => {
                               if (storeId) {
                                 setShowDetailsModal(false);
-                                router.push(`/MainStorePage?storeId=${storeId}` as any as string);
+                                router.push(`/MainStorePage?storeId=${storeId}` as any);
                               }
                             }}
                           >
@@ -912,7 +912,7 @@ function CouponsPage() {
         title: 'No Coupons Available',
         desc: 'Check back later for exciting deals!',
         btn: 'Browse Stores',
-        onBtn: () => router.push('/explore'),
+        onBtn: () => router.push('/explore' as any),
       },
       'my-coupons': {
         icon: 'gift-outline',
@@ -983,7 +983,7 @@ function CouponsPage() {
       <LinearGradient colors={[C.headerDark, C.headerMid]} style={s.header}>
         <View style={s.headerRow}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={s.headerBtn}
           >
             <Ionicons name="arrow-back" size={22} color={colors.background.primary} />

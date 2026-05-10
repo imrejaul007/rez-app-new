@@ -132,7 +132,7 @@ function ProductsScreen() {
       return (
         <Pressable
           style={styles.productCard}
-          onPress={() => router.push(`/account/product-detail?id=${item._id}`)}
+          onPress={() => router.push(`/account/product-detail?id=${item._id}` as any)}
           accessibilityLabel={`${productName}. Purchased ${formatDate(item.purchaseDate)}. ${warrantyInfo ? warrantyInfo + '. ' : ''}${amcInfo ? amcInfo + '. ' : ''}${statusInfo}`}
           accessibilityRole="button"
           accessibilityHint="Double tap to view full product details, warranty, and service options"
@@ -208,7 +208,7 @@ function ProductsScreen() {
       {selectedFilter === 'all' && (
         <Pressable
           style={styles.shopButton}
-          onPress={() => router.push('/(tabs)')}
+          onPress={() => router.push('/(tabs)' as any)}
           accessibilityLabel="Start Shopping"
           accessibilityRole="button"
           accessibilityHint="Double tap to browse store and purchase products"
@@ -245,7 +245,7 @@ function ProductsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"

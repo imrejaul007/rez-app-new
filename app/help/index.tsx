@@ -255,7 +255,7 @@ function HelpPage() {
     <Pressable
       key={action.id}
       style={styles.quickAction}
-      onPress={() => router.push(action.route as any as string)}
+      onPress={() => router.push(action.route as any)}
       accessibilityLabel={`${action.title}. ${action.description}`}
       accessibilityRole="button"
       accessibilityHint="Double tap to access this support option"
@@ -272,7 +272,7 @@ function HelpPage() {
     <Pressable
       key={category.id}
       style={styles.helpCategory}
-      onPress={() => router.push(category.route as any as string)}
+      onPress={() => router.push(category.route as any)}
       accessibilityLabel={`${category.title} category. ${category.itemCount} articles available`}
       accessibilityRole="button"
       accessibilityHint="Double tap to browse articles in this category"

@@ -62,7 +62,7 @@ export default function FoodScreen() {
                 router.push({
                   pathname: '/StoreListPage',
                   params: { category: cat.id, sort: 'rating' },
-                } as any as string)
+                } as any)
               }
             >
               <Text style={styles.catEmoji as any}>{cat.emoji}</Text>
@@ -78,7 +78,7 @@ export default function FoodScreen() {
             router.push({
               pathname: '/StoreListPage',
               params: { category: 'food', sort: 'rating' },
-            } as any as string)
+            } as any)
           }
         >
           <Text style={styles.allBtnText as any}>Browse all food spots</Text>

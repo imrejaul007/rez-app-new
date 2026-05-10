@@ -564,7 +564,7 @@ const CoinSystemPage = () => {
         <View style={styles.ctaSection}>
           <Pressable
             style={styles.ctaButton}
-            onPress={() => router.push('/wallet')}
+            onPress={() => router.push('/wallet' as any)}
             accessibilityLabel="View My Wallet"
             accessibilityRole="button"
           >

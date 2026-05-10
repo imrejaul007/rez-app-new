@@ -260,7 +260,7 @@ const ProductionCategorySlider = ({ categories, isLoading, selectedSlug, onSelec
       onSelect(category);
     } else {
       // Fallback to navigation if no callback provided
-      router.push(`/category/${category.slug || category._id}` as string);
+      router.push(`/category/${category.slug || category._id}` as any);
     }
   };
 

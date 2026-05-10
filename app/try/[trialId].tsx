@@ -129,7 +129,7 @@ function TrialDetailScreen() {
       });
 
       if (bookingResponse?.data?.bookingId) {
-        router.push(`/try/booking/${bookingResponse.data.bookingId}`);
+        router.push(`/try/booking/${bookingResponse.data.bookingId}` as any);
       } else {
         throw new Error('Booking confirmed but navigation failed. Check My Bookings.');
       }

@@ -840,7 +840,7 @@ function BookingsPage() {
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[C.primary, C.primaryDark]} style={styles.header}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backBtn}
           >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
@@ -856,7 +856,7 @@ function BookingsPage() {
           <Text style={styles.emptySubtitle}>Please login to view your bookings</Text>
           <Pressable
             style={[styles.ctaButton, { backgroundColor: tintColor || C.primary }]}
-            onPress={() => router.push('/sign-in')}
+            onPress={() => router.push('/sign-in' as any)}
           >
             <Text style={styles.ctaButtonText}>Login</Text>
           </Pressable>
@@ -889,7 +889,7 @@ function BookingsPage() {
             <Text style={styles.ctaButtonOutlineText}>Clear Filters</Text>
           </Pressable>
         ) : (
-          <Pressable style={[styles.ctaButton, { backgroundColor: C.primary }]} onPress={() => router.push('/')}>
+          <Pressable style={[styles.ctaButton, { backgroundColor: C.primary }]} onPress={() => router.push('/' as any)}>
             <Text style={styles.ctaButtonText}>Explore Now</Text>
           </Pressable>
         )}
@@ -913,7 +913,7 @@ function BookingsPage() {
           style={styles.header}
         >
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backBtn}
           >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />

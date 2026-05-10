@@ -1,0 +1,8 @@
+app/near-u/[merchantSlug].tsx(155,24): error TS1005: '}' expected.
+app/near-u/[merchantSlug].tsx(156,13): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+app/near-u/[merchantSlug].tsx(157,11): error TS1382: Unexpected token. Did you mean `{'>'}` or `&gt;`?
+app/near-u/[merchantSlug].tsx(160,13): error TS17002: Expected corresponding JSX closing tag for 'View'.
+app/near-u/[merchantSlug].tsx(165,11): error TS17002: Expected corresponding JSX closing tag for 'ScrollView'.
+app/near-u/[merchantSlug].tsx(168,9): error TS17002: Expected corresponding JSX closing tag for 'SafeAreaView'.
+app/near-u/[merchantSlug].tsx(169,5): error TS1005: ')' expected.
+app/near-u/[merchantSlug].tsx(170,3): error TS1109: Expression expected.

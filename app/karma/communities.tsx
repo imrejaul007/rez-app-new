@@ -231,7 +231,7 @@ function KarmaCommunitiesScreen() {
     ({ item }: { item: Community }) => (
       <CommunityCard
         community={item}
-        onPress={() => router.push(`/karma/communities/${item.slug}`)}
+        onPress={() => router.push(`/karma/communities/${item.slug}` as any)}
         onFollowToggle={() => handleFollowToggle(item)}
         isFollowing={item.isFollowing}
         followingLoading={followingLoading === item.slug}

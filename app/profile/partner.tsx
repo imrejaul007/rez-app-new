@@ -383,7 +383,7 @@ function PartnerProfilePage() {
   };
 
   const handleContactSupport = () => {
-    router.push('/support/chat' as any as string);
+    router.push('/support/chat' as any);
   };
 
   const handleJackpotMilestonePress = async (milestone: JackpotMilestone) => {
@@ -642,7 +642,7 @@ function PartnerProfilePage() {
           <Pressable
             style={styles.menuButton}
             onPress={() => {
-              router.push('/profile/activity' as any as string);
+              router.push('/profile/activity' as any);
             }}
           >
             <View style={styles.menuButtonInner}>

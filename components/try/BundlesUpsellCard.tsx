@@ -17,7 +17,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
-import { Bundle, getBundleSavings, getBundleDisplayTitle } from './bundleUtils';
+import { Bundle, getBundleSavings, getBundleDisplayTitle } from '@/components/try/bundleUtils';
 
 // =============================================================================
 // PROPS

@@ -286,7 +286,7 @@ function FlashSaleSuccessPage() {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable style={styles.secondaryButton} onPress={() => router.push('/my-vouchers' as any as string)}>
+              <Pressable style={styles.secondaryButton} onPress={() => router.push('/my-vouchers' as any)}>
                 <ThemedText style={styles.secondaryButtonText}>View My Vouchers</ThemedText>
               </Pressable>
             </View>

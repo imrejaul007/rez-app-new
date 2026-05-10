@@ -127,7 +127,7 @@ function MyEventsPage() {
   };
 
   const handleEventPress = (eventId: string) => {
-    router.push({ pathname: '/EventPage', params: { id: eventId } } as any as string);
+    router.push({ pathname: '/EventPage', params: { id: eventId } } as any);
   };
 
   const handleCheckIn = async (booking: EventBooking) => {
@@ -254,7 +254,7 @@ function MyEventsPage() {
           <Ionicons name="lock-closed-outline" size={64} color={C.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Please login to view your events</Text>
-          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any as string)}>
+          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
             <Text style={styles.loginButtonText}>Login</Text>
           </Pressable>
         </View>
@@ -293,7 +293,7 @@ function MyEventsPage() {
         <Ionicons name={icon as any} size={64} color={C.textSecondary} />
         <Text style={styles.emptyTitle}>{title}</Text>
         <Text style={styles.emptySubtitle}>{subtitle}</Text>
-        <Pressable style={styles.exploreButton} onPress={() => router.push('/events' as any as string)}>
+        <Pressable style={styles.exploreButton} onPress={() => router.push('/events' as any)}>
           <Ionicons name="compass-outline" size={18} color={colors.text.inverse} />
           <Text style={styles.exploreButtonText}>Explore Events</Text>
         </Pressable>
@@ -323,7 +323,7 @@ function MyEventsPage() {
             <Text style={styles.headerTitle}>My Events</Text>
             <Text style={styles.headerSubtitle}>Bookings & favorites</Text>
           </View>
-          <Pressable onPress={() => router.push('/events' as any as string)} style={styles.backButton}>
+          <Pressable onPress={() => router.push('/events' as any)} style={styles.backButton}>
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>

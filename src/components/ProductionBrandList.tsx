@@ -242,11 +242,11 @@ const ProductionBrandList = ({ stores, isLoading, error, onRefresh }: Production
   const router = useRouter();
 
   const handleBrandPress = (store: FashionStore) => {
-    router.push(`/MainStorePage?storeId=${store._id}` as string);
+    router.push(`/MainStorePage?storeId=${store._id}` as any);
   };
 
   const handleViewAllPress = () => {
-    router.push('/StoreListPage' as string);
+    router.push('/StoreListPage' as any);
   };
 
   const renderBrand = (store: FashionStore, index: number) => {

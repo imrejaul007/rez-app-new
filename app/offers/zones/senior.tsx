@@ -160,14 +160,14 @@ function SeniorCitizenZonePage() {
   };
 
   const handleDealPress = (offer: ZoneOffer) => {
-    router.push(`/offers/${offer._id}` as any as string);
+    router.push(`/offers/${offer._id}` as any);
   };
 
   const handleVerify = () => {
     router.push({
       pathname: '/profile/verification',
       params: { zone: 'senior' },
-    } as any as string);
+    } as any);
   };
 
   const renderSkeletonCard = () => (

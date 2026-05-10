@@ -195,9 +195,9 @@ function AllOffersPage() {
   const handleOfferPress = useCallback(
     (offer: MallOffer) => {
       if (offer.store) {
-        router.push(`/MainStorePage?storeId=${offer.store._id}` as any as string);
+        router.push(`/MainStorePage?storeId=${offer.store._id}` as any);
       } else if (offer.brand) {
-        router.push(`/mall/brand/${offer.brand.id || offer.brand._id}` as any as string);
+        router.push(`/mall/brand/${offer.brand.id || offer.brand._id}` as any);
       } else {
         // No specific target - stay on offers page (already here)
       }

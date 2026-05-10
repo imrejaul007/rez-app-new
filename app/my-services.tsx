@@ -38,7 +38,7 @@ const MyServicesPage = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleBackPress = useCallback(() => {
-    router.push('/profile' as any as string);
+    router.push('/profile' as any);
   }, [router]);
 
   const mapSubmissionStatus = (status: string): 'active' | 'completed' | 'pending' | 'cancelled' => {

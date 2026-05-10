@@ -305,7 +305,7 @@ const FashionPage: React.FC = () => {
       <Pressable
         key={product.id}
         style={styles.productCard}
-        onPress={() => router.push(`/product-page?cardId=${product._id}&cardType=product` as any as string)}
+        onPress={() => router.push(`/product-page?cardId=${product._id}&cardType=product` as any)}
       >
         <CachedImage source={product.image} style={styles.productImage} contentFit="cover" cachePolicy="memory-disk" />
         {product.cashbackPercentage > 0 && (
@@ -371,7 +371,7 @@ const FashionPage: React.FC = () => {
               <Text style={styles.headerTitle}>Fashion</Text>
               <Text style={styles.headerSubtitle}>Trending styles & collections</Text>
             </View>
-            <Pressable onPress={() => router.push('/cart' as any as string)} style={styles.cartButton}>
+            <Pressable onPress={() => router.push('/cart' as any)} style={styles.cartButton}>
               <Ionicons name="cart-outline" size={24} color={colors.background.primary} />
             </Pressable>
           </View>
@@ -407,7 +407,7 @@ const FashionPage: React.FC = () => {
             <Text style={styles.headerTitle}>Fashion</Text>
             <Text style={styles.headerSubtitle}>Trending styles & collections</Text>
           </View>
-          <Pressable onPress={() => router.push('/cart' as any as string)} style={styles.cartButton}>
+          <Pressable onPress={() => router.push('/cart' as any)} style={styles.cartButton}>
             <Ionicons name="cart-outline" size={24} color={colors.background.primary} />
           </Pressable>
         </View>
@@ -476,7 +476,7 @@ const FashionPage: React.FC = () => {
                     <Pressable
                       key={cat._id}
                       style={styles.categoryCard}
-                      onPress={() => router.push(`/categories/${cat.slug}` as any as string)}
+                      onPress={() => router.push(`/categories/${cat.slug}` as any)}
                     >
                       <View style={styles.categoryIcon}>
                         {cat.icon ? (
@@ -524,7 +524,7 @@ const FashionPage: React.FC = () => {
                       key={tp.id}
                       style={styles.styleCard}
                       onPress={() =>
-                        router.push(`/product-page?cardId=${tp._id}&cardType=product` as any as string)
+                        router.push(`/product-page?cardId=${tp._id}&cardType=product` as any)
                       }
                     >
                       <CachedImage
@@ -551,7 +551,7 @@ const FashionPage: React.FC = () => {
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Top Brands</Text>
                   <Pressable
-                    onPress={() => router.push(`/explore/stores?category=${FASHION_SLUG}` as any as string)}
+                    onPress={() => router.push(`/explore/stores?category=${FASHION_SLUG}` as any)}
                   >
                     <Text style={styles.viewAllText}>View All</Text>
                   </Pressable>
@@ -561,7 +561,7 @@ const FashionPage: React.FC = () => {
                     <Pressable
                       key={store._id}
                       style={styles.brandCard}
-                      onPress={() => router.push(`/store/${store._id}` as any as string)}
+                      onPress={() => router.push(`/store/${store._id}` as any)}
                     >
                       <View style={styles.brandLogoContainer}>
                         {store.logo ? (

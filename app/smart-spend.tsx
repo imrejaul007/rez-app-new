@@ -278,7 +278,7 @@ export default function SmartSpendScreen() {
 
   const handleStorePress = useCallback(
     (storeId: string) => {
-      router.push(`/store-detail?storeId=${storeId}` as any as string);
+      router.push(`/store-detail?storeId=${storeId}` as any);
     },
     [router],
   );

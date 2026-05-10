@@ -186,7 +186,7 @@ function RechargePage() {
     if (!mobileNumber || !isValidE164Length || !amount || !selectedOperator) return;
 
     if (!isAuthenticated) {
-      router.push('/sign-in');
+      router.push('/sign-in' as any);
       return;
     }
 

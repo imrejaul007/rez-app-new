@@ -246,7 +246,7 @@ function CheckInHistoryScreen() {
   const handleRowPress = (tx: CheckInTransaction) => {
     const storeId = tx.metadata?.storeId;
     if (storeId) {
-      router.push(`/store-detail?storeId=${storeId}` as any as string);
+      router.push(`/store-detail?storeId=${storeId}` as any);
     }
   };
 
@@ -276,7 +276,7 @@ function CheckInHistoryScreen() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/profile'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/profile' as any))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >

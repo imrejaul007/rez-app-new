@@ -75,7 +75,7 @@ function NotificationsScreen() {
     ({ item }: { item: NotificationItem }) => (
       <Pressable
         style={styles.notifCard}
-        onPress={() => item.deepLink && router.push(item.deepLink as any as string)}
+        onPress={() => item.deepLink && router.push(item.deepLink as any)}
       >
         <Text style={styles.notifIcon}>{getUrgencyIcon(item.type)}</Text>
         <View style={{ flex: 1 }}>

@@ -212,7 +212,7 @@ function TestPagesScreen() {
                   <Pressable
                     key={page.path}
                     style={styles.pageItem}
-                    onPress={() => router.push(page.path as any as string)}
+                    onPress={() => router.push(page.path as any)}
                   >
                     <View style={[styles.pageIcon, { backgroundColor: category.color + '20' }]}>
                       <Ionicons name={page.icon as any} size={18} color={category.color} />
@@ -233,7 +233,7 @@ function TestPagesScreen() {
               <Pressable
                 key={category.title}
                 style={[styles.quickLinkCard, { borderColor: category.color }]}
-                onPress={() => router.push(category.pages[0].path as any as string)}
+                onPress={() => router.push(category.pages[0].path as any)}
               >
                 <View style={[styles.quickLinkIcon, { backgroundColor: category.color }]}>
                   <Ionicons name={category.pages[0].icon as any} size={20} color={colors.background.primary} />

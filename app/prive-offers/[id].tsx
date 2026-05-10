@@ -117,7 +117,7 @@ function PriveOfferDetailScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
@@ -136,7 +136,7 @@ function PriveOfferDetailScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
@@ -161,7 +161,7 @@ function PriveOfferDetailScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
@@ -307,7 +307,7 @@ function PriveOfferDetailScreen() {
       <View style={styles.ctaContainer}>
         <Pressable
           style={[styles.ctaButton, isOfferExpired ? styles.ctaButtonDisabled : null]}
-          onPress={() => !isOfferExpired && router.push('/prive/redeem' as any as string)}
+          onPress={() => !isOfferExpired && router.push('/prive/redeem' as any)}
           disabled={isOfferExpired}
         >
           <Ionicons

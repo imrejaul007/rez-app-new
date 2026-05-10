@@ -73,7 +73,7 @@ function PriveOffersScreen() {
 
   const renderOffer = useCallback(
     ({ item }: { item: PriveOffer }) => (
-      <Pressable style={styles.offerCard} onPress={() => router.push(`/prive-offers/${item.id}` as any as string)}>
+      <Pressable style={styles.offerCard} onPress={() => router.push(`/prive-offers/${item.id}` as any)}>
         <View style={styles.offerHeader}>
           <View style={styles.brandBadge}>
             <Text style={styles.brandText}>{item.brand}</Text>

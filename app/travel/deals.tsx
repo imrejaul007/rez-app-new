@@ -82,19 +82,19 @@ const HotDealsPage: React.FC = () => {
 
     // Route to appropriate detail page based on category
     if (category === 'flights') {
-      router.push(`/flight/${serviceId}` as any as string);
+      router.push(`/flight/${serviceId}` as any);
     } else if (category === 'hotels') {
-      router.push(`/hotel/${serviceId}` as any as string);
+      router.push(`/hotel/${serviceId}` as any);
     } else if (category === 'trains') {
-      router.push(`/train/${serviceId}` as any as string);
+      router.push(`/train/${serviceId}` as any);
     } else if (category === 'bus') {
-      router.push(`/bus/${serviceId}` as any as string);
+      router.push(`/bus/${serviceId}` as any);
     } else if (category === 'cab') {
-      router.push(`/cab/${serviceId}` as any as string);
+      router.push(`/cab/${serviceId}` as any);
     } else if (category === 'packages') {
-      router.push(`/package/${serviceId}` as any as string);
+      router.push(`/package/${serviceId}` as any);
     } else {
-      router.push(`/product-page?cardId=${serviceId}&cardType=product` as any as string);
+      router.push(`/product-page?cardId=${serviceId}&cardType=product` as any);
     }
   };
 

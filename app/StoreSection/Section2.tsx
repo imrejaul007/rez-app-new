@@ -115,7 +115,7 @@ function Section2({ dynamicData, cardType }: Section2Props) {
           storeId: storeId,
           storeName: storeName,
         },
-      } as any as string);
+      } as any);
     } catch (error: any) {
       platformAlert('Error', 'Unable to view store products');
     }

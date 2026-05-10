@@ -3,7 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import StoreGallerySection from '@/components/store/StoreGallerySection';
-import { UGCSection } from '@/app/MainStoreSection';
+import { UGCSection } from '@/components/main-store-section';
 import { colors } from '@/constants/theme';
 
 interface PhotosTabContentProps {

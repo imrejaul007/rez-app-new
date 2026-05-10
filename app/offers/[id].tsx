@@ -252,7 +252,7 @@ function OfferDetailPage() {
       platformAlertConfirm(
         'Authentication Required',
         'Please sign in to redeem this offer',
-        () => router.push('/sign-in'),
+        () => router.push('/sign-in' as any),
         'Sign In',
       );
       return;
@@ -273,7 +273,7 @@ function OfferDetailPage() {
           router.push({
             pathname: '/profile/verification',
             params: { zone: requiredZone },
-          } as any as string),
+          } as any),
         'Verify Now',
       );
       return;
@@ -377,7 +377,7 @@ function OfferDetailPage() {
 
   const handleStorePress = () => {
     if (offer?.store?.id) {
-      router.push(`/MainStorePage?storeId=${offer.store.id}` as any as string);
+      router.push(`/MainStorePage?storeId=${offer.store.id}` as any);
     }
   };
 
@@ -639,7 +639,7 @@ function OfferDetailPage() {
                     router.push({
                       pathname: '/profile/verification',
                       params: { zone: requiredZone },
-                    } as any as string)
+                    } as any)
                   }
                 >
                   <ThemedText style={styles.verifyNowButtonText}>Verify</ThemedText>
@@ -810,7 +810,7 @@ function OfferDetailPage() {
             <ThemedText style={styles.voucherCodeSmall}>Code: {existingVoucherCode}</ThemedText>
             <Pressable
               style={styles.viewVouchersButton}
-              onPress={() => router.push('/my-vouchers')}
+              onPress={() => router.push('/my-vouchers' as any)}
               accessibilityLabel="View my vouchers"
               accessibilityRole="button"
               accessibilityHint="Double tap to view all your vouchers"
@@ -835,7 +835,7 @@ function OfferDetailPage() {
                 router.push({
                   pathname: '/profile/verification',
                   params: { zone: requiredZone },
-                } as any as string);
+                } as any);
               }
             }}
             accessibilityLabel={verificationStatus?.status === 'pending' ? 'Verification pending' : 'Verify to unlock'}
@@ -954,7 +954,7 @@ function OfferDetailPage() {
                 style={[styles.modalButton, styles.modalButtonConfirm]}
                 onPress={() => {
                   setShowSuccessModal(false);
-                  router.push('/my-vouchers');
+                  router.push('/my-vouchers' as any);
                 }}
               >
                 <ThemedText style={styles.modalButtonTextConfirm}>View Vouchers</ThemedText>

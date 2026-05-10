@@ -190,12 +190,12 @@ function DealSuccessPage() {
               <ThemedText style={styles.primaryBtnText}>Try Again</ThemedText>
             </LinearGradient>
           </Pressable>
-          <Pressable style={styles.secondaryBtn} onPress={() => router.replace('/my-deals' as any as string)}>
+          <Pressable style={styles.secondaryBtn} onPress={() => router.replace('/my-deals' as any)}>
             <ThemedText style={styles.secondaryBtnText}>Check My Deals</ThemedText>
           </Pressable>
           <Pressable
             style={styles.backLink}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <ThemedText style={styles.backLinkText}>Go Back</ThemedText>
           </Pressable>
@@ -257,13 +257,13 @@ function DealSuccessPage() {
 
       {/* Bottom Buttons */}
       <View style={styles.bottomButtons}>
-        <Pressable style={styles.primaryButton} onPress={() => router.replace('/my-deals' as any as string)}>
+        <Pressable style={styles.primaryButton} onPress={() => router.replace('/my-deals' as any)}>
           <LinearGradient colors={[Colors.warning, colors.warningScale[700]]} style={styles.primaryButtonGradient}>
             <ThemedText style={styles.primaryButtonText}>View My Deals</ThemedText>
           </LinearGradient>
         </Pressable>
 
-        <Pressable style={styles.secondaryButton} onPress={() => router.replace('/' as any as string)}>
+        <Pressable style={styles.secondaryButton} onPress={() => router.replace('/' as any)}>
           <ThemedText style={styles.secondaryButtonText}>Back to Home</ThemedText>
         </Pressable>
       </View>

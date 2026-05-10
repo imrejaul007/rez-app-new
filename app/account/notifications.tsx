@@ -339,7 +339,7 @@ function NotificationsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -357,7 +357,7 @@ function NotificationsScreen() {
         {/* Push Notifications */}
         <Pressable
           style={styles.notificationSection}
-          onPress={() => router.push('/account/push-notifications')}
+          onPress={() => router.push('/account/push-notifications' as any)}
           accessibilityLabel="Push notifications settings"
           accessibilityRole="button"
           accessibilityHint="Navigate to manage push notification preferences"
@@ -375,7 +375,7 @@ function NotificationsScreen() {
         {/* Email Notifications */}
         <Pressable
           style={styles.notificationSection}
-          onPress={() => router.push('/account/email-notifications')}
+          onPress={() => router.push('/account/email-notifications' as any)}
           accessibilityLabel="Email notifications settings"
           accessibilityRole="button"
           accessibilityHint="Navigate to manage email notification settings"
@@ -393,7 +393,7 @@ function NotificationsScreen() {
         {/* SMS Notifications */}
         <Pressable
           style={styles.notificationSection}
-          onPress={() => router.push('/account/sms-notifications')}
+          onPress={() => router.push('/account/sms-notifications' as any)}
           accessibilityLabel="SMS notifications settings"
           accessibilityRole="button"
           accessibilityHint="Navigate to manage SMS notification preferences"
@@ -411,7 +411,7 @@ function NotificationsScreen() {
         {/* Marketing Messages */}
         <Pressable
           style={styles.notificationSection}
-          onPress={() => router.push('/account/marketing-inbox' as any as string)}
+          onPress={() => router.push('/account/marketing-inbox' as any)}
           accessibilityLabel="Marketing messages"
           accessibilityRole="button"
           accessibilityHint="Navigate to view promotional and merchant broadcast messages"
@@ -429,7 +429,7 @@ function NotificationsScreen() {
         {/* Notification History */}
         <Pressable
           style={styles.notificationSection}
-          onPress={() => router.push('/account/notification-history')}
+          onPress={() => router.push('/account/notification-history' as any)}
           accessibilityLabel="Notification history"
           accessibilityRole="button"
           accessibilityHint="Navigate to view all past notifications"

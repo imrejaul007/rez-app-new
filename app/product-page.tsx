@@ -716,7 +716,7 @@ function StorePage() {
     try {
       // Auth guard — redirect to sign-in if not logged in
       if (!isAuthenticated) {
-        router.push('/sign-in' as any as string);
+        router.push('/sign-in' as any);
         return;
       }
 
@@ -800,7 +800,7 @@ function StorePage() {
   const handleVisitStore = useCallback(() => {
     const storeId = cardData?.store?._id || cardData?.store?.id || cardData?.storeId;
     if (storeId) {
-      router.push(`/MainStorePage?storeId=${storeId}` as any as string);
+      router.push(`/MainStorePage?storeId=${storeId}` as any);
     }
   }, [cardData?.store?._id, cardData?.store?.id, cardData?.storeId, router]);
 
@@ -809,7 +809,7 @@ function StorePage() {
       router.push({
         pathname: '/product-page',
         params: { cardId: prodId, cardType: 'product' },
-      } as any as string);
+      } as any);
     },
     [router],
   );

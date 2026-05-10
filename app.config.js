@@ -47,9 +47,7 @@ module.exports = {
     orientation: 'portrait',
     icon: './assets/images/icon.png',
     scheme: 'rezapp', // Deep link scheme — must match EXPO_PUBLIC_DEEP_LINK_SCHEME=rezapp
-    // Explicit entry point: prevents Metro from falling back to expo/AppEntry.js
-    // which requires a root App.tsx. Expo Router apps use expo-router/entry instead.
-    entryPoint: 'expo-router/entry',
+    // NOTE: entryPoint defaults to App.tsx which re-exports expo-router/entry
     userInterfaceStyle: 'light',
     newArchEnabled: false,
     ios: {

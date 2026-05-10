@@ -120,13 +120,13 @@ const LockDealsPage: React.FC = () => {
 
   const handleDealPress = useCallback(
     (deal: LockPriceDeal) => {
-      router.push(`/lock-deals/${deal._id}` as any as string);
+      router.push(`/lock-deals/${deal._id}` as any);
     },
     [router],
   );
 
   const handleMyLocksPress = () => {
-    router.push('/lock-deals/my-locks' as any as string);
+    router.push('/lock-deals/my-locks' as any);
   };
 
   const getDaysRemaining = (validUntil: string) => {

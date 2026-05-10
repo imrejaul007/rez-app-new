@@ -199,7 +199,7 @@ const MyDealsPage: React.FC = () => {
 
   const handleDealPress = (redemption: DealRedemption) => {
     if (redemption.campaignId && redemption.dealIndex !== undefined) {
-      router.push(`/deals/${redemption.campaignId}/${redemption.dealIndex}` as any as string);
+      router.push(`/deals/${redemption.campaignId}/${redemption.dealIndex}` as any);
     }
   };
 

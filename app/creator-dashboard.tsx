@@ -245,7 +245,7 @@ function CreatorDashboard() {
 
         {/* Quick Actions */}
         <View style={styles.actionsRow}>
-          <Pressable style={styles.actionCard} onPress={() => router.push('/submit-pick')}>
+          <Pressable style={styles.actionCard} onPress={() => router.push('/submit-pick' as any)}>
             <View style={[styles.actionIcon, { backgroundColor: colors.background.tertiary }]}>
               <Ionicons name="add-circle" size={24} color={colors.nileBlue} />
             </View>
@@ -266,14 +266,14 @@ function CreatorDashboard() {
             <Text style={styles.actionText}>My Profile</Text>
           </Pressable>
 
-          <Pressable style={styles.actionCard} onPress={() => router.push('/creator/edit')}>
+          <Pressable style={styles.actionCard} onPress={() => router.push('/creator/edit' as any)}>
             <View style={[styles.actionIcon, { backgroundColor: Colors.warningScale[50] }]}>
               <Ionicons name="create-outline" size={24} color={Colors.gold} />
             </View>
             <Text style={styles.actionText}>Edit Profile</Text>
           </Pressable>
 
-          <Pressable style={styles.actionCard} onPress={() => router.push('/my-earnings')}>
+          <Pressable style={styles.actionCard} onPress={() => router.push('/my-earnings' as any)}>
             <View style={[styles.actionIcon, { backgroundColor: Colors.successScale[100] }]}>
               <Ionicons name="stats-chart" size={24} color={Colors.success} />
             </View>

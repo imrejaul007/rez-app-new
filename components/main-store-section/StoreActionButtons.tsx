@@ -34,7 +34,7 @@ function StoreActionButtons({ storeId, onScanPay, onUploadBill, onViewOffers }: 
     if (onScanPay) {
       onScanPay();
     } else {
-      router.push('/pay-in-store');
+      router.push('/pay-in-store' as any);
     }
   };
 
@@ -43,7 +43,7 @@ function StoreActionButtons({ storeId, onScanPay, onUploadBill, onViewOffers }: 
     if (onUploadBill) {
       onUploadBill();
     } else {
-      router.push(storeId ? (`/bill-upload?storeId=${storeId}` as any as string) : '/bill-upload');
+      router.push(storeId ? (`/bill-upload?storeId=${storeId}` as any) : '/bill-upload' as any);
     }
   };
 
@@ -52,7 +52,7 @@ function StoreActionButtons({ storeId, onScanPay, onUploadBill, onViewOffers }: 
     if (onViewOffers) {
       onViewOffers();
     } else if (storeId) {
-      router.push(`/store/${storeId}` as any as string);
+      router.push(`/store/${storeId}` as any);
     }
   };
 

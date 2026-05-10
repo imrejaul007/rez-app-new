@@ -126,7 +126,7 @@ function PaymentSuccessScreen() {
       // Show coins earned popup if any coins were earned
       if (currentRewards.coinsEarned > 0) {
         showCoinsEarned(currentRewards.coinsEarned, `${BRAND.COIN_NAME} earned from purchase`, () =>
-          router.push('/wallet-screen'),
+          router.push('/wallet-screen' as any),
         );
       }
       // Show cashback popup if any cashback was earned (after coins popup)
@@ -134,7 +134,7 @@ function PaymentSuccessScreen() {
         showCashbackEarned(
           currentRewards.cashbackEarned,
           `${currentSymbol}${currentRewards.cashbackEarned} added to your wallet`,
-          () => router.push('/wallet-screen'),
+          () => router.push('/wallet-screen' as any),
         );
       }
     }, 1500); // Show popup 1.5s after screen loads

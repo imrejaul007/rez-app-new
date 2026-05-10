@@ -51,17 +51,17 @@ const ProductionQuickButtons = () => {
 
   const handleNewOffer = () => {
     // Navigate to offers page with new arrivals
-    router.push('/offers/view-all?category=new_arrival');
+    router.push('/offers/view-all?category=new_arrival' as any);
   };
 
   const handleRezCoin = () => {
     // Navigate to coin page (already working)
-    router.push('/coins');
+    router.push('/coins' as any);
   };
 
   const handleTopRated = () => {
     // Navigate to stores page sorted by rating
-    router.push('/StoreListPage?sortBy=rating&order=desc');
+    router.push('/StoreListPage?sortBy=rating&order=desc' as any);
   };
 
   const quickButtons: QuickButton[] = [

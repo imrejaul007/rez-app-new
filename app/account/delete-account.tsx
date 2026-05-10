@@ -138,7 +138,7 @@ function DeleteAccountPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             accessibilityHint="Double tap to return to previous screen"
@@ -256,7 +256,7 @@ function DeleteAccountPage() {
           <View style={styles.alternativesList}>
             <Pressable
               style={styles.alternativeItem}
-              onPress={() => router.push('/account/settings')}
+              onPress={() => router.push('/account/settings' as any)}
               accessibilityRole="button"
               accessibilityLabel="Update your privacy settings"
               accessibilityHint="Double tap to adjust your account privacy settings instead of deleting"
@@ -266,7 +266,7 @@ function DeleteAccountPage() {
             </Pressable>
             <Pressable
               style={styles.alternativeItem}
-              onPress={() => router.push('/account/notifications')}
+              onPress={() => router.push('/account/notifications' as any)}
               accessibilityRole="button"
               accessibilityLabel="Disable notifications"
               accessibilityHint="Double tap to turn off notifications instead of deleting your account"
@@ -276,7 +276,7 @@ function DeleteAccountPage() {
             </Pressable>
             <Pressable
               style={styles.alternativeItem}
-              onPress={() => router.push('/support')}
+              onPress={() => router.push('/support' as any)}
               accessibilityRole="button"
               accessibilityLabel="Contact support for help"
               accessibilityHint="Double tap to get help from our support team"

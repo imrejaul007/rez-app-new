@@ -67,19 +67,19 @@ function ProfilePage() {
     (item: ProfileIconGridItem) => {
       switch (item.id) {
         case 'product':
-          router.push('/my-products');
+          router.push('/my-products' as any);
           break;
         case 'service':
-          router.push('/my-services');
+          router.push('/my-services' as any);
           break;
         case 'voucher':
-          router.push('/my-vouchers');
+          router.push('/my-vouchers' as any);
           break;
         case 'earns':
-          router.push('/my-earnings');
+          router.push('/my-earnings' as any);
           break;
         default:
-          if (item.route) router.push(item.route as any as string);
+          if (item.route) router.push(item.route as any);
           break;
       }
     },
@@ -90,58 +90,58 @@ function ProfilePage() {
     (item: ProfileMenuListItem) => {
       switch (item.id) {
         case 'order_transaction_history':
-          router.push('/tracking');
+          router.push('/tracking' as any);
           break;
         case 'bookings':
-          router.push('/my-bookings');
+          router.push('/my-bookings' as any);
           break;
         case 'incomplete_transaction':
-          router.push('/transactions/incomplete');
+          router.push('/transactions/incomplete' as any);
           break;
         case 'home_delivery':
-          router.push('/home-delivery');
+          router.push('/home-delivery' as any);
           break;
         case 'rezcoin':
-          router.push('/wallet-screen');
+          router.push('/wallet-screen' as any);
           break;
         case 'group_buy':
-          router.push('/group-buy');
+          router.push('/group-buy' as any);
           break;
         case 'order_tracking':
-          router.push('/tracking');
+          router.push('/tracking' as any);
           break;
         case 'review':
-          router.push('/my-reviews');
+          router.push('/my-reviews' as any);
           break;
         case 'social_media':
-          router.push('/social-media');
+          router.push('/social-media' as any);
           break;
         case 'achievements':
-          router.push('/profile/achievements');
+          router.push('/profile/achievements' as any);
           break;
         case 'saved_addresses':
-          router.push('/account/addresses');
+          router.push('/account/addresses' as any);
           break;
         case 'notification_preferences':
-          router.push('/account/notifications');
+          router.push('/account/notifications' as any);
           break;
         case 'checkin_history':
-          router.push('/checkin-history');
+          router.push('/checkin-history' as any);
           break;
         case 'settings':
-          router.push('/settings');
+          router.push('/settings' as any);
           break;
         case 'notifications_inbox':
-          router.push('/notifications');
+          router.push('/notifications' as any);
           break;
         case 'nearby_map':
-          router.push('/map');
+          router.push('/map' as any);
           break;
         case 'bill_simulator':
-          router.push('/bill-simulator');
+          router.push('/bill-simulator' as any);
           break;
         default:
-          if (item.route) router.push(item.route as any as string);
+          if (item.route) router.push(item.route as any);
           break;
       }
     },
@@ -149,7 +149,7 @@ function ProfilePage() {
   );
 
   const handleLocationSettingsPress = useCallback(() => {
-    router.push('/location/settings');
+    router.push('/location/settings' as any);
   }, [router]);
 
   // ── Render helpers ────────────────────────────────────────────────────────
@@ -258,7 +258,7 @@ function ProfilePage() {
           <View style={styles.headerActions}>
             <Pressable
               style={styles.actionButton}
-              onPress={() => router.push('/profile/qr-code')}
+              onPress={() => router.push('/profile/qr-code' as any)}
               accessibilityLabel="View QR Code"
               accessibilityRole="button"
             >
@@ -266,7 +266,7 @@ function ProfilePage() {
             </Pressable>
             <Pressable
               style={styles.actionButton}
-              onPress={() => router.push('/profile/edit')}
+              onPress={() => router.push('/profile/edit' as any)}
               accessibilityLabel="Edit profile"
               accessibilityRole="button"
             >
@@ -338,7 +338,7 @@ function ProfilePage() {
               )}
               <Pressable
                 style={styles.editProfileButton}
-                onPress={() => router.push('/profile/edit')}
+                onPress={() => router.push('/profile/edit' as any)}
                 accessibilityRole="button"
                 accessibilityLabel="Edit profile"
               >
@@ -437,7 +437,7 @@ function ProfilePage() {
           {profileCompletion < 100 && (
             <Pressable
               style={styles.completionCard}
-              onPress={() => router.push('/profile/edit')}
+              onPress={() => router.push('/profile/edit' as any)}
               accessibilityLabel={`Profile completion ${profileCompletion} percent`}
               accessibilityRole="button"
             >
@@ -474,7 +474,7 @@ function ProfilePage() {
           {/* Invite Friends card */}
           <Pressable
             style={styles.inviteFriendsCard}
-            onPress={() => router.push('/invite-friends')}
+            onPress={() => router.push('/invite-friends' as any)}
             accessibilityLabel="Invite Friends"
             accessibilityRole="button"
           >
@@ -497,7 +497,7 @@ function ProfilePage() {
           {/* Referral Program Card */}
           <Pressable
             style={styles.referralCard}
-            onPress={() => router.push('/referral')}
+            onPress={() => router.push('/referral' as any)}
             accessibilityLabel="Refer and Earn 100 rupees"
             accessibilityRole="button"
           >
@@ -527,7 +527,7 @@ function ProfilePage() {
           {/* Loyalty Points Card */}
           <Pressable
             style={styles.loyaltyCard}
-            onPress={() => router.push('/profile/achievements')}
+            onPress={() => router.push('/profile/achievements' as any)}
             accessibilityLabel="Loyalty points"
             accessibilityRole="button"
           >
@@ -569,7 +569,7 @@ function ProfilePage() {
               return (
                 <Pressable
                   style={styles.rezScoreCard}
-                  onPress={() => router.push('/rez-score')}
+                  onPress={() => router.push('/rez-score' as any)}
                   accessibilityRole="button"
                   accessibilityLabel={`REZ Score ${score}`}
                 >
@@ -629,7 +629,7 @@ function ProfilePage() {
           {/* Tier Benefits Card */}
           <Pressable
             style={styles.tierBenefitsCard}
-            onPress={() => router.push('/tier-benefits')}
+            onPress={() => router.push('/tier-benefits' as any)}
             accessibilityLabel="Tier Benefits"
             accessibilityRole="button"
           >
@@ -648,7 +648,7 @@ function ProfilePage() {
           {/* REZ Premium Card */}
           <Pressable
             style={styles.premiumCard}
-            onPress={() => router.push('/premium')}
+            onPress={() => router.push('/premium' as any)}
             accessibilityLabel="REZ Premium"
             accessibilityRole="button"
           >
@@ -676,7 +676,7 @@ function ProfilePage() {
           {/* Transaction History Card */}
           <Pressable
             style={styles.transactionHistoryCard}
-            onPress={() => router.push('/transaction-history')}
+            onPress={() => router.push('/transaction-history' as any)}
             accessibilityLabel="Transaction History"
             accessibilityRole="button"
           >
@@ -697,7 +697,7 @@ function ProfilePage() {
           {/* Partner Program Card */}
           <Pressable
             style={styles.partnerCard}
-            onPress={() => router.push('/profile/partner')}
+            onPress={() => router.push('/profile/partner' as any)}
             accessibilityLabel="Partner Program"
             accessibilityRole="button"
           >
@@ -752,7 +752,7 @@ function ProfilePage() {
         <View style={styles.section}>
           <Pressable
             style={styles.menuItem}
-            onPress={() => router.push('/notifications')}
+            onPress={() => router.push('/notifications' as any)}
             accessibilityLabel="Notifications"
             accessibilityRole="button"
           >
@@ -769,7 +769,7 @@ function ProfilePage() {
           </Pressable>
           <Pressable
             style={styles.menuItem}
-            onPress={() => router.push('/map')}
+            onPress={() => router.push('/map' as any)}
             accessibilityLabel="Nearby Map"
             accessibilityRole="button"
           >
@@ -786,7 +786,7 @@ function ProfilePage() {
           </Pressable>
           <Pressable
             style={styles.menuItem}
-            onPress={() => router.push('/bill-simulator')}
+            onPress={() => router.push('/bill-simulator' as any)}
             accessibilityLabel="Bill Simulator"
             accessibilityRole="button"
           >
@@ -814,7 +814,7 @@ function ProfilePage() {
             <View style={styles.statsHeader}>
               <ThemedText style={styles.statsTitle}>Your Activity</ThemedText>
               <Pressable
-                onPress={() => router.push('/profile/activity')}
+                onPress={() => router.push('/profile/activity' as any)}
                 style={styles.viewAllButton}
                 accessibilityLabel="View all activity"
                 accessibilityRole="button"
@@ -829,7 +829,7 @@ function ProfilePage() {
               <View style={styles.statsGrid}>
                 <Pressable
                   style={styles.statItem}
-                  onPress={() => router.push('/earnings-history')}
+                  onPress={() => router.push('/earnings-history' as any)}
                   accessibilityRole="button"
                 >
                   <ThemedText style={styles.statNumber}>{statistics.orders?.total || 0}</ThemedText>
@@ -837,7 +837,7 @@ function ProfilePage() {
                 </Pressable>
                 <Pressable
                   style={styles.statItem}
-                  onPress={() => router.push('/wallet-screen')}
+                  onPress={() => router.push('/wallet-screen' as any)}
                   accessibilityRole="button"
                 >
                   <ThemedText style={styles.statNumber}>
@@ -848,7 +848,7 @@ function ProfilePage() {
                 </Pressable>
                 <Pressable
                   style={styles.statItem}
-                  onPress={() => router.push('/profile/achievements')}
+                  onPress={() => router.push('/profile/achievements' as any)}
                   accessibilityRole="button"
                 >
                   <ThemedText style={styles.statNumber}>

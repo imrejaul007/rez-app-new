@@ -585,7 +585,7 @@ function TrainDetailsPage() {
               </View>
               <Pressable
                 style={styles.viewStoreButton}
-                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as any as string)}
+                onPress={() => router.push(`/MainStorePage?storeId=${train.store.id}` as any)}
               >
                 <Text style={styles.viewStoreButtonText}>View</Text>
                 <Ionicons name="chevron-forward" size={16} color={Colors.gold} />

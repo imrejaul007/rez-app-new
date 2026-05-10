@@ -303,7 +303,7 @@ function AccountRecoveryPage() {
             <View style={styles.headerContent}>
               <Pressable
                 style={styles.closeButton}
-                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               >
                 <Ionicons name="close" size={24} color={colors.background.primary} />
               </Pressable>

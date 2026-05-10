@@ -279,14 +279,7 @@ const MenuPageScreen: React.FC = () => {
     if (!item.isAvailable) {
       return;
     }
-    router.push({
-      pathname: '/store/order',
-      params: {
-        storeSlug: params.storeSlug,
-        itemId: item.id,
-        ...(params.tableNumber ? { tableNumber: params.tableNumber } : {}),
-      },
-    });
+    router.push(`/store/order?storeSlug=${params.storeSlug}&itemId=${item.id}` as any);
   };
 
   const filteredCategories = storeInfo?.categories
@@ -311,7 +304,7 @@ const MenuPageScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <Stack.Screen options={{ title: 'Menu' }} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.brand.primary} />
+          <ActivityIndicator size="large" color={Colors.primary} />
           <Text style={styles.loadingText}>Loading menu...</Text>
         </View>
       </SafeAreaView>
@@ -357,7 +350,7 @@ const MenuPageScreen: React.FC = () => {
       >
         {/* Store Header */}
         <LinearGradient
-          colors={[colors.brand.nileBlue, colors.brand.nileBlueDark]}
+          colors={[colors.nileBlue, colors.brand.navyDark]}
           style={styles.headerGradient}
         >
           <View style={styles.storeHeader}>
@@ -532,7 +525,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: Colors.brand.primary,
+    backgroundColor: Colors.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -543,7 +536,7 @@ const styles = StyleSheet.create({
     color: Colors.white,
   },
   tableBanner: {
-    backgroundColor: Colors.brand.primary,
+    backgroundColor: Colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -551,7 +544,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   tableBannerText: {
-    ...Typography.subtitle,
+    ...Typography.body,
     color: Colors.white,
     fontWeight: '600',
   },
@@ -614,8 +607,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border.default,
   },
   categoryPillActive: {
-    backgroundColor: Colors.brand.primary,
-    borderColor: Colors.brand.primary,
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
   },
   categoryPillText: {
     ...Typography.caption,
@@ -654,7 +647,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   menuItemName: {
-    ...Typography.subtitle,
+    ...Typography.body,
     color: colors.text.primary,
   },
   popularBadge: {
@@ -684,8 +677,8 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   menuItemPrice: {
-    ...Typography.subtitle,
-    color: Colors.brand.primary,
+    ...Typography.body,
+    color: Colors.primary,
     fontWeight: '700',
   },
   unavailableText: {

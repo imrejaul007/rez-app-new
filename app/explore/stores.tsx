@@ -179,7 +179,7 @@ const ExploreStoresPage = () => {
   }, [fetchStores]);
 
   const navigateTo = (path: string) => {
-    router.push(path as any as string);
+    router.push(path as any);
   };
 
   // Stores are already filtered by category from the API call, apply local sort

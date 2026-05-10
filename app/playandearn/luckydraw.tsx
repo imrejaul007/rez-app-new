@@ -258,7 +258,7 @@ const LuckyDraw = () => {
           <Text style={styles.headerSubtitle}>Spin once daily, win big!</Text>
         </View>
 
-        <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any as string)}>
+        <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any)}>
           <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
           <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
         </Pressable>
@@ -355,7 +355,7 @@ const LuckyDraw = () => {
               </View>
 
               <Pressable
-                onPress={() => router.push('/playandearn' as any as string)}
+                onPress={() => router.push('/playandearn' as any)}
                 style={styles.secondaryAction}
               >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
@@ -379,7 +379,7 @@ const LuckyDraw = () => {
                 </LinearGradient>
               </Pressable>
               <Pressable
-                onPress={() => router.push('/playandearn' as any as string)}
+                onPress={() => router.push('/playandearn' as any)}
                 style={styles.secondaryAction}
               >
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />

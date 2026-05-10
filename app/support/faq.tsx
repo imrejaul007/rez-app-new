@@ -197,13 +197,13 @@ function FAQPage() {
       router.back();
     } else {
       // If no previous screen (e.g., page was refreshed), navigate to account page
-      router.push('/account' as any as string);
+      router.push('/account' as any);
     }
   };
 
   const handleContactSupport = () => {
     // Navigate to support hub for live chat/ticket creation
-    router.push('/support' as any as string);
+    router.push('/support' as any);
   };
 
   const getCategoryColor = (category: string) => {

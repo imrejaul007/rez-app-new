@@ -145,7 +145,7 @@ function ComparePage() {
     async (productId: string) => {
       if (!isAuthenticated) {
         platformAlertSimple('Login Required', 'Please login to compare products');
-        router.push('/sign-in' as any as string);
+        router.push('/sign-in' as any);
         return;
       }
 
@@ -170,7 +170,7 @@ function ComparePage() {
           }
         } else {
           // Create new comparison (need at least 2 products, so navigate to search for now)
-          router.push('/search?mode=compare');
+          router.push('/search?mode=compare' as any);
         }
       } catch (error: any) {
         platformAlertSimple('Error', error.message || 'Failed to add product to comparison');
@@ -196,7 +196,7 @@ function ComparePage() {
       platformAlertSimple('Limit Reached', 'You can compare up to 5 products at once');
       return;
     }
-    router.push('/search?mode=compare');
+    router.push('/search?mode=compare' as any);
   };
 
   const handleDeleteComparison = useCallback(async () => {
@@ -270,7 +270,7 @@ function ComparePage() {
   );
 
   const handleBuy = (item: CompareItem) => {
-    router.push(`/product-page?productId=${item.productId}` as any as string);
+    router.push(`/product-page?productId=${item.productId}` as any);
   };
 
   // Loading state
@@ -280,7 +280,7 @@ function ComparePage() {
         <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
         <View style={styles.header}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
@@ -300,7 +300,7 @@ function ComparePage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />

@@ -226,7 +226,7 @@ function KarmaScanScreen() {
             </Pressable>
             <Pressable
               style={styles.doneBtn}
-              onPress={() => router.push(activeEventId ? `/karma/event/${activeEventId}` : '/karma/home')}
+              onPress={() => router.push(activeEventId ? `/karma/event/${activeEventId}` : '/karma/home' as any)}
             >
               <Text style={styles.doneBtnText}>{activeEventId ? 'Back to Event' : 'Go to Home'}</Text>
             </Pressable>

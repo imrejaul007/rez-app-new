@@ -485,7 +485,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
       icon: entry.icon,
       title: entry.title,
       subtitle: entry.subtitle,
-      onPress: () => router.push(entry.route as any as string),
+      onPress: () => router.push(entry.route as any),
       badge: 'VERIFIED',
     };
   }, [segment, router]);
@@ -499,21 +499,21 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
         icon: 'person-outline' as const,
         title: 'Complete Profile',
         subtitle: `${completionStatus?.completionPercentage || 0}% complete`,
-        onPress: () => router.push('/profile/edit'),
+        onPress: () => router.push('/profile/edit' as any),
       },
       {
         id: 'savings-goals',
         icon: 'flag-outline' as const,
         title: 'Savings Goals',
         subtitle: 'Track & hit your targets',
-        onPress: () => router.push('/savings-goals'),
+        onPress: () => router.push('/savings-goals' as any),
       },
       {
         id: 'scratch-card',
         icon: 'ticket-outline' as const,
         title: 'Scratch Card',
         subtitle: 'Win coins & discounts',
-        onPress: () => router.push('/scratch-card'),
+        onPress: () => router.push('/scratch-card' as any),
         badge: 'NEW',
       },
       {
@@ -521,35 +521,35 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
         icon: 'people-outline' as const,
         title: 'Refer & Earn',
         subtitle: 'Invite friends, earn coins',
-        onPress: () => router.push('/referral'),
+        onPress: () => router.push('/referral' as any),
       },
       {
         id: 'orders',
         icon: 'receipt-outline' as const,
         title: 'Order History',
         subtitle: 'View order details',
-        onPress: () => router.push('/order-history'),
+        onPress: () => router.push('/order-history' as any),
       },
       {
         id: 'wishlist',
         icon: 'heart-outline' as const,
         title: 'Wishlist',
         subtitle: 'All your Favorites',
-        onPress: () => router.push('/wishlist'),
+        onPress: () => router.push('/wishlist' as any),
       },
       {
         id: 'address',
         icon: 'location-outline' as const,
         title: 'Saved Address',
         subtitle: 'Edit, add, delete your address',
-        onPress: () => router.push('/account/addresses'),
+        onPress: () => router.push('/account/addresses' as any),
       },
       {
         id: 'ring-sizer',
         icon: 'resize-outline' as const,
         title: 'Ring Sizer',
         subtitle: 'Check your ring size',
-        onPress: () => router.push('/ring-sizer'),
+        onPress: () => router.push('/ring-sizer' as any),
       },
     ],
     [completionStatus, router, segmentShortcut],
@@ -631,7 +631,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             </Text>
             <Pressable
               style={[styles.retryButton, { backgroundColor: Colors.brand.purple }]}
-              onPress={() => router.push('/onboarding/profile' as any as string)}
+              onPress={() => router.push('/onboarding/profile' as any)}
               accessibilityLabel="Complete your profile"
               accessibilityRole="button"
             >
@@ -692,7 +692,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <Pressable
               style={styles.settingsButton}
-              onPress={() => router.push('/wallet/settings')}
+              onPress={() => router.push('/wallet/settings' as any)}
               accessibilityLabel="Wallet settings"
               accessibilityRole="button"
             >
@@ -713,7 +713,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           {/* Pending Cashback Banner — shown prominently when there are pending rewards */}
           {(walletData.pendingRewards > 0 || walletData.cashbackBalance > 0) && (
             <Pressable
-              onPress={() => router.push('/transaction-history')}
+              onPress={() => router.push('/transaction-history' as any)}
               style={({ pressed }) => ({
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -770,7 +770,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
           {/* REZ Cash identity entry point */}
           <Pressable
-            onPress={() => router.push('/rez-cash')}
+            onPress={() => router.push('/rez-cash' as any)}
             style={({ pressed }) => [
               {
                 flexDirection: 'row',
@@ -843,7 +843,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <CoinExpiryBanner
               expiringCount={expiringAmount}
               daysLeft={minDaysLeft}
-              onPress={() => router.push('/near-u/map')}
+              onPress={() => router.push('/near-u/map' as any)}
             />
           )}
 
@@ -869,7 +869,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                   borderColor: expiryBannerStyle.borderColor,
                 },
               ]}
-              onPress={() => router.push('/wallet/expiry-tracker')}
+              onPress={() => router.push('/wallet/expiry-tracker' as any)}
               accessibilityLabel={`${expiringLabel} — tap to view expiry details`}
               accessibilityRole="button"
             >
@@ -1003,7 +1003,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                 color: COIN_TYPES.branded.color,
                 isActive: true,
               }}
-              onPress={() => router.push('/BrandedCoinsScreen')}
+              onPress={() => router.push('/BrandedCoinsScreen' as any)}
             />
           )}
 
@@ -1167,7 +1167,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <View style={sprint10Styles.quickActionsRow}>
               <Pressable
                 style={sprint10Styles.quickActionBtn}
-                onPress={() => router.push('/redeem-coins')}
+                onPress={() => router.push('/redeem-coins' as any)}
                 accessibilityLabel="Redeem Coins"
                 accessibilityRole="button"
               >
@@ -1178,7 +1178,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               </Pressable>
               <Pressable
                 style={sprint10Styles.quickActionBtn}
-                onPress={() => router.push('/group-buy')}
+                onPress={() => router.push('/group-buy' as any)}
                 accessibilityLabel="Group Buy"
                 accessibilityRole="button"
               >
@@ -1189,7 +1189,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               </Pressable>
               <Pressable
                 style={sprint10Styles.quickActionBtn}
-                onPress={() => router.push('/transaction-history')}
+                onPress={() => router.push('/transaction-history' as any)}
                 accessibilityLabel="Transaction History"
                 accessibilityRole="button"
               >
@@ -1207,7 +1207,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               <View style={sprint10Styles.recentTxHeader}>
                 <Text style={sprint10Styles.breakdownTitle}>Recent Transactions</Text>
                 <Pressable
-                  onPress={() => router.push('/transaction-history')}
+                  onPress={() => router.push('/transaction-history' as any)}
                   accessibilityLabel="View all transactions"
                   accessibilityRole="button"
                 >
@@ -1256,12 +1256,12 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           <TransactionCTA
             onPress={() => {
               trackTransactionViewed();
-              router.push('/earnings-history');
+              router.push('/earnings-history' as any);
             }}
           />
 
           {/* Partner Earnings Breakdown */}
-          <EarningsBreakdown compact={true} onViewDetails={() => router.push('/explore')} />
+          <EarningsBreakdown compact={true} onViewDetails={() => router.push('/explore' as any)} />
 
           {/* ── Persona-Specific Wallet Cards ─────────────────────────── */}
 
@@ -1335,7 +1335,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
                 {/* Micro Pack CTA */}
                 <Pressable
-                  onPress={() => router.push('/value-packs?persona=student' as any as string)}
+                  onPress={() => router.push('/value-packs?persona=student' as any)}
                   style={{
                     backgroundColor: colors.background.primary,
                     borderRadius: 12,
@@ -1483,7 +1483,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
                 {/* Value Pack CTA */}
                 <Pressable
-                  onPress={() => router.push('/value-packs?persona=corporate' as any as string)}
+                  onPress={() => router.push('/value-packs?persona=corporate' as any)}
                   style={{
                     backgroundColor: colors.lightMustard,
                     borderRadius: 12,
@@ -1506,7 +1506,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           {/* Verification CTA for unverified users who stated an identity */}
           {segment === 'normal' && statedIdentity && statedIdentity !== 'general' && (
             <Pressable
-              onPress={() => router.push('/onboarding/identity-select')}
+              onPress={() => router.push('/onboarding/identity-select' as any)}
               style={{
                 marginHorizontal: Spacing.md,
                 marginVertical: Spacing.md,
@@ -1562,7 +1562,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                   () => {},
                 );
               } else {
-                router.push('/referral');
+                router.push('/referral' as any);
               }
             }}
             isLoading={referralLoading}

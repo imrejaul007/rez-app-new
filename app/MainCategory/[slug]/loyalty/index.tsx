@@ -198,7 +198,7 @@ function LoyaltyHubPage() {
         {/* Coin Balance - Combined loyalty + wallet */}
         <Pressable
           style={styles.coinCard}
-          onPress={() => router.push(('/MainCategory/' + slug + '/loyalty/coins') as any as string)}
+          onPress={() => router.push(('/MainCategory/' + slug + '/loyalty/coins') as any)}
         >
           <View style={styles.coinLeft}>
             <Ionicons name="wallet" size={28} color={theme.primaryColor} />
@@ -232,7 +232,7 @@ function LoyaltyHubPage() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Brand Loyalty</Text>
-            <Pressable onPress={() => router.push(('/MainCategory/' + slug + '/loyalty/brands') as any as string)}>
+            <Pressable onPress={() => router.push(('/MainCategory/' + slug + '/loyalty/brands') as any)}>
               <Text style={[styles.sectionSeeAll, { color: theme.primaryColor }]}>View All ({brands.length})</Text>
             </Pressable>
           </View>
@@ -278,7 +278,7 @@ function LoyaltyHubPage() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Active Missions</Text>
             <Pressable
-              onPress={() => router.push(('/MainCategory/' + slug + '/loyalty/missions') as any as string)}
+              onPress={() => router.push(('/MainCategory/' + slug + '/loyalty/missions') as any)}
             >
               <Text style={[styles.sectionSeeAll, { color: theme.primaryColor }]}>View All ({missions.length})</Text>
             </Pressable>

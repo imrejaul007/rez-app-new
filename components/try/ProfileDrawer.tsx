@@ -80,7 +80,7 @@ export interface ProfileDrawerProps {
 
 const TIER_CONFIG: Record<Tier, { label: string; color: string; icon: string }> = {
   curious: { label: 'Curious', color: colors.gray[400], icon: 'leaf-outline' },
-  explorer: { label: 'Explorer', color: colors.brand.tealGreen, icon: 'compass-outline' },
+  explorer: { label: 'Explorer', color: colors.tealGreen, icon: 'compass-outline' },
   adventurer: { label: 'Adventurer', color: colors.brand.purple, icon: 'shield-outline' },
   pioneer: { label: 'Pioneer', color: colors.gold, icon: 'star-outline' },
 };

@@ -100,7 +100,7 @@ function DisputeListScreen() {
     const statusColor = STATUS_COLORS[item.status] || colors.neutral[500];
 
     return (
-      <TouchableOpacity style={styles.card} onPress={() => router.push(`/disputes/${item._id}`)} activeOpacity={0.7}>
+      <TouchableOpacity style={styles.card} onPress={() => router.push(`/disputes/${item._id}` as any)} activeOpacity={0.7}>
         <View style={styles.cardHeader}>
           <Text style={styles.disputeNumber}>{item.disputeNumber}</Text>
           <View style={[styles.badge, { backgroundColor: statusColor + '18' }]}>

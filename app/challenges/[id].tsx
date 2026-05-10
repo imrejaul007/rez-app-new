@@ -187,7 +187,7 @@ function ChallengeDetailPage() {
         logger.error('Progress IDs:', allProgress.map((p: any) => p._id).slice(0, 5));
         showAlert('Error', 'Challenge not found', undefined, 'error');
         // eslint-disable-next-line no-unused-expressions
-        router.canGoBack() ? router.back() : router.replace('/(tabs)');
+        router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
         return;
       }
 
@@ -200,7 +200,7 @@ function ChallengeDetailPage() {
       logger.error('❌ [Challenge Detail] Error loading challenge:', error);
       showAlert('Error', 'Failed to load challenge details', undefined, 'error');
       // eslint-disable-next-line no-unused-expressions
-      router.canGoBack() ? router.back() : router.replace('/(tabs)');
+      router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
     } finally {
       if (!isMounted()) return;
       setLoading(false);
@@ -242,7 +242,7 @@ function ChallengeDetailPage() {
 
     const route = actionRoutes[action];
     if (route) {
-      router.push(route as any as string);
+      router.push(route as any);
     } else {
       showAlert('Info', 'Complete this challenge by using the app!', undefined, 'info');
     }
@@ -625,7 +625,7 @@ function ChallengeDetailPage() {
           onClose={() => {
             setShowClaimModal(false);
             // eslint-disable-next-line no-unused-expressions
-            router.canGoBack() ? router.back() : router.replace('/(tabs)');
+            router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
           }}
           reward={{
             coins: claimData.coins,

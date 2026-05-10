@@ -354,7 +354,7 @@ function SlotsPage() {
       {/* Back to Games */}
       <Pressable
         style={styles.backToGamesBtn}
-        onPress={() => router.push('/games' as any as string)}
+        onPress={() => router.push('/games' as any)}
         accessibilityRole="button"
         accessibilityLabel="More games"
       >

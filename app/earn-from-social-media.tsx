@@ -639,7 +639,7 @@ function EarnFromSocialMediaPage() {
           <ThemedText style={styles.emptyDescription}>
             Complete orders or pay in store to earn coins by sharing on social media!
           </ThemedText>
-          <Pressable style={styles.shopNowButton} onPress={() => router.push('/')}>
+          <Pressable style={styles.shopNowButton} onPress={() => router.push('/' as any)}>
             <ThemedText style={styles.shopNowText}>Shop Now</ThemedText>
           </Pressable>
         </View>

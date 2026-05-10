@@ -572,7 +572,7 @@ function CategoryProductsPage() {
 
   const handleProductPress = useCallback(
     (product: Product) => {
-      router.push(`/product-page?cardId=${product._id}&cardType=product` as any as string);
+      router.push(`/product-page?cardId=${product._id}&cardType=product` as any);
     },
     [router],
   );
@@ -747,7 +747,7 @@ function CategoryProductsPage() {
           message="We're adding more products to this category soon!"
           icon="bag-outline"
           actionLabel="Browse Mall"
-          onAction={() => router.push('/mall' as any as string)}
+          onAction={() => router.push('/mall' as any)}
         />
       </View>
     );

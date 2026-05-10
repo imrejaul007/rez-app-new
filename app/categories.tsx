@@ -292,7 +292,7 @@ const CategoriesPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
@@ -337,7 +337,7 @@ const CategoriesPage: React.FC = () => {
                   <Pressable
                     key={cat.id}
                     style={styles.categoryCard}
-                    onPress={() => router.push(cat.route as any as string)}
+                    onPress={() => router.push(cat.route as any)}
                   >
                     <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                       <Text style={styles.categoryEmoji}>{cat.icon}</Text>

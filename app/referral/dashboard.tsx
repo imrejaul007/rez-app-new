@@ -132,12 +132,12 @@ function ReferralDashboard() {
   };
 
   const handleShare = () => {
-    router.push('/referral/share' as any as string);
+    router.push('/referral/share' as any);
   };
 
   const handleViewLeaderboard = () => {
     // Link to main leaderboard page with referral type
-    router.push('/leaderboard' as any as string);
+    router.push('/leaderboard' as any);
   };
 
   const renderLeaderboardItem = useCallback(

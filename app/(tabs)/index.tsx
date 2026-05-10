@@ -720,7 +720,7 @@ function HomeScreen() {
   }, [actions, authUser, isAuthenticated, loadUserContext, refreshCart, refreshRecentlyViewed]);
 
   const handleSearchPress = useCallback(() => {
-    router.push('/search');
+    router.push('/search' as any);
   }, [router]);
 
   const handleCoinPress = useCallback(() => {
@@ -728,27 +728,27 @@ function HomeScreen() {
     sessionTrackingService.trackFeatureTouch('wallet');
     if (IS_IOS) {
       clearTimeout(navTimerRef.current);
-      navTimerRef.current = setTimeout(() => router.push('/wallet-screen'), 50);
+      navTimerRef.current = setTimeout(() => router.push('/wallet-screen' as any), 50);
     } else {
-      router.push('/wallet-screen');
+      router.push('/wallet-screen' as any);
     }
   }, [router]);
 
   const handlePriveLockedPress = useCallback(() => {
-    router.push('/prive/eligibility');
+    router.push('/prive/eligibility' as any);
   }, [router]);
 
   const handleCartPress = useCallback(() => {
     if (IS_IOS) {
       clearTimeout(navTimerRef.current);
-      navTimerRef.current = setTimeout(() => router.push('/cart'), 50);
+      navTimerRef.current = setTimeout(() => router.push('/cart' as any), 50);
     } else {
-      router.push('/cart');
+      router.push('/cart' as any);
     }
   }, [router]);
 
   const handleNotificationPress = useCallback(() => {
-    router.push('/account/notification-history' as any as string);
+    router.push('/account/notification-history' as any);
   }, [router]);
 
   const handleProfilePress = useCallback(() => {
@@ -821,7 +821,7 @@ function HomeScreen() {
       switch (action) {
         case 'booking':
           sessionTrackingService.trackFeatureTouch('booking');
-          router.push('/booking' as any as string);
+          router.push('/booking' as any);
           break;
         case 'earn':
           sessionTrackingService.trackFeatureTouch('earn');
@@ -1113,7 +1113,7 @@ function HomeScreen() {
                   savingsStreak={savingsSummaryData?.savingsStreak ?? 0}
                   missedSavingsCount={savingsSummaryData?.missedSavingsCount ?? 0}
                   topCategory={savingsSummaryData?.topCategory}
-                  onMissedPress={() => router.push('/savings?tab=missed' as any as string)}
+                  onMissedPress={() => router.push('/savings?tab=missed' as any)}
                 />
               </FeatureErrorBoundary>
             </View>
@@ -1203,7 +1203,7 @@ function HomeScreen() {
               borderWidth: 1,
               borderColor: '#DDD6FE',
             }}
-            onPress={() => router.push('/explore' as any as string)}
+            onPress={() => router.push('/explore' as any)}
             accessibilityRole="button"
             accessibilityLabel="Explore REZ network stores"
             accessibilityHint="Tap to discover stores where your REZ coins work"
@@ -1243,7 +1243,7 @@ function HomeScreen() {
         {activeTab !== 'prive' && activeTab !== 'mall' && (
           <Pressable
             style={viewStyles.tryBanner}
-            onPress={() => router.push('/try' as any as string)}
+            onPress={() => router.push('/try' as any)}
             accessibilityLabel="Try before you buy"
             accessibilityRole="button"
             accessibilityHint="Tap to explore products you can try risk-free and earn coins"
@@ -1282,7 +1282,7 @@ function HomeScreen() {
               borderColor: '#fcd34d',
               gap: 12,
             }}
-            onPress={() => router.push('/savings?tab=missed' as any as string)}
+            onPress={() => router.push('/savings?tab=missed' as any)}
             accessibilityRole="button"
             accessibilityLabel={`You could have saved more this month: ${savingsSummaryData?.missedSavingsCount} missed savings`}
             accessibilityHint="Tap to view missed savings opportunities"

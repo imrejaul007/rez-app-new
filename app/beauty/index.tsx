@@ -187,15 +187,15 @@ const BeautyPage: React.FC = () => {
   }, [fetchData]);
 
   const handleCategoryPress = (route: string) => {
-    router.push(route as any as string);
+    router.push(route as any);
   };
 
   const handleSalonPress = (salonId: string) => {
-    router.push(`/MainStorePage?storeId=${salonId}` as any as string);
+    router.push(`/MainStorePage?storeId=${salonId}` as any);
   };
 
   const handleProductPress = (productId: string) => {
-    router.push(`/product-page?productId=${productId}` as any as string);
+    router.push(`/product-page?productId=${productId}` as any);
   };
 
   const handleSearch = () => {
@@ -223,7 +223,7 @@ const BeautyPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
@@ -299,7 +299,7 @@ const BeautyPage: React.FC = () => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Featured Salons & Spas</Text>
-              <Pressable onPress={() => router.push('/stores?category=beauty-wellness' as any as string)}>
+              <Pressable onPress={() => router.push('/stores?category=beauty-wellness' as any)}>
                 <Text style={styles.viewAllText}>View All</Text>
               </Pressable>
             </View>
@@ -341,7 +341,7 @@ const BeautyPage: React.FC = () => {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Trending Products</Text>
-              <Pressable onPress={() => router.push('/products?category=beauty-wellness' as any as string)}>
+              <Pressable onPress={() => router.push('/products?category=beauty-wellness' as any)}>
                 <Text style={styles.viewAllText}>View All</Text>
               </Pressable>
             </View>
@@ -389,7 +389,7 @@ const BeautyPage: React.FC = () => {
               <Pressable
                 key={brand.id}
                 style={styles.brandCard}
-                onPress={() => router.push(brand.route as any as string)}
+                onPress={() => router.push(brand.route as any)}
               >
                 <Text style={styles.brandLogo}>{brand.logo}</Text>
                 <Text style={styles.brandName}>{brand.name}</Text>
@@ -412,7 +412,7 @@ const BeautyPage: React.FC = () => {
               <Text style={styles.promoTitle}>Beauty Week Special</Text>
               <Text style={styles.promoSubtitle}>Extra 15% cashback on all bookings</Text>
             </View>
-            <Pressable style={styles.promoButton} onPress={() => router.push('/offers' as any as string)}>
+            <Pressable style={styles.promoButton} onPress={() => router.push('/offers' as any)}>
               <Text style={styles.promoButtonText}>View Offers</Text>
             </Pressable>
           </LinearGradient>
@@ -424,7 +424,7 @@ const BeautyPage: React.FC = () => {
           <View style={styles.quickActionsRow}>
             <Pressable
               style={styles.quickActionCard}
-              onPress={() => router.push('/stores?category=beauty-wellness&filter=verified' as any as string)}
+              onPress={() => router.push('/stores?category=beauty-wellness&filter=verified' as any)}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: '#E0F2FE' }]}>
                 <Ionicons name="shield-checkmark" size={24} color={colors.brand.sky} />
@@ -433,7 +433,7 @@ const BeautyPage: React.FC = () => {
             </Pressable>
             <Pressable
               style={styles.quickActionCard}
-              onPress={() => router.push('/stores?category=beauty-wellness&filter=nearby' as any as string)}
+              onPress={() => router.push('/stores?category=beauty-wellness&filter=nearby' as any)}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: Colors.warningScale[200] }]}>
                 <Ionicons name="location" size={24} color={Colors.warning} />
@@ -442,7 +442,7 @@ const BeautyPage: React.FC = () => {
             </Pressable>
             <Pressable
               style={styles.quickActionCard}
-              onPress={() => router.push('/offers?type=cashback' as any as string)}
+              onPress={() => router.push('/offers?type=cashback' as any)}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: colors.tint.green }]}>
                 <Ionicons name="wallet" size={24} color={Colors.success} />
@@ -451,7 +451,7 @@ const BeautyPage: React.FC = () => {
             </Pressable>
             <Pressable
               style={styles.quickActionCard}
-              onPress={() => router.push('/stores?category=beauty-wellness&filter=try-buy' as any as string)}
+              onPress={() => router.push('/stores?category=beauty-wellness&filter=try-buy' as any)}
             >
               <View style={[styles.quickActionIcon, { backgroundColor: colors.pinkMist }]}>
                 <Ionicons name="flash" size={24} color={colors.deepPink} />

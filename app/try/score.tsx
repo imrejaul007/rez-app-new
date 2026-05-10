@@ -263,7 +263,7 @@ export default function ExplorerScoreScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>My Badges</Text>
-            <Pressable onPress={() => router.push('/try/badges')}>
+            <Pressable onPress={() => router.push('/try/badges' as any)}>
               <Text style={styles.viewAllLink}>View All →</Text>
             </Pressable>
           </View>
@@ -280,7 +280,7 @@ export default function ExplorerScoreScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>This Week's Mission</Text>
-            <Pressable onPress={() => router.push('/try/missions')}>
+            <Pressable onPress={() => router.push('/try/missions' as any)}>
               <Text style={styles.viewAllLink}>View All →</Text>
             </Pressable>
           </View>
@@ -302,7 +302,7 @@ export default function ExplorerScoreScreen() {
 
         {/* Weekly Surprise */}
         <View style={styles.section}>
-          <Pressable style={styles.surpriseCard} onPress={() => router.push('/try/surprise')}>
+          <Pressable style={styles.surpriseCard} onPress={() => router.push('/try/surprise' as any)}>
             <Text style={styles.surpriseEmoji}>🎁</Text>
             <View style={styles.surpriseContent}>
               <Text style={styles.surpriseLabel}>Weekly Surprise</Text>
@@ -324,7 +324,7 @@ export default function ExplorerScoreScreen() {
                 </Text>
               </View>
             </View>
-            <Pressable style={styles.leaderboardButton} onPress={() => router.push('/try/leaderboard')}>
+            <Pressable style={styles.leaderboardButton} onPress={() => router.push('/try/leaderboard' as any)}>
               <Text style={styles.leaderboardButtonText}>View Leaderboard →</Text>
             </Pressable>
           </View>

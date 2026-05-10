@@ -108,7 +108,7 @@ const ExploreReelsPage = () => {
 
   const navigateTo = useCallback(
     (path: string) => {
-      router.push(path as any as string);
+      router.push(path as any);
     },
     [router],
   );
