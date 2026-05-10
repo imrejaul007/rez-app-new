@@ -68,6 +68,10 @@ import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useHomeTabStore } from '@/stores/homeTabStore';
 import { getCoinExpiryWarning } from '@/utils/retentionHooks';
 import { logger } from '@/utils/logger';
+// Savings module integration
+import { useSavings } from '@/hooks/useSavings';
+import { useSavingsNotifications } from '@/hooks/useSavingsNotifications';
+import { SavingsWidget, SavingsStreakCard, SavingsQuickStats } from '@/components/wallet/SavingsWidget';
 
 /** Local type for coin bucket items used in expiry breakdown */
 interface CoinBucketItem {
@@ -124,6 +128,17 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
   });
 
   const { trackWalletViewed, trackTopupInitiated, trackTransactionViewed } = useWalletAnalytics();
+
+  // Savings module - load data and enable notifications
+  const { dashboard: savingsDashboard, refreshDashboard } = useSavings();
+  useSavingsNotifications();
+
+  // Refresh savings data when wallet screen loads
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      refreshDashboard();
+    }
+  }, [isAuthenticated, user?.id, refreshDashboard]);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -686,9 +701,10 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           </View>
 
           {/* Savings Hero - inside gradient header for white-on-dark text */}
+          {/* Uses SavingsContext when available, falls back to walletData */}
           <SavingsHero
-            totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
-            thisMonth={walletData?.savingsInsights?.thisMonth ?? 0}
+            totalSaved={savingsDashboard?.totalSavingsAmount ?? walletData?.savingsInsights?.totalSaved ?? 0}
+            thisMonth={savingsDashboard?.thisMonthAmount ?? walletData?.savingsInsights?.thisMonth ?? 0}
             currencySymbol={currencySymbol}
             isHidden={isBalanceHidden}
             segment={segment}
@@ -1072,6 +1088,31 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
           {/* Wallet Insights */}
           <InsightSection walletData={walletData} currencySymbol={currencySymbol} segment={segment} />
+
+          {/* Savings Module Section */}
+          {savingsDashboard && savingsDashboard.totalSavings > 0 && (
+            <View style={styles.section}>
+              {/* Savings Quick Stats */}
+              <SavingsQuickStats
+                onPressHistory={() => router.push('/savings/history')}
+                onPressGoals={() => router.push('/savings/goals')}
+              />
+
+              {/* Savings Streak Card */}
+              <View style={{ marginTop: Spacing.md }}>
+                <SavingsStreakCard />
+              </View>
+
+              {/* View Full Savings Button */}
+              <Pressable
+                style={styles.savingsViewAllButton}
+                onPress={() => router.push('/savings')}
+              >
+                <Text style={styles.savingsViewAllText}>View Full Savings Dashboard</Text>
+                <Ionicons name="chevron-forward" size={18} color={Colors.primary} />
+              </Pressable>
+            </View>
+          )}
 
           {/* Sprint 10: Lifetime Breakdown Cards */}
           <View style={sprint10Styles.breakdownSection}>
@@ -1665,6 +1706,30 @@ const createStyles = (
       fontSize: 11,
       color: colors.brand.amberDark,
       marginTop: 1,
+    },
+    // Savings module section
+    section: {
+      marginHorizontal: 14,
+      marginTop: 16,
+      marginBottom: 4,
+    },
+    savingsViewAllButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: Colors.surface,
+      paddingVertical: 14,
+      paddingHorizontal: 16,
+      borderRadius: BorderRadius.md,
+      marginTop: Spacing.md,
+      gap: 6,
+      borderWidth: 1,
+      borderColor: Colors.border,
+    },
+    savingsViewAllText: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: Colors.primary,
     },
   });
 };
