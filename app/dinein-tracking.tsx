@@ -178,7 +178,7 @@ function DineInTrackingScreen() {
             style={styles.addMoreBtn}
             onPress={() => {
               const storeId = order?.store?._id || order?.store;
-              if (storeId) router.push(`/store/${storeId}?dineIn=true&table=${encodeURIComponent(tableNumber)}`);
+              if (storeId) router.push(`/store/${storeId}?dineIn=true&table=${encodeURIComponent(tableNumber)}` as any);
             }}
           >
             <Ionicons name="add-circle-outline" size={20} color={colors.nileBlue} />

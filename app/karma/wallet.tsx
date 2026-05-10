@@ -152,7 +152,7 @@ function KarmaWalletScreen() {
           <Ionicons name="lock-closed-outline" size={64} color={Colors.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Sign in to view your wallet</Text>
-          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as any as string)}>
+          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as any)}>
             <Text style={styles.loginBtnText}>Sign In</Text>
           </Pressable>
         </View>
@@ -180,7 +180,7 @@ function KarmaWalletScreen() {
         title="Wallet"
         showBack
         rightAction={
-          <Pressable style={styles.headerAction} onPress={() => router.push('/karma/my-karma')} hitSlop={8}>
+          <Pressable style={styles.headerAction} onPress={() => router.push('/karma/my-karma' as any)} hitSlop={8}>
             <Ionicons name="leaf" size={20} color={colors.text.inverse} />
           </Pressable>
         }
@@ -306,7 +306,7 @@ function KarmaWalletScreen() {
               <Ionicons name="receipt-outline" size={48} color={Colors.textSecondary} />
               <Text style={styles.emptyTxTitle}>No transactions yet</Text>
               <Text style={styles.emptyTxSub}>Start earning karma to see your activity here</Text>
-              <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore')}>
+              <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore' as any)}>
                 <Text style={styles.exploreBtnText}>Find Events</Text>
               </Pressable>
             </View>
@@ -330,11 +330,11 @@ function KarmaWalletScreen() {
               </View>
             </View>
             <View style={styles.earnMoreActions}>
-              <Pressable style={styles.earnMoreBtn} onPress={() => router.push('/karma/explore')}>
+              <Pressable style={styles.earnMoreBtn} onPress={() => router.push('/karma/explore' as any)}>
                 <Text style={styles.earnMoreBtnText}>Explore Events</Text>
                 <Ionicons name="arrow-forward" size={16} color={colors.text.inverse} />
               </Pressable>
-              <Pressable style={styles.scanBtn} onPress={() => router.push('/karma/scan')}>
+              <Pressable style={styles.scanBtn} onPress={() => router.push('/karma/scan' as any)}>
                 <Ionicons name="qr-code-outline" size={18} color={KARMA_PURPLE} />
               </Pressable>
             </View>

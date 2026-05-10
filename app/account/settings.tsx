@@ -145,7 +145,7 @@ function SettingsPage() {
             <View style={styles.sectionContent}>
               <Pressable
                 style={styles.settingRow}
-                onPress={() => router.push('/account/language')}
+                onPress={() => router.push('/account/language' as any)}
                 accessibilityLabel={`Language and Region. Current setting: ${settings.general.language.toUpperCase()}, ${settings.general.currency}`}
                 accessibilityRole="button"
                 accessibilityHint="Double tap to change language and region settings"
@@ -661,7 +661,7 @@ function SettingsPage() {
           <View style={styles.sectionContent}>
             <Pressable
               style={styles.settingRow}
-              onPress={() => router.push('/legal/about')}
+              onPress={() => router.push('/legal/about' as any)}
               accessibilityLabel={`About ${BRAND.APP_NAME}`}
               accessibilityRole="button"
             >
@@ -674,7 +674,7 @@ function SettingsPage() {
 
             <Pressable
               style={styles.settingRow}
-              onPress={() => router.push('/legal/terms')}
+              onPress={() => router.push('/legal/terms' as any)}
               accessibilityLabel="Terms and Conditions"
               accessibilityRole="button"
             >
@@ -686,7 +686,7 @@ function SettingsPage() {
 
             <Pressable
               style={styles.settingRow}
-              onPress={() => router.push('/legal/privacy')}
+              onPress={() => router.push('/legal/privacy' as any)}
               accessibilityLabel="Privacy Policy"
               accessibilityRole="button"
             >
@@ -698,7 +698,7 @@ function SettingsPage() {
 
             <Pressable
               style={styles.settingRow}
-              onPress={() => router.push('/legal/refund-policy')}
+              onPress={() => router.push('/legal/refund-policy' as any)}
               accessibilityLabel="Refund Policy"
               accessibilityRole="button"
             >
@@ -721,7 +721,7 @@ function SettingsPage() {
           <View style={styles.sectionContent}>
             <Pressable
               style={styles.settingRow}
-              onPress={() => router.push('/dev/test-pages')}
+              onPress={() => router.push('/dev/test-pages' as any)}
               accessibilityLabel="Test All Pages"
               accessibilityRole="button"
             >

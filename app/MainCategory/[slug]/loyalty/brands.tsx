@@ -118,7 +118,7 @@ function ElectronicsBrandsPage() {
       return (
         <Pressable
           style={styles.brandCard}
-          onPress={() => router.push(`/MainStorePage?storeId=${item.brandId}` as any as string)}
+          onPress={() => router.push(`/MainStorePage?storeId=${item.brandId}` as any)}
         >
           <LinearGradient
             colors={[config.gradientStart, config.gradientEnd]}

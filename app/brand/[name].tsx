@@ -165,7 +165,7 @@ const BrandPage: React.FC = () => {
   }, [fetchProducts]);
 
   const handleProductPress = (product: Product) => {
-    router.push(`/product-page?productId=${product.id}` as any as string);
+    router.push(`/product-page?productId=${product.id}` as any);
   };
 
   if (isLoading) {
@@ -178,12 +178,12 @@ const BrandPage: React.FC = () => {
       <LinearGradient colors={[brandConfig.color, brandConfig.color + 'CC']} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
-          <Pressable onPress={() => router.push('/search' as any as string)} style={styles.searchButton}>
+          <Pressable onPress={() => router.push('/search' as any)} style={styles.searchButton}>
             <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>

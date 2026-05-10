@@ -205,7 +205,7 @@ function FollowStoreSection({ storeData, isFollowingProp, onFollowChange }: Foll
         'Please sign in to follow stores and get updates on their offers.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Sign In', onPress: () => router.push('/sign-in') },
+          { text: 'Sign In', onPress: () => router.push('/sign-in' as any) },
         ],
         'info',
       );

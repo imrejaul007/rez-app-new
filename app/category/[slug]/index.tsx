@@ -157,7 +157,7 @@ function CategoryPage() {
     // Navigate to product page like home-delivery
 
     router.push(
-      `/product-page?cardId=${item.id}&cardType=category&category=${category?.id || slug}` as any as string,
+      `/product-page?cardId=${item.id}&cardType=category&category=${category?.id || slug}` as any,
     );
   };
 
@@ -262,7 +262,7 @@ function CategoryPage() {
 
   const handleBack = () => {
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
   };
 
   const handleCarouselItemPress = async (carouselItem: CategoryCarouselItem) => {
@@ -283,7 +283,7 @@ function CategoryPage() {
             actions.updateSearch(carouselItem.action.target);
             break;
           case 'navigate':
-            router.push(carouselItem.action.target as any as string);
+            router.push(carouselItem.action.target as any);
             break;
         }
 
@@ -370,7 +370,7 @@ function CategoryPage() {
                     banner={banner}
                     onPress={() => {
                       if (banner.action?.type === 'navigate') {
-                        router.push(banner.action.target as any as string);
+                        router.push(banner.action.target as any);
                       }
                     }}
                   />
@@ -430,7 +430,7 @@ function CategoryPage() {
                   <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
                   {section.viewAllLink && (
                     <Pressable
-                      onPress={() => router.push(section.viewAllLink as any as string)}
+                      onPress={() => router.push(section.viewAllLink as any)}
                       accessibilityLabel={`View all ${section.title.toLowerCase()}`}
                       accessibilityRole="button"
                       accessibilityHint="Double tap to see all items in this section"

@@ -87,7 +87,7 @@ function MerchantSlugScreen() {
           <Ionicons name="storefront-outline" size={56} color="#9CA3AF" />
           <Text style={styles.errorTitle}>Merchant not found</Text>
           <Text style={styles.errorSub}>This merchant may have moved or no longer exists</Text>
-          <Pressable style={styles.backBtn} onPress={() => router.push('/near-u' as any as string)}>
+          <Pressable style={styles.backBtn} onPress={() => router.push('/near-u' as any)}>
             <Text style={styles.backBtnText}>Browse nearby merchants</Text>
           </Pressable>
         </View>
@@ -148,17 +148,12 @@ function MerchantSlugScreen() {
         <View style={styles.ctaRow}>
           <Pressable
             style={styles.ctaPrimary}
-            onPress={() =>
-              router.push({
-                pathname: '/StoreListPage',
-                params: { merchantId: merchant._id },
-              } as any as string)
-            }
+            onPress={() => router.push(`/StoreListPage?storeId=${merchant._id}` as any)}
           >
             <Ionicons name="storefront" size={18} color="#fff" />
             <Text style={styles.ctaPrimaryText}>View Offers</Text>
           </Pressable>
-          <Pressable style={styles.ctaSecondary} onPress={() => router.push('/try' as any as string)}>
+          <Pressable style={styles.ctaSecondary} onPress={() => router.push('/try' as any)}>
             <Ionicons name="flask" size={18} color="#1a3a52" />
             <Text style={styles.ctaSecondaryText}>Try Free</Text>
           </Pressable>

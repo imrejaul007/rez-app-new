@@ -88,7 +88,7 @@ function AccountPage() {
 
   const handleBackPress = useCallback(() => {
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
   }, [router]);
 
   const handleTabChange = useCallback(
@@ -116,38 +116,38 @@ function AccountPage() {
 
       switch (category.id) {
         case 'subscription':
-          router.push('/subscription/manage');
+          router.push('/subscription/manage' as any);
           break;
         case 'delivery':
-          router.push('/account/delivery');
+          router.push('/account/delivery' as any);
           break;
         case 'payment':
-          router.push('/account/payment');
+          router.push('/account/payment' as any);
           break;
         case 'wallet':
-          router.push('/wallet');
+          router.push('/wallet' as any);
           break;
         case 'khata':
-          router.push('/khata');
+          router.push('/khata' as any);
           break;
         case 'voucher':
-          router.push('/my-vouchers');
+          router.push('/my-vouchers' as any);
           break;
         case 'my_deals':
-          router.push('/my-deals');
+          router.push('/my-deals' as any);
           break;
         case 'coupon':
-          router.push('/account/coupons');
+          router.push('/account/coupons' as any);
           break;
         case 'bill_upload':
-          router.push('/bill-upload');
+          router.push('/bill-upload' as any);
           break;
         case 'achievements':
-          router.push('/profile/achievements');
+          router.push('/profile/achievements' as any);
           break;
         default:
           if (category.route) {
-            router.push(category.route as any as string);
+            router.push(category.route as any);
           }
           break;
       }
@@ -184,7 +184,7 @@ function AccountPage() {
 
           <Pressable
             style={styles.headerAction}
-            onPress={() => router.push('/account/settings')}
+            onPress={() => router.push('/account/settings' as any)}
             accessibilityLabel="Settings"
             accessibilityRole="button"
           >
@@ -281,9 +281,9 @@ function AccountPage() {
                     onPress={() => {
                       if (isVerified) {
                         const route = SEGMENT_ROUTES[segment];
-                        if (route) router.push(route as any as string);
+                        if (route) router.push(route as any);
                       } else {
-                        router.push('/onboarding/identity-select' as any as string);
+                        router.push('/onboarding/identity-select' as any);
                       }
                     }}
                     style={{

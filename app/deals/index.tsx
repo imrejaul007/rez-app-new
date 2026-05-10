@@ -113,7 +113,7 @@ function DealsIndexPage() {
             </Text>
           </View>
           <Pressable
-            onPress={() => router.push('/bonus-zone' as any as string)}
+            onPress={() => router.push('/bonus-zone' as any)}
             style={{
               backgroundColor: 'rgba(255,255,255,0.15)',
               borderRadius: 20,
@@ -225,7 +225,7 @@ function DealsIndexPage() {
               {featuredCampaigns.map((campaign) => (
                 <Pressable
                   key={campaign._id}
-                  onPress={() => router.push(`/deals/${campaign._id}` as any as string)}
+                  onPress={() => router.push(`/deals/${campaign._id}` as any)}
                   style={{
                     backgroundColor: '#fff',
                     borderRadius: 14,

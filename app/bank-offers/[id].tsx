@@ -93,7 +93,7 @@ function BankOfferDetailScreen() {
         <ThemedText style={styles.errorText}>{error || 'Offer not found'}</ThemedText>
         <Pressable
           style={styles.backButton}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         >
           <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
         </Pressable>
@@ -114,7 +114,7 @@ function BankOfferDetailScreen() {
       <View style={styles.header}>
         <Pressable
           style={styles.headerBtn}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>

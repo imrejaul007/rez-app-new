@@ -47,7 +47,7 @@ const HotRightNow = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as any as string);
+    router.push(path as any);
   };
 
   const getOfferBadgeColor = (offer: string) => {

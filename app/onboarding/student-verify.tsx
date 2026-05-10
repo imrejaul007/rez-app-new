@@ -78,7 +78,7 @@ function StudentVerifyPage() {
           zone: 'student',
           type: result.autoVerified ? 'instant' : 'provisional',
         },
-      } as any as string);
+      } as any);
     } catch (e: any) {
       const msg = e?.message || 'Verification failed. Please try again.';
       if (!isMounted()) return;

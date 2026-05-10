@@ -22,7 +22,7 @@ import {
   getMissionProgress,
   formatMissionReward,
   isMissionUrgent,
-} from './missionUtils';
+} from '@/components/try/missionUtils';
 
 interface MissionProgressMiniProps {
   mission: Mission;
@@ -57,7 +57,7 @@ function MissionProgressMini({
     if (onPress) {
       onPress();
     } else {
-      router.push('/try/missions');
+      router.push('/try/missions' as any);
     }
   };
 
@@ -89,7 +89,7 @@ function MissionProgressMini({
         </Text>
         {urgent && (
           <View style={styles.urgentBadge}>
-            <Ionicons name="time-outline" size={10} color={colors.error.main} />
+            <Ionicons name="time-outline" size={10} color={colors.errorScale[500]} />
             <Text style={styles.urgentText}>{timeLeft}</Text>
           </View>
         )}
@@ -117,7 +117,7 @@ function MissionProgressMini({
       <View style={styles.rewardRow}>
         {mission.reward.rezCoins > 0 && (
           <View style={styles.rewardBadge}>
-            <Ionicons name="logo-usd" size={12} color={colors.coin.gold} />
+            <Ionicons name="logo-usd" size={12} color={colors.gold} />
             <Text style={styles.rewardText}>{mission.reward.rezCoins} ReZ</Text>
           </View>
         )}
@@ -148,9 +148,9 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
   } as ViewStyle,
   containerUrgent: {
-    borderColor: colors.error.main,
+    borderColor: colors.errorScale[500],
     borderWidth: 1,
-    backgroundColor: colors.error.light,
+    backgroundColor: colors.errorScale[50],
   } as ViewStyle,
 
   headerRow: {
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   urgentBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.error.light,
+    backgroundColor: colors.errorScale[100],
     paddingHorizontal: spacing.xs,
     paddingVertical: 2,
     borderRadius: borderRadius.sm,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   urgentText: {
     fontSize: 10,
     fontWeight: '600',
-    color: colors.error.main,
+    color: colors.error,
   } as TextStyle,
 
   progressContainer: {
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   rewardBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.tint.gold,
+    backgroundColor: colors.tint.amber,
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
     borderRadius: borderRadius.sm,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   rewardText: {
     fontSize: 11,
     fontWeight: '600',
-    color: colors.coin.gold,
+    color: colors.gold,
   } as TextStyle,
   rewardTextTrial: {
     fontSize: 11,

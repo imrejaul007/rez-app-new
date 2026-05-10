@@ -93,7 +93,7 @@ function BrandDetailPage() {
         try {
           const storeData = await mallApi.getMallStoreById(id);
           if (storeData) {
-            router.replace(`/MainStorePage?storeId=${id}` as any as string);
+            router.replace(`/MainStorePage?storeId=${id}` as any);
             return;
           }
         } catch {}
@@ -106,7 +106,7 @@ function BrandDetailPage() {
       try {
         const storeData = await mallApi.getMallStoreById(id);
         if (storeData) {
-          router.replace(`/MainStorePage?storeId=${id}` as any as string);
+          router.replace(`/MainStorePage?storeId=${id}` as any);
           return;
         }
       } catch {}
@@ -338,7 +338,7 @@ function BrandDetailPage() {
                 style={styles.categoryItem}
                 onPress={() =>
                   brand.mallCategory?.slug &&
-                  router.push(`/mall/category/${brand.mallCategory.slug}` as any as string)
+                  router.push(`/mall/category/${brand.mallCategory.slug}` as any)
                 }
               >
                 <Text style={styles.categoryIcon}>{brand.mallCategory.icon}</Text>
@@ -356,7 +356,7 @@ function BrandDetailPage() {
                 <Pressable
                   key={collection.id || collection._id}
                   style={styles.collectionItem}
-                  onPress={() => router.push(`/mall/collection/${collection.slug}` as any as string)}
+                  onPress={() => router.push(`/mall/collection/${collection.slug}` as any)}
                 >
                   <Text style={styles.collectionName}>{collection.name}</Text>
                   <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />

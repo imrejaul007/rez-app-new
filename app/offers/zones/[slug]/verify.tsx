@@ -155,7 +155,7 @@ function ZoneVerifyScreen() {
 
         // If already eligible, redirect to zone page
         if (response.data.isEligible) {
-          router.replace(`/offers/zones/${slug}` as any as string);
+          router.replace(`/offers/zones/${slug}` as any);
         }
       }
     } catch (err: any) {
@@ -198,7 +198,7 @@ function ZoneVerifyScreen() {
           'Your verification request has been submitted. You will be notified once it is reviewed.',
         );
         // eslint-disable-next-line no-unused-expressions
-        router.canGoBack() ? router.back() : router.replace('/(tabs)');
+        router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
       } else {
         if (!isMounted()) return;
         setError(response.message || 'Failed to submit verification');
@@ -233,12 +233,12 @@ function ZoneVerifyScreen() {
           <Ionicons name="lock-closed-outline" size={64} color={COLORS.textMuted} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Please login to verify your eligibility for this exclusive zone</Text>
-          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any as string)}>
+          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
             <Text style={styles.loginButtonText}>Login</Text>
           </Pressable>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Text style={styles.backButtonText}>Go Back</Text>
           </Pressable>
@@ -263,7 +263,7 @@ function ZoneVerifyScreen() {
           </Text>
           <Pressable
             style={styles.primaryButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Text style={styles.primaryButtonText}>Go Back</Text>
           </Pressable>
@@ -293,7 +293,7 @@ function ZoneVerifyScreen() {
           </Pressable>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Text style={styles.backButtonText}>Go Back</Text>
           </Pressable>
@@ -311,7 +311,7 @@ function ZoneVerifyScreen() {
         <View style={styles.header}>
           <Pressable
             style={styles.headerBackButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.textDark} />
           </Pressable>

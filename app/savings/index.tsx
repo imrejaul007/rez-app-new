@@ -208,7 +208,7 @@ function VisitStreakCard({ router }: { router: ReturnType<typeof useRouter> }) {
       {current === 0 ? (
         <Pressable
           style={s.visitStreakCTA}
-          onPress={() => router.push('/explore' as any as string)}
+          onPress={() => router.push('/explore' as any)}
           accessibilityRole="button"
           accessibilityLabel="Visit a REZ store today"
         >
@@ -218,7 +218,7 @@ function VisitStreakCard({ router }: { router: ReturnType<typeof useRouter> }) {
       ) : (
         <Pressable
           style={[s.visitStreakCTA, { backgroundColor: '#059669' }]}
-          onPress={() => router.push('/explore' as any as string)}
+          onPress={() => router.push('/explore' as any)}
           accessibilityRole="button"
           accessibilityLabel="Keep your streak going"
         >
@@ -564,14 +564,14 @@ function SavingsDashboard() {
             <MissedSavingsTab
               items={missed}
               loading={missedLoading}
-              onExplore={(id) => router.push(`/store/${id}` as any as string)}
+              onExplore={(id) => router.push(`/store/${id}` as any)}
             />
           )}
           {activeTab === 'nearby' && (
             <BestNearbyTab
               stores={nearby}
               loading={nearbyLoading}
-              onPress={(id) => router.push(`/store/${id}` as any as string)}
+              onPress={(id) => router.push(`/store/${id}` as any)}
             />
           )}
           <View style={{ height: 40 }} />

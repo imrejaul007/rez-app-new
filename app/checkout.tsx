@@ -565,7 +565,7 @@ function CheckoutPage() {
           onClose={() => dispatch({ type: 'SET_FIELD', field: 'showAddressModal', value: false })}
           onAddNew={() => {
             dispatch({ type: 'SET_FIELD', field: 'showAddressModal', value: false });
-            router.push('/account/addresses');
+            router.push('/account/addresses' as any);
           }}
           loading={state.loading}
         />

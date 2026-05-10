@@ -56,7 +56,7 @@ function CategoriesView({
         {/* AI Search Card - Nile Blue Theme */}
         <Pressable
           style={styles.quickSearchCard}
-          onPress={() => router.push('/search/ai-search')}
+          onPress={() => router.push('/search/ai-search' as any)}
         >
           <LinearGradient
             colors={[REZ_THEME.nileBlue, REZ_THEME.nileBlueLight]}
@@ -76,7 +76,7 @@ function CategoriesView({
         {/* Hotspots Card - Mustard Theme */}
         <Pressable
           style={styles.quickSearchCard}
-          onPress={() => router.push('/search/hotspots')}
+          onPress={() => router.push('/search/hotspots' as any)}
         >
           <LinearGradient
             colors={[REZ_THEME.lightMustard, REZ_THEME.mustardDark]}

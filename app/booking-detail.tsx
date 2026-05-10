@@ -93,7 +93,7 @@ function BookingDetailPage() {
         <View style={styles.centered}>
           <Text style={styles.errorText}>Booking not found. Please try again.</Text>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as any as string))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as any))}
             style={styles.retryBtn}
           >
             <Text style={styles.retryBtnText}>Go Back</Text>
@@ -259,7 +259,7 @@ function BookingDetailPage() {
         <Text style={styles.errorText}>{error || 'Booking not found'}</Text>
         <Pressable
           style={styles.retryBtn}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         >
           <Text style={styles.retryBtnText}>Go Back</Text>
         </Pressable>
@@ -285,7 +285,7 @@ function BookingDetailPage() {
         <View style={styles.headerRow}>
           <Pressable
             style={styles.backBtn}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>

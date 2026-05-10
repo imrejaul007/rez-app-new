@@ -152,7 +152,7 @@ function GamificationDashboard() {
               <Text style={styles.title}>Gamification Hub</Text>
               <Text style={styles.subtitle}>Complete challenges, earn rewards!</Text>
             </View>
-            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any as string)}>
+            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any)}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                 style={styles.coinsBadgeGradient}
@@ -278,7 +278,7 @@ function GamificationDashboard() {
               <AchievementCard key={achievement._id} achievement={achievement} />
             ))}
 
-            <Pressable style={styles.viewAllButton} onPress={() => router.push('/badges' as any as string)}>
+            <Pressable style={styles.viewAllButton} onPress={() => router.push('/badges' as any)}>
               <Text style={styles.viewAllText}>View All Achievements</Text>
             </Pressable>
           </View>
@@ -288,7 +288,7 @@ function GamificationDashboard() {
           <View style={styles.content}>
             <Pressable
               style={styles.leaderboardCard}
-              onPress={() => router.push('/playandearn/leaderboard' as any as string)}
+              onPress={() => router.push('/playandearn/leaderboard' as any)}
             >
               <Ionicons name="trophy" size={24} color={colors.brand.goldBright} />
               <Text style={styles.leaderboardTitle}>View Leaderboards</Text>
@@ -304,7 +304,7 @@ function GamificationDashboard() {
             <Ionicons name="game-controller" size={24} color={colors.brand.purpleLight} />
           </View>
           <View style={styles.gameRow}>
-            <Pressable style={styles.gameCard} onPress={() => router.push('/games/spin-wheel' as any as string)}>
+            <Pressable style={styles.gameCard} onPress={() => router.push('/games/spin-wheel' as any)}>
               <LinearGradient
                 colors={['#FF6B6B', '#EE5A6F']}
                 style={styles.gameGradient}
@@ -318,7 +318,7 @@ function GamificationDashboard() {
               </LinearGradient>
             </Pressable>
 
-            <Pressable style={styles.gameCard} onPress={() => router.push('/scratch-card' as any as string)}>
+            <Pressable style={styles.gameCard} onPress={() => router.push('/scratch-card' as any)}>
               <LinearGradient
                 colors={['#4ECDC4', '#44A08D']}
                 style={styles.gameGradient}
@@ -332,7 +332,7 @@ function GamificationDashboard() {
               </LinearGradient>
             </Pressable>
 
-            <Pressable style={styles.gameCard} onPress={() => router.push('/games/quiz' as any as string)}>
+            <Pressable style={styles.gameCard} onPress={() => router.push('/games/quiz' as any)}>
               <LinearGradient
                 colors={['#A8E6CF', '#88D4AB']}
                 style={styles.gameGradient}

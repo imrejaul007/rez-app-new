@@ -283,7 +283,7 @@ const MyProductsPage = () => {
                   setTimeout(() => {
                     if (!isMounted()) return;
                     setShowReorderModal(false);
-                    router.push('/cart' as any as string);
+                    router.push('/cart' as any);
                   }, 2000);
                 }
               } else {
@@ -315,9 +315,9 @@ const MyProductsPage = () => {
     (product: PurchasedProduct) => {
       const storeId = product.storeId || product.store?._id || product.store?.id;
       if (storeId) {
-        router.push(`/reviews/${storeId}?productId=${product._id || product.id}` as any as string);
+        router.push(`/reviews/${storeId}?productId=${product._id || product.id}` as any);
       } else {
-        router.push('/ReviewPage' as any as string);
+        router.push('/ReviewPage' as any);
       }
     },
     [router],
@@ -330,7 +330,7 @@ const MyProductsPage = () => {
       return (
         <Pressable
           style={styles.productCard}
-          onPress={() => router.push(`/product-page?cardId=${item.productId}&cardType=product` as any as string)}
+          onPress={() => router.push(`/product-page?cardId=${item.productId}&cardType=product` as any)}
           accessibilityLabel={productLabel}
           accessibilityRole="button"
           accessibilityHint="Double tap to view product details"
@@ -553,7 +553,7 @@ const MyProductsPage = () => {
                     style={[styles.modalButton, styles.modalButtonPrimary]}
                     onPress={() => {
                       setShowReorderModal(false);
-                      router.push('/cart' as any as string);
+                      router.push('/cart' as any);
                     }}
                   >
                     <Text style={styles.modalButtonTextPrimary}>View Cart</Text>

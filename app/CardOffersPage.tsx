@@ -153,7 +153,7 @@ function CardOffersPage() {
       if (!isAuthenticated) {
         platformAlert('Sign In Required', 'Please sign in to apply card offers.', [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Sign In', onPress: () => router.push('/sign-in') },
+          { text: 'Sign In', onPress: () => router.push('/sign-in' as any) },
         ]);
         return;
       }

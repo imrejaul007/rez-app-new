@@ -83,7 +83,7 @@ function AllianceStorePage() {
     ({ item }: { item: AllianceStore }) => (
       <Pressable
         style={styles.storeCard}
-        onPress={() => router.push(`/MainStorePage?storeId=${item._id}` as any as string)}
+        onPress={() => router.push(`/MainStorePage?storeId=${item._id}` as any)}
       >
         {/* Store Image */}
         <View style={styles.storeImageContainer}>

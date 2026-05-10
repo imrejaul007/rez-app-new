@@ -190,7 +190,7 @@ const EventsCategoryPage: React.FC = () => {
   }, [fetchEvents, selectedFilter]);
 
   const handleEventPress = (eventId: string) => {
-    router.push({ pathname: '/EventPage', params: { id: eventId } } as any as string);
+    router.push({ pathname: '/EventPage', params: { id: eventId } } as any);
   };
 
   if (isLoading) {
@@ -274,7 +274,7 @@ const EventsCategoryPage: React.FC = () => {
             </Text>
             <Text style={styles.headerSubtitle}>{totalEvents} events available</Text>
           </View>
-          <Pressable style={styles.searchButton} onPress={() => router.push('/events-list' as any as string)}>
+          <Pressable style={styles.searchButton} onPress={() => router.push('/events-list' as any)}>
             <Ionicons name="search" size={24} color={COLORS.background} />
           </Pressable>
         </View>

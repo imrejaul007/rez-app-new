@@ -99,19 +99,19 @@ function MemberDashboard({ status }: { status: NBKCStatus }) {
       {/* Quick Actions */}
       <Text style={styles.sectionTitle}>Quick Actions</Text>
       <View style={styles.actionsRow}>
-        <Pressable style={styles.actionCard} onPress={() => router.push('/karma/civic-corps/missions')}>
+        <Pressable style={styles.actionCard} onPress={() => router.push('/karma/civic-corps/missions' as any)}>
           <View style={[styles.actionIcon, { backgroundColor: '#DCFCE7' }]}>
             <Ionicons name="map" size={22} color="#22C55E" />
           </View>
           <Text style={styles.actionLabel}>Find Missions</Text>
         </Pressable>
-        <Pressable style={styles.actionCard} onPress={() => router.push('/karma/civic-corps/leaderboard')}>
+        <Pressable style={styles.actionCard} onPress={() => router.push('/karma/civic-corps/leaderboard' as any)}>
           <View style={[styles.actionIcon, { backgroundColor: '#DBEAFE' }]}>
             <Ionicons name="trophy" size={22} color="#3B82F6" />
           </View>
           <Text style={styles.actionLabel}>Leaderboard</Text>
         </Pressable>
-        <Pressable style={styles.actionCard} onPress={() => router.push('/karma/civic-corps/join')}>
+        <Pressable style={styles.actionCard} onPress={() => router.push('/karma/civic-corps/join' as any)}>
           <View style={[styles.actionIcon, { backgroundColor: '#EDE9FE' }]}>
             <Ionicons name="add-circle" size={22} color="#8B5CF6" />
           </View>

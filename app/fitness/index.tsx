@@ -155,14 +155,14 @@ const FitnessPage: React.FC = () => {
 
   const handleCategoryPress = (categorySlug: string) => {
     if (categorySlug === 'challenges') {
-      router.push('/challenges' as any as string);
+      router.push('/challenges' as any);
     } else {
-      router.push(`/fitness/${categorySlug}` as any as string);
+      router.push(`/fitness/${categorySlug}` as any);
     }
   };
 
   const handleGymPress = (gym: FeaturedGym) => {
-    router.push(`/MainStorePage?storeId=${gym._id}` as any as string);
+    router.push(`/MainStorePage?storeId=${gym._id}` as any);
   };
 
   const getCategoryIcon = (slug: string) => categoryConfig[slug]?.icon || '🏋️';
@@ -321,7 +321,7 @@ const FitnessPage: React.FC = () => {
             <Text style={styles.promoSubtitle}>Join now & win up to 10,000 coins</Text>
             <Pressable
               style={styles.promoButton}
-              onPress={() => router.push('/challenges' as any as string)}
+              onPress={() => router.push('/challenges' as any)}
               accessibilityRole="button"
               accessibilityLabel="Join the New Year Fitness Challenge and win up to 10,000 coins"
             >

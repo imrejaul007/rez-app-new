@@ -19,7 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, gradients, borderRadius, spacing, typography } from '@/constants/theme';
-import { formatCoins, getCoinTier, type CoinTier } from './coinUtils';
+import { formatCoins, getCoinTier, type CoinTier } from '@/components/try/coinUtils';
 
 export interface CoinBalancePillProps {
   /** Current coin balance */
@@ -42,7 +42,7 @@ export interface CoinBalancePillProps {
 
 const TIER_CONFIG = {
   low: {
-    backgroundColors: gradients.gold as [string, string, string],
+    backgroundColors: [...gradients.gold] as [string, string],
     textColor: colors.nileBlue,
     borderColor: colors.primary[300],
     iconColor: colors.nileBlue,
@@ -88,7 +88,7 @@ const CoinBalancePill: React.FC<CoinBalancePillProps> = ({
       onPress();
     } else {
       // Default: navigate to coins page
-      router.push('/try/coins');
+      router.push('/try/coins' as any);
     }
   }, [onPress, router]);
 
@@ -208,7 +208,7 @@ const CoinBalancePill: React.FC<CoinBalancePillProps> = ({
       ]}
     >
       <LinearGradient
-        colors={config.backgroundColors as [string, string, string]}
+        colors={config.backgroundColors}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
         style={styles.gradientBackground}
@@ -306,6 +306,6 @@ const styles = StyleSheet.create({
 // ============================================================================
 
 export { CoinBalancePill };
-export type { CoinBalancePillProps, CoinTier };
+export type { CoinTier };
 
 export default memo(CoinBalancePill);

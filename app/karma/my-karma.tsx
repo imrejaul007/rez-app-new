@@ -355,7 +355,7 @@ function KarmaMyKarmaScreen() {
           <Ionicons name="lock-closed-outline" size={64} color={Colors.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Sign in to track your karma journey</Text>
-          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as any as string)}>
+          <Pressable style={styles.loginBtn} onPress={() => router.push('/sign-in' as any)}>
             <Text style={styles.loginBtnText}>Sign In</Text>
           </Pressable>
         </View>
@@ -410,7 +410,7 @@ function KarmaMyKarmaScreen() {
                 <Ionicons name="document-text" size={20} color={colors.text.inverse} />
               )}
             </Pressable>
-            <Pressable style={styles.headerAction} onPress={() => router.push('/karma/wallet')} hitSlop={8}>
+            <Pressable style={styles.headerAction} onPress={() => router.push('/karma/wallet' as any)} hitSlop={8}>
               <Ionicons name="wallet" size={20} color={colors.text.inverse} />
             </Pressable>
           </View>
@@ -486,7 +486,7 @@ function KarmaMyKarmaScreen() {
             <Text style={styles.statValue}>{conversionRate}%</Text>
             <Text style={styles.statLabel}>Rate</Text>
           </View>
-          <Pressable style={styles.statCard} onPress={() => router.push('/karma/wallet')}>
+          <Pressable style={styles.statCard} onPress={() => router.push('/karma/wallet' as any)}>
             <Ionicons name="wallet" size={20} color="#22C55E" />
             <Text style={styles.statValue}>Wallet</Text>
             <Text style={styles.statLabel}>View</Text>
@@ -591,7 +591,7 @@ function KarmaMyKarmaScreen() {
               <Ionicons name="leaf-outline" size={48} color={Colors.textSecondary} />
               <Text style={styles.emptyHistoryTitle}>No karma earned yet</Text>
               <Text style={styles.emptyHistorySub}>Join events and complete check-ins to start earning karma</Text>
-              <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore')}>
+              <Pressable style={styles.exploreBtn} onPress={() => router.push('/karma/explore' as any)}>
                 <Text style={styles.exploreBtnText}>Explore Events</Text>
               </Pressable>
             </View>

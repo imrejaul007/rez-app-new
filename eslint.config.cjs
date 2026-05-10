@@ -112,8 +112,6 @@ module.exports = [
         },
       ],
       'no-undef': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     },
   },

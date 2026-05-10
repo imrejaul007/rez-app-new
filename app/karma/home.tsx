@@ -306,7 +306,7 @@ function KarmaHomeScreen() {
       icon: 'qr-code' as const,
       color: '#8B5CF6',
       bg: '#F5F3FF',
-      onPress: () => router.push('/karma/scan'),
+      onPress: () => router.push('/karma/scan' as any),
     },
     {
       id: 'explore',
@@ -314,7 +314,7 @@ function KarmaHomeScreen() {
       icon: 'compass' as const,
       color: '#3B82F6',
       bg: '#EFF6FF',
-      onPress: () => router.push('/karma/explore'),
+      onPress: () => router.push('/karma/explore' as any),
     },
     {
       id: 'my-karma',
@@ -322,7 +322,7 @@ function KarmaHomeScreen() {
       icon: 'leaf' as const,
       color: '#22C55E',
       bg: '#DCFCE7',
-      onPress: () => router.push('/karma/my-karma'),
+      onPress: () => router.push('/karma/my-karma' as any),
     },
     {
       id: 'wallet',
@@ -330,7 +330,7 @@ function KarmaHomeScreen() {
       icon: 'wallet' as const,
       color: '#F59E0B',
       bg: '#FFFBEB',
-      onPress: () => router.push('/karma/wallet'),
+      onPress: () => router.push('/karma/wallet' as any),
     },
     {
       id: 'missions',
@@ -338,7 +338,7 @@ function KarmaHomeScreen() {
       icon: 'flag' as const,
       color: '#EF4444',
       bg: '#FEF2F2',
-      onPress: () => router.push('/karma/missions'),
+      onPress: () => router.push('/karma/missions' as any),
     },
     {
       id: 'micro',
@@ -346,7 +346,7 @@ function KarmaHomeScreen() {
       icon: 'flash' as const,
       color: '#F59E0B',
       bg: '#FFFBEB',
-      onPress: () => router.push('/karma/micro-actions'),
+      onPress: () => router.push('/karma/micro-actions' as any),
     },
     {
       id: 'leaderboard',
@@ -354,7 +354,7 @@ function KarmaHomeScreen() {
       icon: 'trophy' as const,
       color: '#8B5CF6',
       bg: '#F5F3FF',
-      onPress: () => router.push('/karma/leaderboard'),
+      onPress: () => router.push('/karma/leaderboard' as any),
     },
     {
       id: 'communities',
@@ -362,7 +362,7 @@ function KarmaHomeScreen() {
       icon: 'people' as const,
       color: '#7C3AED',
       bg: '#F5F3FF',
-      onPress: () => router.push('/karma/communities'),
+      onPress: () => router.push('/karma/communities' as any),
     },
   ];
 

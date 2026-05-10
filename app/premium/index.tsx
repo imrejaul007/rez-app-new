@@ -92,7 +92,7 @@ function PremiumScreen() {
   }, [subscribing, isMounted]);
 
   const handleCancel = useCallback(() => {
-    router.push('/subscription/cancel-feedback' as any as string);
+    router.push('/subscription/cancel-feedback' as any);
   }, [router]);
 
   if (loading) {

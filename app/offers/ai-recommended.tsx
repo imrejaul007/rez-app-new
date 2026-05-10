@@ -195,7 +195,7 @@ function AIRecommendedPage() {
       const discountColor = getDiscountColor(item.discountValue);
 
       return (
-        <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any as string)}>
+        <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any)}>
           <View style={styles.offerHeader}>
             {item.storeLogo ? (
               <CachedImage source={{ uri: item.storeLogo }} style={styles.offerImage as any} />

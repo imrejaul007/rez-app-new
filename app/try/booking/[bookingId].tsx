@@ -206,7 +206,7 @@ export default function BookingConfirmationScreen() {
           <Pressable style={styles.primaryButton} onPress={loadBooking}>
             <Text style={styles.primaryButtonText}>Try Again</Text>
           </Pressable>
-          <Pressable style={styles.secondaryButton} onPress={() => router.push('/try')}>
+          <Pressable style={styles.secondaryButton} onPress={() => router.push('/try' as any)}>
             <Text style={styles.secondaryButtonText}>Back to Explore</Text>
           </Pressable>
         </View>
@@ -218,7 +218,7 @@ export default function BookingConfirmationScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.push('/try')} hitSlop={12}>
+        <Pressable onPress={() => router.push('/try' as any)} hitSlop={12}>
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Booking Confirmed!</Text>
@@ -339,7 +339,7 @@ export default function BookingConfirmationScreen() {
         <View style={styles.divider} />
 
         {/* Back to Explore */}
-        <Pressable style={styles.backLink} onPress={() => router.push('/try')}>
+        <Pressable style={styles.backLink} onPress={() => router.push('/try' as any)}>
           <Ionicons name="arrow-back" size={16} color={colors.text.secondary} />
           <Text style={styles.backLinkText}>Back to explore more trials</Text>
         </Pressable>

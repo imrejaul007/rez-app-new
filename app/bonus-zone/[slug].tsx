@@ -270,7 +270,7 @@ function CampaignDetailPage() {
     if (!campaign) return;
 
     if (campaign.userState === 'claimed' || campaign.userState === 'limit_reached') {
-      router.push('/bonus-zone-history' as any as string);
+      router.push('/bonus-zone-history' as any);
       return;
     }
 
@@ -283,7 +283,7 @@ function CampaignDetailPage() {
             ...params,
             bonusCampaignSlug: campaign.slug,
           },
-        });
+        } as any);
       }
     }
   }, [campaign, router]);

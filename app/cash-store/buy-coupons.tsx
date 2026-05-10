@@ -254,7 +254,7 @@ function BuyCouponsPage() {
 
   const handleGiftCardPress = useCallback(
     (brand: VoucherBrandItem) => {
-      router.push(`/vouchers/brand/${brand._id}` as any as string);
+      router.push(`/vouchers/brand/${brand._id}` as any);
     },
     [router],
   );
@@ -296,7 +296,7 @@ function BuyCouponsPage() {
   );
 
   const handleViewMyCoupons = useCallback(() => {
-    router.push('/account/coupons' as any as string);
+    router.push('/account/coupons' as any);
   }, [router]);
 
   // ─── Denomination Range Display ────────────────────────────
@@ -522,7 +522,7 @@ function BuyCouponsPage() {
         <View style={[styles.stickyHeader, { paddingTop: skeletonTop }]}>
           <View style={styles.headerRow}>
             <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               style={styles.backBtn}
             >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
@@ -565,7 +565,7 @@ function BuyCouponsPage() {
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
             <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               style={styles.backBtn}
             >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />

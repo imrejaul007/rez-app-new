@@ -290,7 +290,7 @@ function GiftCardsScreen() {
                 style={styles.viewVouchersButton}
                 onPress={() => {
                   setShowVoucherModal(false);
-                  router.push('/prive/vouchers' as any as string);
+                  router.push('/prive/vouchers' as any);
                 }}
               >
                 <Text style={styles.viewVouchersText}>View All Vouchers</Text>

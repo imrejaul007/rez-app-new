@@ -265,7 +265,7 @@ function SpinWheelPage() {
               </ThemedText>
               <Pressable
                 style={styles.ctaButton}
-                onPress={() => router.push('/gamification' as any as string)}
+                onPress={() => router.push('/gamification' as any)}
                 accessibilityRole="button"
                 accessibilityLabel="View challenges to earn more spins"
               >

@@ -56,7 +56,7 @@ import {
 import {
   ProfileDrawer,
   CoinBalancePill,
-} from './components';
+} from '@/components/try';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 const GRID_GAP = 12;
@@ -392,7 +392,7 @@ export default function TryHomeScreen() {
     .sort((a, b) => (b.ratingCount || 0) - (a.ratingCount || 0))
     .slice(0, 8);
 
-  const go = (trialId: string) => router.push(`/try/${trialId}`);
+  const go = (trialId: string) => router.push(`/try/${trialId}` as any);
 
   // ── Location permission wall ────────────────────────────────────────────────
   if (!locationPermission && !loading) {
@@ -432,7 +432,7 @@ export default function TryHomeScreen() {
       >
         {/* ── Surprise Trial Card (always visible) ─────────────────────────── */}
         <Animated.View entering={FadeInDown.delay(60).duration(350)}>
-          <Pressable style={styles.surpriseCard} onPress={() => router.push('/try/surprise')}>
+          <Pressable style={styles.surpriseCard} onPress={() => router.push('/try/surprise' as any)}>
             <LinearGradient
               colors={['#1e1b4b', '#312e81']}
               start={{ x: 0, y: 0 }}
@@ -475,7 +475,7 @@ export default function TryHomeScreen() {
 
         {/* ── Try Near You — 2-column grid ───────────────────────────────── */}
         <View>
-          <SectionHeader emoji="📍" title="Try Near You" onSeeAll={() => router.push('/try/near-you')} />
+          <SectionHeader emoji="📍" title="Try Near You" onSeeAll={() => router.push('/try/near-you' as any)} />
           {loading ? (
             <View style={styles.gridRow}>
               <SkeletonCard half />
@@ -518,7 +518,7 @@ export default function TryHomeScreen() {
         {/* ── Campaign Card (conditional) ────────────────────────────────── */}
         {activeCampaign && (
           <Animated.View entering={FadeInDown.delay(160).duration(350)}>
-            <Pressable style={styles.campaignCard} onPress={() => router.push('/try/campaigns')}>
+            <Pressable style={styles.campaignCard} onPress={() => router.push('/try/campaigns' as any)}>
               <Image
                 source={{ uri: activeCampaign.image || 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800' }}
                 style={styles.campaignImage}
@@ -556,7 +556,7 @@ export default function TryHomeScreen() {
         {/* ── Trial Bundles Upsell (conditional) ─────────────────────────── */}
         {showBundlesUpsell && (
           <Animated.View entering={FadeInDown.delay(180).duration(350)}>
-            <Pressable style={styles.bundleCard} onPress={() => router.push('/try/bundles')}>
+            <Pressable style={styles.bundleCard} onPress={() => router.push('/try/bundles' as any)}>
               <LinearGradient
                 colors={['#065f46', '#047857']}
                 start={{ x: 0, y: 0 }}
@@ -587,7 +587,7 @@ export default function TryHomeScreen() {
         {/* ── Leaderboard Teaser (conditional — top 20% only) ─────────────── */}
         {showLeaderboardTeaser && (
           <Animated.View entering={FadeInDown.delay(200).duration(350)}>
-            <Pressable style={styles.leaderboardCard} onPress={() => router.push('/try/leaderboard')}>
+            <Pressable style={styles.leaderboardCard} onPress={() => router.push('/try/leaderboard' as any)}>
               <LinearGradient
                 colors={['#78350f', '#92400e']}
                 start={{ x: 0, y: 0 }}
@@ -619,7 +619,7 @@ export default function TryHomeScreen() {
             <Pressable
               key={item.route}
               style={styles.quickNavChip}
-              onPress={() => router.push(item.route as any as string)}
+              onPress={() => router.push(item.route as any)}
             >
               <Text style={styles.quickNavText}>{item.label}</Text>
             </Pressable>
@@ -631,7 +631,7 @@ export default function TryHomeScreen() {
 
       {/* ── Floating Explorer Score Widget ────────────────────────────────── */}
       <Animated.View style={[styles.floatWidget, floatAnim]}>
-        <Pressable style={styles.floatInner} onPress={() => router.push('/try/score')}>
+        <Pressable style={styles.floatInner} onPress={() => router.push('/try/score' as any)}>
           <Text style={styles.floatTier}>{explorerScore.tier[0]}</Text>
           <View>
             <Text style={styles.floatLabel}>{explorerScore.tier}</Text>
@@ -646,8 +646,8 @@ export default function TryHomeScreen() {
         onClose={() => setDrawerVisible(false)}
         coins={coinBalance}
         score={explorerScore.score}
-        tier={explorerScore.tier}
-        activeMission={null}
+        tier={explorerScore.tier as 'curious' | 'explorer' | 'adventurer' | 'pioneer'}
+        activeMission={undefined}
         badges={[]}
         leaderboardPercentile={explorerScore.percentile}
         city={location ? 'Your Area' : undefined}

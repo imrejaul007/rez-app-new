@@ -118,7 +118,7 @@ const LockDealDetailPage: React.FC = () => {
 
   const handleViewMyLock = () => {
     if (userLock) {
-      router.push(`/lock-deals/my-locks` as any as string);
+      router.push(`/lock-deals/my-locks` as any);
     }
   };
 

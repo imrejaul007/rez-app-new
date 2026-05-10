@@ -98,7 +98,7 @@ function BankOffersListScreen() {
   const handleOfferPress = (offer: BankOffer) => {
     const offerId = offer._id || offer.id;
     if (offerId) {
-      router.push(`/bank-offers/${offerId}` as any as string);
+      router.push(`/bank-offers/${offerId}` as any);
     }
   };
 
@@ -120,7 +120,7 @@ function BankOffersListScreen() {
         <View style={styles.header}>
           <Pressable
             style={styles.headerBtn}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
@@ -147,7 +147,7 @@ function BankOffersListScreen() {
         <View style={styles.header}>
           <Pressable
             style={styles.headerBtn}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
@@ -178,7 +178,7 @@ function BankOffersListScreen() {
       <View style={styles.header}>
         <Pressable
           style={styles.headerBtn}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>

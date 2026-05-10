@@ -280,7 +280,7 @@ const BadgesScreen: React.FC = () => {
         <Text style={styles.ctasTitle}>Quick Actions to Unlock More</Text>
 
         {/* Shopping CTA */}
-        <Pressable style={styles.ctaCard} onPress={() => router.push('/mall')}>
+        <Pressable style={styles.ctaCard} onPress={() => router.push('/mall' as any)}>
           <LinearGradient colors={['rgba(139, 92, 246, 0.2)', 'rgba(236, 72, 153, 0.2)']} style={styles.ctaGradient}>
             <View style={[styles.ctaIconBox, { backgroundColor: 'rgba(139, 92, 246, 0.2)' }]}>
               <Ionicons name="bag-handle" size={20} color={COLORS.purple600} />
@@ -294,7 +294,7 @@ const BadgesScreen: React.FC = () => {
         </Pressable>
 
         {/* Referral CTA */}
-        <Pressable style={styles.ctaCard} onPress={() => router.push('/referral')}>
+        <Pressable style={styles.ctaCard} onPress={() => router.push('/referral' as any)}>
           <LinearGradient colors={['rgba(59, 130, 246, 0.2)', 'rgba(6, 182, 212, 0.2)']} style={styles.ctaGradient}>
             <View style={[styles.ctaIconBox, { backgroundColor: 'rgba(59, 130, 246, 0.2)' }]}>
               <Ionicons name="people" size={20} color={COLORS.blue500} />
@@ -308,7 +308,7 @@ const BadgesScreen: React.FC = () => {
         </Pressable>
 
         {/* Games CTA */}
-        <Pressable style={styles.ctaCard} onPress={() => router.push('/games')}>
+        <Pressable style={styles.ctaCard} onPress={() => router.push('/games' as any)}>
           <LinearGradient colors={['rgba(34, 197, 94, 0.2)', 'rgba(16, 185, 129, 0.2)']} style={styles.ctaGradient}>
             <View style={[styles.ctaIconBox, { backgroundColor: 'rgba(34, 197, 94, 0.2)' }]}>
               <Ionicons name="game-controller" size={20} color={COLORS.green500} />
@@ -322,7 +322,7 @@ const BadgesScreen: React.FC = () => {
         </Pressable>
 
         {/* Daily Check-in CTA */}
-        <Pressable style={styles.ctaCard} onPress={() => router.push('/explore/daily-checkin')}>
+        <Pressable style={styles.ctaCard} onPress={() => router.push('/explore/daily-checkin' as any)}>
           <LinearGradient colors={['rgba(245, 158, 11, 0.2)', 'rgba(234, 179, 8, 0.2)']} style={styles.ctaGradient}>
             <View style={[styles.ctaIconBox, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}>
               <Ionicons name="ribbon" size={20} color={COLORS.amber500} />
@@ -365,7 +365,7 @@ const BadgesScreen: React.FC = () => {
           error={error}
           onRetry={() => fetchAchievements()}
           title="Unable to load achievements"
-          onSecondaryAction={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onSecondaryAction={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         />
       </>
     );
@@ -379,7 +379,7 @@ const BadgesScreen: React.FC = () => {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={20} color={(COLORS as any).navy} />
           </Pressable>

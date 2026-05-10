@@ -144,7 +144,7 @@ const PlayEarn = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path as any as string);
+    router.push(path as any);
   };
 
   // Build activities with dynamic data overlay from stats

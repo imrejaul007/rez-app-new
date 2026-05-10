@@ -210,7 +210,7 @@ const CreatorPickDetail = () => {
     router.push({
       pathname: '/product-page',
       params: { cardId: pick.productId || id, cardType: 'product', pickId: id },
-    });
+    } as any);
   };
 
   // ============================================
@@ -471,7 +471,7 @@ const CreatorPickDetail = () => {
               {(pick.status === 'draft' || pick.status === 'rejected') && (
                 <Pressable
                   style={s.editPickBtn}
-                  onPress={() => router.push(`/submit-pick?editId=${id}` as any as string)}
+                  onPress={() => router.push(`/submit-pick?editId=${id}` as any)}
                 >
                   <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                   <Text style={s.editPickText}>Edit Pick</Text>

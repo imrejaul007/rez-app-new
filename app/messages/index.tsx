@@ -176,7 +176,7 @@ function MessagesIndexPage() {
   };
 
   const handleAIChatPress = useCallback(() => {
-    router.push('/messages/ai-chat');
+    router.push('/messages/ai-chat' as any);
   }, [router]);
 
   const renderEmpty = useCallback(() => {

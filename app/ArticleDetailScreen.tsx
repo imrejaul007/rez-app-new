@@ -278,7 +278,7 @@ function ArticleDetailScreen() {
   // Navigate to product
   const handleProductPress = useCallback(
     (product: DiscoverProduct) => {
-      router.push(`/product-page?cardId=${product._id}&cardType=product&source=article`);
+      router.push(`/product-page?cardId=${product._id}&cardType=product&source=article` as any);
     },
     [router],
   );
@@ -356,7 +356,7 @@ function ArticleDetailScreen() {
   // Deep-link parameter validation guard
   if (!params.item || typeof params.item !== 'string') {
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
     return null;
   }
 
@@ -372,7 +372,7 @@ function ArticleDetailScreen() {
         <Text style={styles.errorText}>{error || 'Article not found'}</Text>
         <Pressable
           style={styles.backButton}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         >
           <Text style={styles.backButtonText}>Go Back</Text>
         </Pressable>
@@ -388,7 +388,7 @@ function ArticleDetailScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable
           style={styles.headerButton}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>

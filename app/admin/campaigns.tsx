@@ -198,7 +198,7 @@ function AdminCampaigns() {
       <LinearGradient colors={[colors.successScale[400], colors.successScale[700]]} style={styles.header}>
         <Pressable
           style={styles.backButton}
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>

@@ -254,7 +254,7 @@ function LoyaltyRewardsPage() {
 
   const handleMilestonePress = (milestone: LoyaltyMilestone) => {
     // Navigate to mission detail which shows milestone/mission progress
-    router.push(`/mission-detail?milestoneId=${milestone._id}` as any as string);
+    router.push(`/mission-detail?milestoneId=${milestone._id}` as any);
   };
 
   const renderMilestoneCard = (milestone: LoyaltyMilestone) => {
@@ -550,7 +550,7 @@ function LoyaltyRewardsPage() {
 
       {/* Fixed CTA Button */}
       <View style={styles.fixedCTA}>
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as any as string)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/offers' as any)}>
           <LinearGradient
             colors={Gradients.primary}
             start={{ x: 0, y: 0 }}

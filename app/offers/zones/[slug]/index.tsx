@@ -339,13 +339,13 @@ function ExclusiveZonePage() {
   const handleOfferPress = (offer: ZoneOffer) => {
     const offerId = offer._id || offer.id;
     if (offerId) {
-      router.push(`/offers/${offerId}` as any as string);
+      router.push(`/offers/${offerId}` as any);
     }
   };
 
   const handleVerify = () => {
     if (slug) {
-      router.push(`/offers/zones/${slug}/verify` as any as string);
+      router.push(`/offers/zones/${slug}/verify` as any);
     }
   };
 

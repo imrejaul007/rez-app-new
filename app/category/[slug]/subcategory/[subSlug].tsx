@@ -259,7 +259,7 @@ function SubcategoryPage() {
    */
   const handleStorePress = useCallback(
     (store: StoreItem) => {
-      router.push(`/MainStorePage?storeId=${store.id}` as any as string);
+      router.push(`/MainStorePage?storeId=${store.id}` as any);
     },
     [router],
   );
@@ -269,7 +269,7 @@ function SubcategoryPage() {
    */
   const handleProductPress = useCallback(
     (product: ProductItem) => {
-      router.push(`/product-page?cardId=${product.id}&cardType=product` as any as string);
+      router.push(`/product-page?cardId=${product.id}&cardType=product` as any);
     },
     [router],
   );
@@ -380,7 +380,7 @@ function SubcategoryPage() {
         >
           <View style={styles.headerContent}>
             <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               style={styles.backButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
@@ -393,7 +393,7 @@ function SubcategoryPage() {
               </ThemedText>
             </View>
             <Pressable
-              onPress={() => router.push(`/search?category=${subSlug}` as any as string)}
+              onPress={() => router.push(`/search?category=${subSlug}` as any)}
               style={styles.searchButton}
             >
               <Ionicons name="search" size={22} color={colors.text.inverse} />

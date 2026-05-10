@@ -12,7 +12,7 @@ import {
   NearbyStoresSection,
   TermsTransparencySection,
   RewardsFooterBanner,
-} from '@/app/MainStoreSection';
+} from '@/components/main-store-section';
 
 interface LocationData {
   address?: string;

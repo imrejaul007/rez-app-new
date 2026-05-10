@@ -247,7 +247,7 @@ function LanguageSettingsPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
@@ -271,7 +271,7 @@ function LanguageSettingsPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"

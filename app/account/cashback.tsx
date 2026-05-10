@@ -334,7 +334,7 @@ function CashbackPage() {
         <View style={[styles.header, { paddingTop: headerTop }]}>
           <View style={styles.headerContent}>
             <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               style={styles.backButton}
             >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
@@ -362,13 +362,13 @@ function CashbackPage() {
       <View style={[styles.header, { paddingTop: headerTop }]}>
         <View style={styles.headerContent}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Track Cashback</Text>
-          <Pressable onPress={() => router.push('/wallet' as any as string)} style={styles.walletButton}>
+          <Pressable onPress={() => router.push('/wallet' as any)} style={styles.walletButton}>
             <Ionicons name="wallet-outline" size={18} color={colors.nileBlue} />
           </Pressable>
         </View>
@@ -702,7 +702,7 @@ function CashbackPage() {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Double Cashback</Text>
-                  <Pressable onPress={() => router.push('/offers/double-cashback' as any as string)}>
+                  <Pressable onPress={() => router.push('/offers/double-cashback' as any)}>
                     <Text style={styles.seeAllText}>See All</Text>
                   </Pressable>
                 </View>
@@ -743,7 +743,7 @@ function CashbackPage() {
 
             {/* ─── Quick Actions ─────────────────────────────────── */}
             <View style={styles.quickActions}>
-              <Pressable style={styles.quickAction} onPress={() => router.push('/wallet' as any as string)}>
+              <Pressable style={styles.quickAction} onPress={() => router.push('/wallet' as any)}>
                 <View style={[styles.quickActionIcon, { backgroundColor: Colors.success + '1A' }]}>
                   <Ionicons name="wallet-outline" size={18} color={Colors.success} />
                 </View>
@@ -751,14 +751,14 @@ function CashbackPage() {
               </Pressable>
               <Pressable
                 style={styles.quickAction}
-                onPress={() => router.push('/cash-store/offers' as any as string)}
+                onPress={() => router.push('/cash-store/offers' as any)}
               >
                 <View style={[styles.quickActionIcon, { backgroundColor: Colors.warning + '1A' }]}>
                   <Ionicons name="flash-outline" size={18} color={Colors.warning} />
                 </View>
                 <Text style={styles.quickActionLabel}>Offers</Text>
               </Pressable>
-              <Pressable style={styles.quickAction} onPress={() => router.push('/my-vouchers' as any as string)}>
+              <Pressable style={styles.quickAction} onPress={() => router.push('/my-vouchers' as any)}>
                 <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(139,92,246,0.1)' }]}>
                   <Ionicons name="ticket-outline" size={18} color={colors.brand.purpleLight} />
                 </View>
@@ -766,7 +766,7 @@ function CashbackPage() {
               </Pressable>
               <Pressable
                 style={styles.quickAction}
-                onPress={() => router.push('/account/coupons' as any as string)}
+                onPress={() => router.push('/account/coupons' as any)}
               >
                 <View style={[styles.quickActionIcon, { backgroundColor: 'rgba(232,184,150,0.15)' }]}>
                   <Ionicons name="pricetag-outline" size={18} color={colors.brand.sand} />

@@ -36,12 +36,12 @@ function HomeDeliveryPage() {
 
   const handleProductPress = (product: HomeDeliveryProduct) => {
     router.push(
-      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as any as string,
+      `/product-page?cardId=${product.id}&cardType=just_for_you&category=${product.categoryId}` as any,
     );
   };
 
   const handleViewAllSection = (sectionId: string) => {
-    router.push(`/home-delivery/section/${sectionId}` as any as string);
+    router.push(`/home-delivery/section/${sectionId}` as any);
   };
 
   const handleHideSearch = () => {

@@ -158,7 +158,7 @@ const CampaignScreen: React.FC = () => {
         'Please sign in or create an account to claim this reward.',
         [
           { text: 'Cancel', style: 'cancel' },
-          { text: 'Sign In', onPress: () => router.push('/account/login') },
+          { text: 'Sign In', onPress: () => router.push('/account/login' as any) },
         ]
       );
       return;
@@ -208,7 +208,7 @@ const CampaignScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <Stack.Screen options={{ title: 'Campaign' }} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.brand.primary} />
+          <ActivityIndicator size="large" color={colors.brand.orange} />
           <Text style={styles.loadingText}>Loading campaign...</Text>
         </View>
       </SafeAreaView>
@@ -336,7 +336,7 @@ const CampaignScreen: React.FC = () => {
         <View style={styles.shareSection}>
           <Text style={styles.shareTitle}>Share with Friends</Text>
           <Pressable style={styles.shareButton} onPress={handleShare}>
-            <Ionicons name="share-social-outline" size={20} color={Colors.brand.primary} />
+            <Ionicons name="share-social-outline" size={20} color={colors.brand.orange} />
             <Text style={styles.shareButtonText}>Share Campaign</Text>
           </Pressable>
         </View>
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: Colors.brand.primary,
+    backgroundColor: colors.brand.orange,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   rewardTypeLabel: {
-    ...Typography.subtitle,
+    ...Typography.body,
     color: Colors.white,
     opacity: 0.9,
     marginTop: Spacing.xs,
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   merchantText: {
-    ...Typography.subtitle,
+    ...Typography.body,
     color: colors.text.secondary,
   },
   expiryInfo: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   expiryText: {
-    ...Typography.subtitle,
+    ...Typography.body,
     color: Colors.warning,
   },
   termItem: {
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   claimButton: {
-    backgroundColor: Colors.brand.primary,
+    backgroundColor: colors.brand.orange,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   shareTitle: {
-    ...Typography.subtitle,
+    ...Typography.body,
     color: colors.text.secondary,
     marginBottom: Spacing.md,
   },
@@ -519,13 +519,13 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.brand.primary,
+    borderColor: colors.brand.orange,
     borderRadius: BorderRadius.lg,
     gap: Spacing.sm,
   },
   shareButtonText: {
     ...Typography.button,
-    color: Colors.brand.primary,
+    color: colors.brand.orange,
   },
 });
 

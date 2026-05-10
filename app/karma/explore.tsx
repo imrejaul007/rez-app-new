@@ -368,7 +368,7 @@ function KarmaExploreScreen() {
               ? `No ${selectedCategory} events right now`
               : `No ${selectedStatus} events right now`}
           </Text>
-          <Pressable style={styles.emptyExploreBtn} onPress={() => router.push('/karma/home')}>
+          <Pressable style={styles.emptyExploreBtn} onPress={() => router.push('/karma/home' as any)}>
             <Text style={styles.emptyExploreBtnText}>Go to Home</Text>
           </Pressable>
         </View>
@@ -376,7 +376,7 @@ function KarmaExploreScreen() {
         <FlashList
           data={filteredEvents}
           renderItem={({ item }) => (
-            <ExploreEventCard event={item} onPress={() => router.push(`/karma/event/${item._id}`)} />
+            <ExploreEventCard event={item} onPress={() => router.push(`/karma/event/${item._id}` as any)} />
           )}
           keyExtractor={(item) => item._id}
           estimatedItemSize={380}

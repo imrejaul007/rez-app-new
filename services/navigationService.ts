@@ -1,7 +1,7 @@
 // Navigation Service
 // Centralized navigation service with error handling and event management
 
-import { Href, Router } from 'expo-router';
+import { Router } from 'expo-router';
 import uuid from 'react-native-uuid';
 import {
   INavigationService,
@@ -14,6 +14,7 @@ import {
   NavigationMethod,
   NavigationErrorType,
   NavigationQueueItem,
+  RoutePath,
 } from '@/types/navigation.types';
 import {
   navigationHistory,
@@ -111,7 +112,7 @@ class NavigationService implements INavigationService {
    * Navigate to a route
    */
   async navigate(
-    route: Href,
+    route: RoutePath,
     options: NavigationOptions = {}
   ): Promise<NavigationResult> {
     if (!this.isReady()) {
@@ -155,9 +156,9 @@ class NavigationService implements INavigationService {
 
       await retryWithBackoff(async () => {
         if (options.replace) {
-          this.router!.replace(route);
+          this.router!.replace(route as any);
         } else {
-          this.router!.push(route);
+          this.router!.push(route as any);
         }
       });
 
@@ -178,7 +179,7 @@ class NavigationService implements INavigationService {
       if (options.fallbackRoute) {
 
         try {
-          this.router!.push(options.fallbackRoute);
+          this.router!.push(options.fallbackRoute as any);
           const fallbackStr = normalizeRoute(options.fallbackRoute);
           this.currentRoute = fallbackStr;
           this.addToHistory(fallbackStr, 'push');
@@ -206,7 +207,7 @@ class NavigationService implements INavigationService {
   /**
    * Go back in navigation history
    */
-  async goBack(fallbackRoute?: Href): Promise<NavigationResult> {
+  async goBack(fallbackRoute?: RoutePath): Promise<NavigationResult> {
     if (!this.isReady()) {
       const error = createNavigationError(
         NavigationErrorType.UNKNOWN,
@@ -237,7 +238,7 @@ class NavigationService implements INavigationService {
       const fallbackChain = getFallbackChain(this.currentRoute);
       for (const fallback of fallbackChain) {
         try {
-          this.router!.push(fallback);
+          this.router!.push(fallback as any);
           const fallbackStr = normalizeRoute(fallback);
           this.currentRoute = fallbackStr;
           this.addToHistory(fallbackStr, 'push');
@@ -260,7 +261,7 @@ class NavigationService implements INavigationService {
    * Replace current route
    */
   async replace(
-    route: Href,
+    route: RoutePath,
     options: NavigationOptions = {}
   ): Promise<NavigationResult> {
     return this.navigate(route, { ...options, replace: true });
@@ -387,7 +388,7 @@ class NavigationService implements INavigationService {
    * Queue navigation for later
    */
   queueNavigation(
-    route: Href,
+    route: RoutePath,
     options: NavigationOptions = {},
     priority: number = 0
   ): string {

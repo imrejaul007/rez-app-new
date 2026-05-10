@@ -75,7 +75,7 @@ function KarmaEventDetailScreen() {
 
   const handleJoin = async () => {
     if (!isAuthenticated) {
-      router.push('/sign-in' as any as string);
+      router.push('/sign-in' as any);
       return;
     }
     if (!event) return;
@@ -124,12 +124,12 @@ function KarmaEventDetailScreen() {
 
   const handleCheckIn = () => {
     if (!event) return;
-    router.push(`/karma/scan?eventId=${event._id}&mode=checkin`);
+    router.push(`/karma/scan?eventId=${event._id}&mode=checkin` as any);
   };
 
   const handleCheckOut = () => {
     if (!event) return;
-    router.push(`/karma/scan?eventId=${event._id}&mode=checkout`);
+    router.push(`/karma/scan?eventId=${event._id}&mode=checkout` as any);
   };
 
   const openMaps = () => {
@@ -161,7 +161,7 @@ function KarmaEventDetailScreen() {
         <View style={styles.emptyState}>
           <Ionicons name="alert-circle-outline" size={64} color={Colors.textSecondary} />
           <Text style={styles.emptyTitle}>Event not found</Text>
-          <Pressable style={styles.backHomeBtn} onPress={() => router.push('/karma/home')}>
+          <Pressable style={styles.backHomeBtn} onPress={() => router.push('/karma/home' as any)}>
             <Text style={styles.backHomeBtnText}>Go to Karma Home</Text>
           </Pressable>
         </View>

@@ -194,7 +194,7 @@ const MyEarningsPage = () => {
       source: 'my_earnings',
       available_balance: data?.availableBalance,
     });
-    router.push('/wallet-screen' as any as string);
+    router.push('/wallet-screen' as any);
   };
 
   const handleExportReport = async () => {
@@ -356,7 +356,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             </Pressable>
             <Pressable
               style={styles.headerIconButton}
-              onPress={() => router.push('/earnings-history' as any as string)}
+              onPress={() => router.push('/earnings-history' as any)}
             >
               <Ionicons name="time-outline" size={22} color={colors.text.inverse} />
             </Pressable>
@@ -446,7 +446,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             <Text style={styles.zeroStateDescription}>
               Complete projects, refer friends, share on social media, play games, and shop to earn coins.
             </Text>
-            <Pressable style={styles.zeroStateCta} onPress={() => router.push('/playandearn' as any as string)}>
+            <Pressable style={styles.zeroStateCta} onPress={() => router.push('/playandearn' as any)}>
               <Text style={styles.zeroStateCtaText}>Explore Earning Opportunities</Text>
               <Ionicons name="arrow-forward" size={16} color={colors.brand.pink} />
             </Pressable>
@@ -504,7 +504,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Recent Earnings</Text>
-                <Pressable onPress={() => router.push('/earnings-history' as any as string)}>
+                <Pressable onPress={() => router.push('/earnings-history' as any)}>
                   <Text style={styles.viewAllText}>View All</Text>
                 </Pressable>
               </View>

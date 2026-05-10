@@ -326,7 +326,7 @@ function CreatorProfilePage() {
 
             {/* Action Button: Edit Profile (own) or Follow (others) */}
             {isOwnProfile ? (
-              <Pressable style={styles.editProfileButton} onPress={() => router.push('/creator/edit')}>
+              <Pressable style={styles.editProfileButton} onPress={() => router.push('/creator/edit' as any)}>
                 <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                 <Text style={styles.editProfileButtonText}>Edit</Text>
               </Pressable>
@@ -385,7 +385,7 @@ function CreatorProfilePage() {
         {/* Own Profile Actions */}
         {isOwnProfile && (
           <View style={styles.ownProfileActions}>
-            <Pressable style={styles.dashboardButton} onPress={() => router.push('/creator-dashboard')}>
+            <Pressable style={styles.dashboardButton} onPress={() => router.push('/creator-dashboard' as any)}>
               <Ionicons name="analytics-outline" size={18} color={colors.text.inverse} />
               <Text style={styles.dashboardButtonText}>Go to Dashboard</Text>
             </Pressable>

@@ -301,7 +301,7 @@ function AllProjectsPage() {
       router.push({
         pathname: '/project-detail',
         params: { projectId: project._id },
-      } as any as string);
+      } as any);
     },
     [router],
   );

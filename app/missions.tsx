@@ -445,7 +445,7 @@ const MissionsScreen: React.FC = () => {
         mission.title.toLowerCase().includes('check in') ||
         mission.title.toLowerCase() === 'daily check-in'
       ) {
-        router.push('/explore/daily-checkin');
+        router.push('/explore/daily-checkin' as any);
         return;
       }
 
@@ -517,7 +517,7 @@ const MissionsScreen: React.FC = () => {
                 </Text>
               </View>
             ) : (
-              <Pressable style={styles.streakBadge} onPress={() => router.push('/explore/daily-checkin')}>
+              <Pressable style={styles.streakBadge} onPress={() => router.push('/explore/daily-checkin' as any)}>
                 <Ionicons name="flame-outline" size={14} color={colors.background.primary} />
                 <Text style={styles.streakText}>Check in</Text>
               </Pressable>

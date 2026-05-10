@@ -265,7 +265,7 @@ function PaymentPage() {
 
   const navigateAfterSuccess = () => {
     if (isFinancialService) {
-      router.replace('/financial' as any as string);
+      router.replace('/financial' as any);
     } else if (isMobileRecharge) {
       // FR-D004 FIX: after mobile recharge payment navigate to wallet so user
       // can see the debited amount + promo coins, rather than looping back to

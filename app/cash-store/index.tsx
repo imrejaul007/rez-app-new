@@ -19,7 +19,7 @@ function CashStorePage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
@@ -33,7 +33,7 @@ function CashStorePage() {
             <Text style={styles.headerSubtitle}>Gift Cards, Coupons & More</Text>
           </View>
         </View>
-        <Pressable style={styles.trackButton} onPress={() => router.push('/account/cashback' as any as string)}>
+        <Pressable style={styles.trackButton} onPress={() => router.push('/account/cashback' as any)}>
           <Ionicons name="time" size={20} color={colors.nileBlue} />
         </Pressable>
       </View>

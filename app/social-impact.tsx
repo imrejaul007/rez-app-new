@@ -295,7 +295,7 @@ function SocialImpactPage() {
                 borderWidth: 1,
                 borderColor: 'rgba(255, 205, 87, 0.3)',
               }}
-              onPress={() => router.push('/social-impact/my-events')}
+              onPress={() => router.push('/social-impact/my-events' as any)}
             >
               <Ionicons name="list" size={16} color={'#e6b84e'} />
               <Text
@@ -487,7 +487,7 @@ function SocialImpactPage() {
                   ) : event.isEnrolled ? (
                     <Pressable
                       style={styles.viewDetailsButton}
-                      onPress={() => router.push(`/social-impact/${event._id}` as any as string)}
+                      onPress={() => router.push(`/social-impact/${event._id}` as any)}
                     >
                       <Text style={styles.viewDetailsButtonText}>View Details</Text>
                       <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
@@ -495,7 +495,7 @@ function SocialImpactPage() {
                   ) : (
                     <Pressable
                       style={styles.registerButton}
-                      onPress={() => router.push(`/social-impact/${event._id}` as any as string)}
+                      onPress={() => router.push(`/social-impact/${event._id}` as any)}
                     >
                       <LinearGradient
                         colors={[Colors.gold, '#e6b84e']}

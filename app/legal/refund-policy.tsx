@@ -279,7 +279,7 @@ function RefundPolicyPage() {
           </View>
           <Pressable
             style={styles.supportButton}
-            onPress={() => router.push('/support' as any as string)}
+            onPress={() => router.push('/support' as any)}
             accessible={true}
             accessibilityLabel="Contact support"
             accessibilityRole="button"

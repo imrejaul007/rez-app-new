@@ -24,7 +24,7 @@ import {
   getCampaignTypeColor,
   formatEndDate,
   getUrgencyColor,
-} from './campaignUtils';
+} from '@/components/try/campaignUtils';
 
 // =============================================================================
 // PROPS

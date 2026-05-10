@@ -92,7 +92,7 @@ function GoingOutSectionPage() {
 
   const handleProductPress = useCallback(
     (item: SectionProduct) => {
-      router.push(`/product-page?cardId=${item._id}` as any as string);
+      router.push(`/product-page?cardId=${item._id}` as any);
     },
     [router],
   );

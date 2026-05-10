@@ -224,7 +224,7 @@ function TrendingOffersPage() {
             controlsColor: colors.background.primary,
           });
         } else if (brand.storeId) {
-          router.push(`/MainStorePage?storeId=${brand.storeId}` as any as string);
+          router.push(`/MainStorePage?storeId=${brand.storeId}` as any);
         }
       } catch (err: any) {
         if (brand.externalUrl) {
@@ -278,7 +278,7 @@ function TrendingOffersPage() {
             controlsColor: colors.background.primary,
           });
         } else if (offer.storeId) {
-          router.push(`/MainStorePage?storeId=${offer.storeId}` as any as string);
+          router.push(`/MainStorePage?storeId=${offer.storeId}` as any);
         }
       } catch (err: any) {
         if (offer.externalUrl) {
@@ -346,7 +346,7 @@ function TrendingOffersPage() {
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
             <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               style={styles.backBtn}
             >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
@@ -399,7 +399,7 @@ function TrendingOffersPage() {
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
             <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               style={styles.backBtn}
             >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />

@@ -177,7 +177,7 @@ function BenefitsScreen() {
         })}
 
         {/* CTA */}
-        <Pressable style={styles.ctaButton} onPress={() => router.push('/prive/next-actions' as any as string)}>
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/prive/next-actions' as any)}>
           <Text style={styles.ctaText}>See How to Level Up</Text>
         </Pressable>
 

@@ -80,7 +80,7 @@ function EnhancedBillUploadPage() {
       if (navigation && navigation.canGoBack && navigation.canGoBack()) {
         navigation.goBack();
       } else if (router && router.push) {
-        router.push('/');
+        router.push('/' as any);
       } else {
         router.replace('/');
       }
@@ -195,7 +195,7 @@ function EnhancedBillUploadPage() {
         platformAlertConfirm(
           'Success!',
           `Your bill has been uploaded successfully. You'll earn ${currencySymbol}${cashbackFormatted} cashback once approved!`,
-          () => router?.push && router.push('/bill-history'),
+          () => router?.push && router.push('/bill-history' as any),
           'View History',
         );
       } else {

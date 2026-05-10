@@ -206,7 +206,7 @@ function SubscriptionsPage() {
               </View>
               <Pressable
                 style={[styles.recoveryButton, { backgroundColor: Colors.primary }]}
-                onPress={() => router.push('/payment?type=subscription&action=retry' as any as string)}
+                onPress={() => router.push('/payment?type=subscription&action=retry' as any)}
               >
                 <Text style={styles.recoveryButtonText}>Update Payment</Text>
               </Pressable>

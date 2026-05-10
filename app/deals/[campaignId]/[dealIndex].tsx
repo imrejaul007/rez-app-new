@@ -254,7 +254,7 @@ const DealDetailPage: React.FC = () => {
       platformAlertConfirm(
         'Sign In Required',
         'Please sign in to redeem this deal',
-        () => router.push('/sign-in'),
+        () => router.push('/sign-in' as any),
         'Sign In',
       );
       return;
@@ -561,7 +561,7 @@ const DealDetailPage: React.FC = () => {
           <Text style={styles.errorText}>{error || 'Deal not found'}</Text>
           <Pressable
             style={styles.errorButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={18} color={COLORS.white} />
             <Text style={styles.errorButtonText}>Go Back</Text>
@@ -606,7 +606,7 @@ const DealDetailPage: React.FC = () => {
           {/* Navigation */}
           <Pressable
             style={styles.backBtn}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={22} color={COLORS.white} />
           </Pressable>
@@ -949,7 +949,7 @@ const DealDetailPage: React.FC = () => {
                 deal?.isSoldOut && styles.redeemButtonSoldOut,
                 alreadyRedeemed && styles.redeemButtonRedeemed,
               ]}
-              onPress={alreadyRedeemed ? () => router.push('/my-deals') : isPaidDeal ? handlePurchase : handleRedeem}
+              onPress={alreadyRedeemed ? () => router.push('/my-deals' as any) : isPaidDeal ? handlePurchase : handleRedeem}
               disabled={isRedeeming || isPurchasing || deal?.isSoldOut}
             >
               <LinearGradient
@@ -1048,7 +1048,7 @@ const DealDetailPage: React.FC = () => {
                   style={styles.modalPrimaryBtn}
                   onPress={() => {
                     setShowSuccessModal(false);
-                    router.push('/my-deals');
+                    router.push('/my-deals' as any);
                   }}
                 >
                   <LinearGradient colors={[COLORS.green500, COLORS.emerald500]} style={styles.modalPrimaryBtnGradient}>

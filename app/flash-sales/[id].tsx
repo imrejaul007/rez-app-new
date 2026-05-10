@@ -195,7 +195,7 @@ function FlashSaleDetailPage() {
       platformAlertConfirm(
         'Sign In Required',
         'Please sign in to get this offer',
-        () => router.push('/sign-in'),
+        () => router.push('/sign-in' as any),
         'Sign In',
       );
       return;
@@ -263,7 +263,7 @@ function FlashSaleDetailPage() {
 
   const handleStorePress = () => {
     if (flashSale?.stores?.[0]?._id) {
-      router.push(`/MainStorePage?storeId=${flashSale.stores[0]._id}` as any as string);
+      router.push(`/MainStorePage?storeId=${flashSale.stores[0]._id}` as any);
     }
   };
 

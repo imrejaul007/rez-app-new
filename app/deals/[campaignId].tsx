@@ -112,7 +112,7 @@ const CampaignDetailPage: React.FC = () => {
   };
 
   const handleDealPress = (deal: CampaignDeal, dealIndex: number) => {
-    router.push(`/deals/${campaignId}/${dealIndex}` as any as string);
+    router.push(`/deals/${campaignId}/${dealIndex}` as any);
   };
 
   const renderDealValue = (deal: CampaignDeal) => {
@@ -204,7 +204,7 @@ const CampaignDetailPage: React.FC = () => {
           <Text style={styles.errorText}>{error || 'Campaign not found'}</Text>
           <Pressable
             style={styles.errorButton}
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           >
             <Ionicons name="arrow-back" size={18} color={COLORS.white} />
             <Text style={styles.errorButtonText}>Go Back</Text>
@@ -255,7 +255,7 @@ const CampaignDetailPage: React.FC = () => {
 
           {/* Back Button */}
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={22} color={COLORS.white} />

@@ -289,7 +289,7 @@ function CreatorApplyPage() {
             </View>
 
             {needsVideos && (
-              <Pressable style={styles.uploadCta} onPress={() => router.push('/ugc-upload')}>
+              <Pressable style={styles.uploadCta} onPress={() => router.push('/ugc-upload' as any)}>
                 <LinearGradient
                   colors={[Colors.brand.purple, Colors.brand.purple]}
                   start={{ x: 0, y: 0 }}

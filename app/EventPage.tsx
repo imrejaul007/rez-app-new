@@ -631,9 +631,9 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             text: 'My Events',
             onPress: () => {
               if (Platform.OS === 'ios') {
-                setTimeout(() => router.push('/my-events' as any as string), 50);
+                setTimeout(() => router.push('/my-events' as any), 50);
               } else {
-                router.push('/my-events' as any as string);
+                router.push('/my-events' as any);
               }
             },
           },
@@ -705,7 +705,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                 </Pressable>
                 <Pressable
                   style={styles.notFoundExploreButton}
-                  onPress={() => router.push('/events' as any as string)}
+                  onPress={() => router.push('/events' as any)}
                 >
                   <Ionicons name="compass-outline" size={20} color={Colors.brand.purpleLight} />
                   <Text style={styles.notFoundExploreText}>Explore Events</Text>

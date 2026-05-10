@@ -262,7 +262,7 @@ function CategoriesScreen() {
           parentCategory: parentSlug,
           title: subcategory.name,
         },
-      } as any as string);
+      } as any);
     },
     [router],
   );
@@ -330,7 +330,7 @@ function CategoriesScreen() {
                 styles.headerIcon,
                 { backgroundColor: isDark ? themeColors.neutral[700] : 'rgba(255,255,255,0.5)' },
               ]}
-              onPress={() => router.push('/wallet-screen')}
+              onPress={() => router.push('/wallet-screen' as any)}
               android_ripple={{ color: 'rgba(0,0,0,0.1)', borderless: true, radius: 20 }}
               accessibilityRole="button"
               accessibilityLabel="Open wallet"
@@ -343,7 +343,7 @@ function CategoriesScreen() {
         {/* Search bar — tap navigates to /search */}
         <Pressable
           style={styles.searchBar}
-          onPress={() => router.push('/search' as any as string)}
+          onPress={() => router.push('/search' as any)}
           android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
           accessibilityRole="search"
           accessibilityLabel="Search everything"
@@ -703,7 +703,7 @@ function CategoriesScreen() {
           totalSaved={0}
           thisMonthSaved={0}
           currencySymbol="\u20B9"
-          onPress={() => router.push('/wallet-screen')}
+          onPress={() => router.push('/wallet-screen' as any)}
         />
         <EarnRezCoinsSection />
         <LazySection

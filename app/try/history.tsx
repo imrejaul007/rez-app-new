@@ -97,7 +97,7 @@ export default function TrialHistoryScreen() {
 
   const handleQRPress = (booking: HistoryItem) => {
     if (booking.status === 'active') {
-      router.push(`/try/booking/${booking.bookingId}`);
+      router.push(`/try/booking/${booking.bookingId}` as any);
     }
   };
 

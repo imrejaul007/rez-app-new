@@ -297,7 +297,7 @@ function NotificationHistoryScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"

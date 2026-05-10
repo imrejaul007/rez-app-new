@@ -212,7 +212,7 @@ const StoresPage: React.FC = () => {
 
   // Handle store press
   const handleStorePress = (store: DisplayStore) => {
-    router.push(`/MainStorePage?storeId=${store.id}` as any as string);
+    router.push(`/MainStorePage?storeId=${store.id}` as any);
   };
 
   // Loading state

@@ -546,7 +546,7 @@ function CartPage() {
   const handleBuyNow = async () => {
     // C06: Guard — unauthenticated users must log in before checkout
     if (!isAuthenticated) {
-      router.push('/onboarding/splash');
+      router.push('/onboarding/splash' as any);
       return;
     }
 
@@ -567,9 +567,9 @@ function CartPage() {
 
     // If validation passed, proceed to checkout (pass offerRedemptionCode if present)
     if (params.offerRedemptionCode) {
-      router.push({ pathname: '/checkout', params: { offerRedemptionCode: params.offerRedemptionCode } });
+      router.push({ pathname: '/checkout', params: { offerRedemptionCode: params.offerRedemptionCode } } as any);
     } else {
-      router.push('/checkout');
+      router.push('/checkout' as any);
     }
   };
 
@@ -582,9 +582,9 @@ function CartPage() {
     if ((validationState.validationResult?.validItems.length ?? 0) > 0) {
       // Pass offerRedemptionCode if present
       if (params.offerRedemptionCode) {
-        router.push({ pathname: '/checkout', params: { offerRedemptionCode: params.offerRedemptionCode } });
+        router.push({ pathname: '/checkout', params: { offerRedemptionCode: params.offerRedemptionCode } } as any);
       } else {
-        router.push('/checkout');
+        router.push('/checkout' as any);
       }
     } else {
       platformAlertSimple('Cannot Checkout', 'No valid items in cart to checkout');
@@ -706,7 +706,7 @@ function CartPage() {
         <ThemedText style={styles.emptySubtitle}>{subtitle}</ThemedText>
         <Pressable
           style={styles.browseCTAButton}
-          onPress={() => router.push('/(tabs)')}
+          onPress={() => router.push('/(tabs)' as any)}
           accessibilityLabel="Browse stores"
           accessibilityRole="button"
         >

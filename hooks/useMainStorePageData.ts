@@ -8,7 +8,7 @@ import { useGamification } from '@/contexts/GamificationContext';
 import { useStoreData } from '@/hooks/useStoreData';
 import { useStoreReviews } from '@/hooks/useStoreReviews';
 import { MainStoreProduct, MainStorePageProps } from '@/types/mainstore';
-import { TabKey } from '@/app/MainStoreSection';
+import { TabKey } from '@/components/main-store-section';
 import reviewsApi from '@/services/reviewsApi';
 import reviewApi from '@/services/reviewApi';
 import apiClient from '@/services/apiClient';

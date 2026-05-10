@@ -57,6 +57,7 @@ export function useMerchantPricingAI(): UseMerchantPricingAIResult {
         merchantQuality: params.merchantQuality,
         competitorPrices: params.competitorPrices,
         targetConversion: params.targetConversion,
+        originalPrice: params.originalPrice,
       });
 
       setSuggestion(result);

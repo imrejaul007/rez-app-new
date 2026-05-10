@@ -98,13 +98,13 @@ function ArticlesPage() {
 
   const handleArticlePress = useCallback(
     (article: Article) => {
-      router.push(`/article/${article.id}`);
+      router.push(`/article/${article.id}` as any);
     },
     [router],
   );
 
   const handleCreateArticle = useCallback(() => {
-    router.push('/article/create');
+    router.push('/article/create' as any);
   }, [router]);
 
   const renderArticleCard = useCallback(
@@ -131,7 +131,7 @@ function ArticlesPage() {
               {/* Back Button */}
               <Pressable
                 style={styles.backButton}
-                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               >
                 <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
@@ -153,7 +153,7 @@ function ArticlesPage() {
             {/* Back Button */}
             <Pressable
               style={styles.backButton}
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>

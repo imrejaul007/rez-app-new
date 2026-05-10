@@ -13,7 +13,7 @@ import {
   CashbackOffer,
   StoreProducts,
   VoucherCardsSection,
-} from '@/app/MainStoreSection';
+} from '@/components/main-store-section';
 import { MainStoreProduct } from '@/types/mainstore';
 import { parsePrice } from '@/utils/priceParser';
 import { platformAlert } from '@/utils/platformAlert';

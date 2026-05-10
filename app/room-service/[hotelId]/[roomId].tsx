@@ -85,7 +85,7 @@ const RoomServiceHubScreen: React.FC = () => {
       const response = await apiClient.get(`/room-service/${params.hotelId}/${params.roomId}`, {
         headers: {
           Authorization: `Bearer ${params.token}`,
-        },
+        } as any,
       });
 
       if (response.success && response.data) {
@@ -207,10 +207,7 @@ const RoomServiceHubScreen: React.FC = () => {
   const handleServicePress = (service: RoomService) => {
     switch (service.actionType) {
       case 'food':
-        router.push({
-          pathname: '/store/hotel-restaurant',
-          params: { hotelId: params.hotelId, roomId: params.roomId },
-        });
+        router.push('/store/hotel-restaurant' as any);
         break;
       case 'housekeeping':
         Alert.alert(
@@ -241,7 +238,7 @@ const RoomServiceHubScreen: React.FC = () => {
       <SafeAreaView style={styles.container}>
         <Stack.Screen options={{ title: 'Room Service' }} />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.brand.primary} />
+          <ActivityIndicator size="large" color={Colors.brand.purple} />
           <Text style={styles.loadingText}>Loading room services...</Text>
         </View>
       </SafeAreaView>
@@ -278,7 +275,7 @@ const RoomServiceHubScreen: React.FC = () => {
       >
         {/* Room Header */}
         <LinearGradient
-          colors={[colors.brand.nileBlue, colors.brand.nileBlueDark]}
+          colors={[colors.nileBlue, colors.brand.navyDark]}
           style={styles.headerGradient}
         >
           <View style={styles.roomHeader}>
@@ -312,7 +309,7 @@ const RoomServiceHubScreen: React.FC = () => {
                   <Ionicons
                     name={SERVICE_ICONS[service.actionType] || 'help-circle-outline'}
                     size={28}
-                    color={Colors.brand.primary}
+                    color={Colors.brand.purple}
                   />
                 </View>
                 <Text style={styles.serviceName}>{service.name}</Text>
@@ -375,7 +372,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: Colors.brand.primary,
+    backgroundColor: Colors.brand.purple,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
@@ -443,15 +440,16 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.brand.primaryLight,
+    backgroundColor: colors.brand.purpleLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
   },
   serviceName: {
-    ...Typography.subtitle,
+    ...Typography.body,
     color: colors.text.primary,
     textAlign: 'center',
+    fontWeight: '600',
   },
   serviceDescription: {
     ...Typography.caption,

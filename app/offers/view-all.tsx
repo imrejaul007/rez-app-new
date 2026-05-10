@@ -237,7 +237,7 @@ function ViewAllOffersScreen() {
 
   const handleOfferPress = useCallback(
     (offer: Offer) => {
-      router.push(`/offers/${offer._id}` as any as string);
+      router.push(`/offers/${offer._id}` as any);
     },
     [router],
   );
@@ -369,7 +369,7 @@ function ViewAllOffersScreen() {
           </Pressable>
 
           <View style={styles.headerCenter}>
-            <Pressable style={styles.pointsContainer} onPress={() => router.push('/coins')}>
+            <Pressable style={styles.pointsContainer} onPress={() => router.push('/coins' as any)}>
               <Ionicons name="star" size={16} color={colors.brand.goldBright} />
               <ThemedText style={styles.pointsText}>{userPoints}</ThemedText>
             </Pressable>

@@ -77,37 +77,37 @@ function SupportHubPage() {
       router.back();
     } else {
       // If no previous screen (e.g., page was refreshed), navigate to account page
-      router.push('/account' as any as string);
+      router.push('/account' as any);
     }
   };
 
   const handleCreateTicket = () => {
-    router.push('/support/create-ticket' as any as string);
+    router.push('/support/create-ticket' as any);
   };
 
   const handleViewAllTickets = () => {
-    router.push('/support/tickets' as any as string);
+    router.push('/support/tickets' as any);
   };
 
   const handleViewAllFAQs = () => {
-    router.push('/support/faq' as any as string);
+    router.push('/support/faq' as any);
   };
 
   const handleViewTicket = (ticket: SupportTicket) => {
-    router.push(`/support/ticket/${ticket._id}` as any as string);
+    router.push(`/support/ticket/${ticket._id}` as any);
   };
 
   const handleViewFAQ = (faq: FAQ) => {
-    router.push(`/support/faq?id=${faq._id}` as any as string);
+    router.push(`/support/faq?id=${faq._id}` as any);
   };
 
   const handleQuickAction = (type: string) => {
     switch (type) {
       case 'order-issue':
-        router.push('/support/create-ticket?category=order&subject=Order Issue' as any as string);
+        router.push('/support/create-ticket?category=order&subject=Order Issue' as any);
         break;
       case 'track-order':
-        router.push('/tracking' as any as string);
+        router.push('/tracking' as any);
         break;
       case 'payment-help':
         handleCreateTicket();
@@ -263,21 +263,21 @@ function SupportHubPage() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Get Help</ThemedText>
             <View style={styles.helpOptionsGrid}>
-              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/call')}>
+              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/call' as any)}>
                 <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.primary[500]}20` }]}>
                   <Ionicons name="call" size={24} color={Colors.primary[500]} />
                 </View>
                 <ThemedText style={styles.helpOptionLabel}>Call Support</ThemedText>
                 <ThemedText style={styles.helpOptionDesc}>Talk to us directly</ThemedText>
               </Pressable>
-              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/feedback')}>
+              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/feedback' as any)}>
                 <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.secondary[500]}20` }]}>
                   <Ionicons name="chatbox" size={24} color={Colors.secondary[500]} />
                 </View>
                 <ThemedText style={styles.helpOptionLabel}>Feedback</ThemedText>
                 <ThemedText style={styles.helpOptionDesc}>Share your thoughts</ThemedText>
               </Pressable>
-              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/report-fraud')}>
+              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/report-fraud' as any)}>
                 <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.error}20` }]}>
                   <Ionicons name="warning" size={24} color={Colors.error} />
                 </View>

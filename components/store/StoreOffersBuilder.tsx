@@ -1,6 +1,6 @@
 // StoreOffersBuilder.tsx - Builds offers array from store data and renders StoreOffersPreview
 import React, { useMemo } from 'react';
-import { StoreOffersPreview } from '@/app/MainStoreSection';
+import { StoreOffersPreview } from '@/components/main-store-section';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 

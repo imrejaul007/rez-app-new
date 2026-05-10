@@ -98,9 +98,9 @@ function RelatedProducts({
   // Handle view all press
   const handleViewAllPress = () => {
     if (currentProduct?.category) {
-      router.push(`/category/${currentProduct.category.toLowerCase()}`);
+      router.push(`/category/${currentProduct.category.toLowerCase()}` as any);
     } else {
-      router.push('/products');
+      router.push('/products' as any);
     }
   };
 

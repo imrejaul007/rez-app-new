@@ -257,9 +257,9 @@ const BeautyCategoryPage: React.FC = () => {
   // Handle item press - navigate to store or product page
   const handleItemPress = (item: DisplayItem) => {
     if (config.type === 'store') {
-      router.push(`/MainStorePage?storeId=${item.id}` as any as string);
+      router.push(`/MainStorePage?storeId=${item.id}` as any);
     } else {
-      router.push(`/product-page?productId=${item.id}` as any as string);
+      router.push(`/product-page?productId=${item.id}` as any);
     }
   };
 
@@ -267,16 +267,16 @@ const BeautyCategoryPage: React.FC = () => {
   const handleBookPress = (item: DisplayItem) => {
     if (config.type === 'store') {
       // Navigate to store page with booking intent
-      router.push(`/MainStorePage?storeId=${item.id}&action=book` as any as string);
+      router.push(`/MainStorePage?storeId=${item.id}&action=book` as any);
     } else {
       // Navigate to product page with add to cart intent
-      router.push(`/product-page?productId=${item.id}&action=buy` as any as string);
+      router.push(`/product-page?productId=${item.id}&action=buy` as any);
     }
   };
 
   // Handle search
   const handleSearch = () => {
-    router.push(`/search?category=beauty&subcategory=${category}` as any as string);
+    router.push(`/search?category=beauty&subcategory=${category}` as any);
   };
 
   // Loading state
@@ -294,7 +294,7 @@ const BeautyCategoryPage: React.FC = () => {
       <LinearGradient colors={config.gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
@@ -381,7 +381,7 @@ const BeautyCategoryPage: React.FC = () => {
             </Text>
             <Pressable
               style={[styles.exploreButton, { backgroundColor: config.gradientColors[0] }]}
-              onPress={() => router.push('/beauty' as any as string)}
+              onPress={() => router.push('/beauty' as any)}
             >
               <Text style={styles.exploreButtonText}>Explore Other Categories</Text>
             </Pressable>

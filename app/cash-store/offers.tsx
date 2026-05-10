@@ -265,7 +265,7 @@ function OffersPage() {
     (drop: CoinDrop) => {
       const storeId = getStoreId(drop.storeId);
       if (storeId) {
-        router.push(`/MainStorePage?storeId=${storeId}` as any as string);
+        router.push(`/MainStorePage?storeId=${storeId}` as any);
       }
     },
     [router],
@@ -290,7 +290,7 @@ function OffersPage() {
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
             <Pressable
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
               style={styles.backBtn}
             >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
@@ -379,7 +379,7 @@ function OffersPage() {
             </View>
             <Text style={styles.emptyTitle}>No offers right now</Text>
             <Text style={styles.emptySubtitle}>Check back soon for coupons, cashback deals & more!</Text>
-            <Pressable onPress={() => router.push('/cash-store' as any as string)} style={styles.browseBtn}>
+            <Pressable onPress={() => router.push('/cash-store' as any)} style={styles.browseBtn}>
               <Text style={styles.browseBtnText}>Browse Cash Store</Text>
               <Ionicons name="arrow-forward" size={14} color={colors.text.inverse} />
             </Pressable>
@@ -422,7 +422,7 @@ function OffersPage() {
                   </View>
                   <Text style={styles.sectionTitle}>Featured Coupons</Text>
                   <Pressable
-                    onPress={() => router.push('/account/coupons' as any as string)}
+                    onPress={() => router.push('/account/coupons' as any)}
                     style={styles.seeAllBtn}
                   >
                     <Text style={styles.seeAllText}>See All</Text>
@@ -441,7 +441,7 @@ function OffersPage() {
                   return (
                     <Pressable
                       key={coupon._id}
-                      onPress={() => router.push('/account/coupons' as any as string)}
+                      onPress={() => router.push('/account/coupons' as any)}
                       style={styles.couponCard}
                     >
                       <View style={styles.couponLeft}>
@@ -492,7 +492,7 @@ function OffersPage() {
                   </View>
                   <Text style={styles.sectionTitle}>Double Cashback</Text>
                   <Pressable
-                    onPress={() => router.push('/offers/double-cashback' as any as string)}
+                    onPress={() => router.push('/offers/double-cashback' as any)}
                     style={styles.seeAllBtn}
                   >
                     <Text style={styles.seeAllText}>See All</Text>
@@ -513,7 +513,7 @@ function OffersPage() {
                     return (
                       <Pressable
                         key={campaign._id}
-                        onPress={() => router.push('/offers/double-cashback' as any as string)}
+                        onPress={() => router.push('/offers/double-cashback' as any)}
                         style={styles.campaignCard}
                       >
                         <LinearGradient
@@ -641,7 +641,7 @@ function OffersPage() {
                   </View>
                   <Text style={styles.sectionTitle}>Top Cashback Brands</Text>
                   <Pressable
-                    onPress={() => router.push('/cash-store/brands' as any as string)}
+                    onPress={() => router.push('/cash-store/brands' as any)}
                     style={styles.seeAllBtn}
                   >
                     <Text style={styles.seeAllText}>See All</Text>
@@ -659,7 +659,7 @@ function OffersPage() {
                     return (
                       <Pressable
                         key={brand._id}
-                        onPress={() => router.push(`/vouchers/brand/${brand._id}` as any as string)}
+                        onPress={() => router.push(`/vouchers/brand/${brand._id}` as any)}
                         style={styles.brandCard}
                       >
                         <View style={styles.brandLogoWrap}>
@@ -726,7 +726,7 @@ function OffersPage() {
                 ].map((action, i) => (
                   <Pressable
                     key={i}
-                    onPress={() => router.push(action.route as any as string)}
+                    onPress={() => router.push(action.route as any)}
                     style={styles.quickActionCard}
                   >
                     <View style={[styles.quickActionIcon, { backgroundColor: action.bg }]}>

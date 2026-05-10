@@ -77,7 +77,7 @@ function BillHistoryPage() {
         navigation.goBack();
       } else if (router && router.push) {
         // Navigate to home if can't go back
-        router.push('/');
+        router.push('/' as any);
       } else {
         // Final fallback - replace current route with home
         router.replace('/');
@@ -250,7 +250,7 @@ function BillHistoryPage() {
       'Would you like to upload a new photo for this bill?',
       () => {
         setShowDetailModal(false);
-        router?.push && router.push('/bill-upload');
+        router?.push && router.push('/bill-upload' as any);
       },
       'Upload New Photo',
     );
@@ -518,7 +518,7 @@ function BillHistoryPage() {
       <Ionicons name="receipt-outline" size={80} color={colors.border.default} />
       <Text style={styles.emptyStateTitle}>No Bills Yet</Text>
       <Text style={styles.emptyStateText}>Upload your bills to start earning cashback on offline purchases</Text>
-      <Pressable style={styles.uploadButton} onPress={() => router?.push && router.push('/bill-upload')}>
+      <Pressable style={styles.uploadButton} onPress={() => router?.push && router.push('/bill-upload' as any)}>
         <Ionicons name="add" size={20} color={colors.text.inverse} />
         <Text style={styles.uploadButtonText}>Upload Bill</Text>
       </Pressable>
@@ -533,7 +533,7 @@ function BillHistoryPage() {
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Bill History</Text>
-        <Pressable onPress={() => router?.push && router.push('/bill-upload')}>
+        <Pressable onPress={() => router?.push && router.push('/bill-upload' as any)}>
           <Ionicons name="add-circle" size={24} color="#FF6B35" />
         </Pressable>
       </View>

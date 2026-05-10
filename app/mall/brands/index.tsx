@@ -251,7 +251,7 @@ function BrandsListingPage() {
 
   const handleBrandPress = useCallback(
     (brand: MallBrand) => {
-      router.push(`/MainStorePage?storeId=${brand.id || brand._id}` as any as string);
+      router.push(`/MainStorePage?storeId=${brand.id || brand._id}` as any);
     },
     [router],
   );

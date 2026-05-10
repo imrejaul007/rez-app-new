@@ -208,7 +208,7 @@ function StoreMapScreen() {
           headerTitleStyle: { fontSize: 16, fontWeight: '600' },
           headerRight: () => (
             <Pressable
-              onPress={() => router.push('/near-u')}
+              onPress={() => router.push('/near-u' as any)}
               style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.6 }]}
             >
               <Ionicons name="list" size={24} color="#fff" />

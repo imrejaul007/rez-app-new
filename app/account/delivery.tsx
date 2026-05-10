@@ -55,7 +55,7 @@ function DeliverySettingsScreen() {
 
   const handleBackPress = () => {
     // eslint-disable-next-line no-unused-expressions
-    router.canGoBack() ? router.back() : router.replace('/(tabs)');
+    router.canGoBack() ? router.back() : router.replace('/(tabs)' as any);
   };
 
   const handleAddAddress = () => {

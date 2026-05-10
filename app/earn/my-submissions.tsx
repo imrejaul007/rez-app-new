@@ -443,7 +443,7 @@ function MySubmissionsPage() {
                   ? 'Upload photos, create reels, vote in polls, or comment on offers to earn coins!'
                   : 'Nothing here yet. Start contributing to earn rewards!'}
               </Text>
-              <Pressable style={styles.emptyCta} onPress={() => router.push('/playandearn' as any as string)}>
+              <Pressable style={styles.emptyCta} onPress={() => router.push('/playandearn' as any)}>
                 <Ionicons name="add-circle" size={18} color={COLORS.white} />
                 <Text style={styles.emptyCtaText}>Start Earning</Text>
               </Pressable>

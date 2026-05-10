@@ -147,7 +147,7 @@ function BillPayScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
@@ -317,7 +317,7 @@ function BillPayScreen() {
                 style={styles.viewVouchersButton}
                 onPress={() => {
                   setShowVoucherModal(false);
-                  router.push('/prive/vouchers' as any as string);
+                  router.push('/prive/vouchers' as any);
                 }}
               >
                 <Text style={styles.viewVouchersText}>View All Vouchers</Text>

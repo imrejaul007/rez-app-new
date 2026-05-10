@@ -189,7 +189,7 @@ function TicketsPage() {
       return (
         <Pressable
           style={styles.ticketCard}
-          onPress={() => router.push(`/support/ticket/${ticket._id}` as any as string)}
+          onPress={() => router.push(`/support/ticket/${ticket._id}` as any)}
         >
           <View style={styles.ticketHeader}>
             <View style={styles.ticketTitleRow}>
@@ -264,7 +264,7 @@ function TicketsPage() {
         </ThemedText>
         <Pressable
           style={styles.emptyButton}
-          onPress={() => router.push('/support/create-ticket' as any as string)}
+          onPress={() => router.push('/support/create-ticket' as any)}
         >
           <Ionicons name="add-circle-outline" size={20} color={colors.background.primary} />
           <ThemedText style={styles.emptyButtonText}>Create Ticket</ThemedText>
@@ -285,14 +285,14 @@ function TicketsPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>My Tickets</ThemedText>
             <Pressable
               style={styles.addButton}
-              onPress={() => router.push('/support/create-ticket' as any as string)}
+              onPress={() => router.push('/support/create-ticket' as any)}
             >
               <Ionicons name="add" size={24} color={colors.background.primary} />
             </Pressable>

@@ -125,7 +125,7 @@ function ProductDetailScreen() {
   };
 
   const handleCreateServiceRequest = () => {
-    router.push(`/support/create-ticket?category=service&productId=${product?._id}` as any as string);
+    router.push(`/support/create-ticket?category=service&productId=${product?._id}` as any);
   };
 
   if (loading) {
@@ -160,7 +160,7 @@ function ProductDetailScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)' as any))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"

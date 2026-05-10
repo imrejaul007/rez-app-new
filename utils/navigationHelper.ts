@@ -2,7 +2,6 @@
 // Safe navigation wrapper functions with platform-specific handling
 
 import { Platform } from 'react-native';
-import { Href } from 'expo-router';
 import {
   NavigationOptions,
   NavigationResult,
@@ -11,6 +10,7 @@ import {
   NavigationError,
   NavigationHistoryEntry,
   Platform as PlatformType,
+  RoutePath,
 } from '@/types/navigation.types';
 
 /**
@@ -71,23 +71,23 @@ export const navigationHistory = new NavigationHistory();
 /**
  * Default fallback routes by platform
  */
-const DEFAULT_FALLBACK_ROUTES: Record<PlatformType, Href> = {
-  web: '/' as Href,
-  ios: '/(tabs)' as Href,
-  android: '/(tabs)' as Href,
+const DEFAULT_FALLBACK_ROUTES: Record<PlatformType, RoutePath> = {
+  web: '/',
+  ios: '/(tabs)',
+  android: '/(tabs)',
 };
 
 /**
  * Get default fallback route for current platform
  */
-export const getDefaultFallbackRoute = (): Href => {
+export const getDefaultFallbackRoute = (): RoutePath => {
   return DEFAULT_FALLBACK_ROUTES[getPlatform()];
 };
 
 /**
  * Validate route
  */
-export const isValidRoute = (route: any): route is Href => {
+export const isValidRoute = (route: any): route is RoutePath => {
   if (!route) return false;
   if (typeof route === 'string') return route.length > 0;
   if (typeof route === 'object') {
@@ -99,10 +99,10 @@ export const isValidRoute = (route: any): route is Href => {
 /**
  * Normalize route to string
  */
-export const normalizeRoute = (route: Href): string => {
+export const normalizeRoute = (route: RoutePath): string => {
   if (typeof route === 'string') return route;
-  if (typeof route === 'object' && 'pathname' in route) {
-    return route.pathname as string;
+  if (typeof route === 'object' && 'pathname' in (route as any)) {
+    return (route as any).pathname as string;
   }
   return '/';
 };
@@ -129,7 +129,7 @@ export const requiresAuth = (route: string): boolean => {
 /**
  * Resolve deep link to route
  */
-export const resolveDeepLink = (url: string): Href | null => {
+export const resolveDeepLink = (url: string): RoutePath | null => {
   try {
     const urlObj = new URL(url);
     const path = urlObj.pathname;
@@ -143,10 +143,10 @@ export const resolveDeepLink = (url: string): Href | null => {
       return {
         pathname: path,
         params,
-      } as Href;
+      } as any;
     }
 
-    return path as Href;
+    return path as any;
   } catch (error) {
     return null;
   }
@@ -158,15 +158,12 @@ export const resolveDeepLink = (url: string): Href | null => {
 export const buildRoute = (
   path: string,
   params?: Record<string, any>
-): Href => {
+): RoutePath => {
   if (!params || Object.keys(params).length === 0) {
-    return path as Href;
+    return path;
   }
 
-  return {
-    pathname: path,
-    params,
-  } as Href;
+  return path;
 };
 
 /**
@@ -261,7 +258,7 @@ export const sanitizeRoute = (route: string): string => {
 /**
  * Check if two routes are equal
  */
-export const routesEqual = (route1: Href, route2: Href): boolean => {
+export const routesEqual = (route1: RoutePath, route2: RoutePath): boolean => {
   const normalized1 = normalizeRoute(route1);
   const normalized2 = normalizeRoute(route2);
   return sanitizeRoute(normalized1) === sanitizeRoute(normalized2);
@@ -347,19 +344,19 @@ export const logNavigation = (
 /**
  * Get safe fallback route chain
  */
-export const getFallbackChain = (currentRoute: string): Href[] => {
-  const fallbacks: Href[] = [];
+export const getFallbackChain = (currentRoute: string): RoutePath[] => {
+  const fallbacks: RoutePath[] = [];
 
   // Try parent route
   const parent = getParentRoute(currentRoute);
   if (parent) {
-    fallbacks.push(parent as Href);
+    fallbacks.push(parent);
   }
 
   // Try common fallbacks
-  fallbacks.push('/profile' as Href);
-  fallbacks.push('/(tabs)' as Href);
-  fallbacks.push('/' as Href);
+  fallbacks.push('/profile');
+  fallbacks.push('/(tabs)');
+  fallbacks.push('/');
 
   return fallbacks;
 };

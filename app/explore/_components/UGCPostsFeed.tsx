@@ -128,7 +128,7 @@ const UGCPostsFeed = () => {
   }, []);
 
   const navigateTo = (path: string) => {
-    router.push(path as any as string);
+    router.push(path as any);
   };
 
   // Handle like/helpful button
