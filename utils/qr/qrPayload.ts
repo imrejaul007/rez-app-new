@@ -24,7 +24,8 @@ export type QrIntentKind =
   | 'room-hub'
   | 'menu-qr'
   | 'rez-now'
-  | 'ad-campaign';
+  | 'ad-campaign'
+  | 'product-verify';
 
 export interface StoreVisitPayload {
   intent: 'store-visit';
@@ -121,6 +122,16 @@ export interface AdCampaignPayload {
   rewardType: 'coins' | 'discount' | 'sample' | 'consultation' | 'contest';
 }
 
+/** Product Verify Intent — for ReZ Verify product authenticity QR codes */
+export interface ProductVerifyPayload {
+  intent: 'product-verify';
+  v: 1;
+  brandId: string;
+  brandSlug: string;
+  productId: string;
+  serialNumber: string;
+}
+
 export type QrPayload =
   | StoreVisitPayload
   | PayBillPayload
@@ -133,7 +144,8 @@ export type QrPayload =
   | RoomHubPayload
   | MenuQrPayload
   | RezNowPayload
-  | AdCampaignPayload;
+  | AdCampaignPayload
+  | ProductVerifyPayload;
 
 export interface ShortUrlIntent {
   intent: 'short-url';
@@ -386,6 +398,33 @@ function validateAdCampaign(obj: Record<string, unknown>, issues: string[]): AdC
   };
 }
 
+function validateProductVerify(obj: Record<string, unknown>, issues: string[]): ProductVerifyPayload | null {
+  if (!isNonEmptyString(obj.brandId)) {
+    issues.push('brandId: required non-empty string');
+    return null;
+  }
+  if (!isNonEmptyString(obj.brandSlug)) {
+    issues.push('brandSlug: required non-empty string');
+    return null;
+  }
+  if (!isNonEmptyString(obj.productId)) {
+    issues.push('productId: required non-empty string');
+    return null;
+  }
+  if (!isNonEmptyString(obj.serialNumber)) {
+    issues.push('serialNumber: required non-empty string');
+    return null;
+  }
+  return {
+    intent: 'product-verify',
+    v: 1,
+    brandId: obj.brandId,
+    brandSlug: obj.brandSlug,
+    productId: obj.productId,
+    serialNumber: obj.serialNumber,
+  };
+}
+
 // ─── Short URL handling ─────────────────────────────────────────────────────
 
 function tryParseShortUrl(raw: string): ShortUrlIntent | null {
@@ -480,6 +519,9 @@ export function parseQrPayload(raw: string | null | undefined): ParseResult {
       break;
     case 'ad-campaign':
       payload = validateAdCampaign(obj, issues);
+      break;
+    case 'product-verify':
+      payload = validateProductVerify(obj, issues);
       break;
     default:
       return { ok: false, reason: 'invalid-schema', issues: [`intent: unknown value "${intent}"`] };

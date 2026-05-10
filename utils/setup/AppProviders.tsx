@@ -41,6 +41,7 @@ import { LocationProvider } from '@/contexts/LocationContext';
 import ToastManager from '@/components/common/ToastManager';
 import { CrossPlatformAlertRenderer } from '@/components/common/CrossPlatformAlert';
 import LocationRegionSync from '@/components/common/LocationRegionSync';
+import { SavingsProvider } from '@/contexts/SavingsContext';
 import OfflineBanner from '@/components/common/OfflineBanner';
 
 import {
@@ -145,8 +146,9 @@ function AppProviders({
     <QueryClientProvider client={queryClient}>
     <ErrorBoundary onError={onErrorBoundaryError}>
       <AuthProvider>
-        <IdentityHydrator />
-        <WalletPrefetcher />
+        <SavingsProvider>
+          <IdentityHydrator />
+          <WalletPrefetcher />
         <DeferredWallet>
           <DeferredGamification>
             <LocationProvider>
@@ -165,6 +167,7 @@ function AppProviders({
             </LocationProvider>
           </DeferredGamification>
         </DeferredWallet>
+        </SavingsProvider>
       </AuthProvider>
     </ErrorBoundary>
     </QueryClientProvider>

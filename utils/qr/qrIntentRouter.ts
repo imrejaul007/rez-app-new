@@ -134,6 +134,17 @@ export function routeFromPayload(
         },
       };
 
+    case 'product-verify':
+      return {
+        pathname: '/verify/[brandSlug]/[productId]',
+        params: {
+          brandSlug: payload.brandSlug,
+          productId: payload.productId,
+          serialNumber: payload.serialNumber,
+          brandId: payload.brandId,
+        },
+      };
+
     case 'short-url':
       // Caller fetches the inflated payload via the backend, then calls
       // routeFromPayload again. Returning null here signals "route on the

@@ -46,6 +46,12 @@ export interface NotificationData {
   transactionId?: string;
   walletAction?: string;
   referralCode?: string;
+  // Savings module fields
+  goalId?: string;
+  goalName?: string;
+  streakDays?: number;
+  milestone?: number;
+  insightType?: string;
   [key: string]: any;
 }
 
@@ -157,6 +163,28 @@ export function handleNotificationDeepLink(data: NotificationData): void {
       case 'streak_milestone':
       case 'streak_at_risk':
         router.push('/wallet-screen' as any);
+        break;
+
+      // ─── Savings Module Notifications ─────────────────────────────────────
+      case 'streak_reminder':
+      case 'streak_achieved':
+      case 'savings_milestone':
+      case 'savings_update':
+        router.push('/savings' as any);
+        break;
+
+      case 'goal_progress':
+      case 'goal_completed':
+        if (data.goalId) {
+          router.push(`/savings/goals/${data.goalId}` as any);
+        } else {
+          router.push('/savings/goals' as any);
+        }
+        break;
+
+      case 'insight_available':
+      case 'recommendation_action':
+        router.push('/savings' as any);
         break;
 
       case 'new_offer':
