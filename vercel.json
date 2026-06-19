@@ -41,7 +41,11 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!assets/|icons/|sw\\.js|manifest\\.json|offline\\.html|rez-icon\\.svg|\\.well-known/).*)",
+      "source": "/api/:path*",
+      "destination": "https://rez-api-gateway.onrender.com/api/:path*"
+    },
+    {
+      "source": "/((?!assets/|icons/|sw\\.js|manifest\\.json|offline\\.html|rez-icon\\.svg|\\.well-known/|api/).*)",
       "destination": "/index.html"
     }
   ]

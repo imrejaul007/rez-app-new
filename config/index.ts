@@ -30,13 +30,21 @@ export {
 // The module-level throw previously crashed the entire test suite if the env var was missing.
 // We now guard the Config object access instead of throwing at import time.
 const isTestEnvironment = typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'test';
-if (!isTestEnvironment && process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !process.env.EXPO_PUBLIC_API_BASE_URL) {
-  throw new Error('[config/index] FATAL: EXPO_PUBLIC_API_BASE_URL is not set in production.');
-}
+const isProductionBuild =
+  !isTestEnvironment &&
+  (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' ||
+    process.env.VERCEL === '1' ||
+    process.env.NODE_ENV === 'production');
+
+// In production, default to the relative /api path so Vercel's rewrite proxies
+// traffic to the gateway server-side (no CORS, no exposed backend URL).
+const apiBaseUrlDefault = isProductionBuild ? '/api' : 'http://localhost:5001/api';
 
 // Secondary guard: warn if EXPO_PUBLIC_API_BASE_URL is missing in production (dev/test are fine)
-if (!isTestEnvironment && !__DEV__ && !process.env.EXPO_PUBLIC_API_BASE_URL) {
-  console.error('[CRITICAL] EXPO_PUBLIC_API_BASE_URL not set in production!');
+if (isProductionBuild && !process.env.EXPO_PUBLIC_API_BASE_URL) {
+  console.warn(
+    '[Config] EXPO_PUBLIC_API_BASE_URL not set in production — defaulting to /api (Vercel proxy).'
+  );
 }
 
 // Export specific configurations for easy access
@@ -45,7 +53,7 @@ export const Config = {
   ENV,
 
   // API
-  API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
+  API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || apiBaseUrlDefault,
   API_TIMEOUT: parseInt(process.env.EXPO_PUBLIC_API_TIMEOUT || '30000'),
   
   // Auth

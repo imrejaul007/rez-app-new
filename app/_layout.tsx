@@ -21,6 +21,7 @@ import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-goog
 import { useAppServices } from '@/hooks/useAppServices';
 import AppProviders from '@/utils/setup/AppProviders';
 import logger, { installProductionConsoleGuard } from '@/utils/logger';
+import { getApiUrl } from '@/config/env';
 import { colors } from '@/constants/theme';
 import { getActiveDraft } from '@/stores/checkoutDraftStore';
 import apiClient from '@/services/apiClient';
@@ -365,7 +366,7 @@ function RootLayout() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000);
     try {
-      const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rezapp.com';
+      const apiUrl = getApiUrl();
       const resp = await fetch(`${apiUrl}/config/app-status`, { signal: controller.signal });
       clearTimeout(timeoutId);
       let json: any;
@@ -469,6 +470,13 @@ function RootLayout() {
   return (
     <ErrorBoundary>
       <View style={styles.rootContainer}>
+        {(() => {
+          if (__DEV__) {
+            // eslint-disable-next-line no-console
+            console.warn('[ROOT_LAYOUT] mounting AppProviders + OfflineBanner');
+          }
+          return null;
+        })()}
         <AppProviders
           onErrorBoundaryError={handleErrorBoundaryError}
           onQueueSyncComplete={handleQueueSyncComplete}

@@ -10,20 +10,44 @@ export const APP_CONFIG = {
   environment: process.env.EXPO_PUBLIC_ENVIRONMENT || 'development',
 } as const;
 
-// Production guard: EXPO_PUBLIC_API_BASE_URL must be the API gateway URL.
-// All traffic routes through the gateway — never call the backend directly.
-if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production') {
-  if (!process.env.EXPO_PUBLIC_API_BASE_URL) {
-    throw new Error('[config/env] FATAL: EXPO_PUBLIC_API_BASE_URL is not set in production.');
-  }
+// Production guard: never let a non-loopback build resolve to a loopback API URL.
+// Fires whether EXPO_PUBLIC_ENVIRONMENT is explicitly 'production' or simply unset
+// during a deployed build (Vercel). All production traffic must route through the
+// gateway — never call the backend directly, and never fall back to localhost.
+//
+// Accepted production values:
+//   - Absolute gateway URL: https://rez-api-gateway.onrender.com/api
+//   - Relative path (Vercel proxy): /api  ← preferred, avoids CORS
+// If unset in production, we default to '/api' (Vercel proxy) so the build doesn't
+// fail and traffic still reaches the gateway server-side.
+const isLoopbackUrl = (url: string) =>
+  url.startsWith('http://localhost') ||
+  url.startsWith('http://127.0.0.1') ||
+  url.startsWith('http://[::1]');
+
+const looksLikeProduction =
+  process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' ||
+  process.env.VERCEL === '1' ||
+  process.env.NODE_ENV === 'production';
+
+// In production, default to the relative /api path so Vercel's rewrite proxies
+// traffic to the gateway server-side (no CORS, no exposed backend URL).
+const apiBaseUrl =
+  process.env.EXPO_PUBLIC_API_BASE_URL ||
+  (looksLikeProduction ? '/api' : 'http://localhost:5001/api');
+
+if (looksLikeProduction && isLoopbackUrl(apiBaseUrl)) {
+  throw new Error(
+    `[config/env] FATAL: EXPO_PUBLIC_API_BASE_URL resolves to a loopback address (${apiBaseUrl}). Production builds must use the public gateway URL or a relative /api path.`
+  );
 }
 
 // API Configuration
 export const API_CONFIG = {
-  baseUrl: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
+  baseUrl: apiBaseUrl,
   timeout: parseInt(process.env.EXPO_PUBLIC_API_TIMEOUT || '30000'),
   devUrl: process.env.EXPO_PUBLIC_DEV_API_URL || 'http://localhost:5001/api',
-  prodUrl: process.env.EXPO_PUBLIC_PROD_API_URL || process.env.EXPO_PUBLIC_API_BASE_URL || '',
+  prodUrl: process.env.EXPO_PUBLIC_PROD_API_URL || apiBaseUrl,
 } as const;
 
 // API Endpoints
@@ -160,12 +184,13 @@ export const isDevelopment = () => APP_CONFIG.environment === 'development';
 export const isProduction = () => APP_CONFIG.environment === 'production';
 
 // All traffic routes through the single API gateway.
-// In dev: use devUrl (localhost). In production: always use baseUrl (gateway).
+// In dev: use devUrl (localhost). In production: prefer prodUrl (Vercel /api proxy),
+// fall back to baseUrl when running a non-deployed production build (e.g. local prod test).
 export const getApiUrl = () => {
   if (isDevelopment()) {
     return API_CONFIG.devUrl;
   }
-  return API_CONFIG.baseUrl; // always the gateway — never the direct backend
+  return API_CONFIG.prodUrl || API_CONFIG.baseUrl;
 };
 
 // Export all configs as a single object for easy access
