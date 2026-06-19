@@ -142,6 +142,56 @@ function AppProviders({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onQueueSyncError: _onQueueSyncError,
 }: AppProvidersProps) {
+  // DIAGNOSTIC: Validate every imported component used in the provider tree.
+  // Runs in both dev and production so we can find the bad import even when
+  // the minified React error #130 ("got: object") is uninformative.
+  // Logs are wrapped in try/catch so the check itself can't crash the app.
+  try {
+    const types: Array<[string, unknown]> = [
+      ['QueryClientProvider', QueryClientProvider],
+      ['ErrorBoundary', ErrorBoundary],
+      ['AuthProvider', AuthProvider],
+      ['SavingsProvider', SavingsProvider],
+      ['IdentityHydrator', IdentityHydrator],
+      ['WalletPrefetcher', WalletPrefetcher],
+      ['DeferredWallet', DeferredWallet],
+      ['DeferredGamification', DeferredGamification],
+      ['LocationProvider', LocationProvider],
+      ['LocationRegionSync', LocationRegionSync],
+      ['DeferredSocket', DeferredSocket],
+      ['DeferredCart', DeferredCart],
+      ['WishlistProvider', WishlistProvider],
+      ['NotificationProvider', NotificationProvider],
+      ['ProfileProvider', ProfileProvider],
+      ['ThemedNavigation', ThemedNavigation],
+    ];
+    for (const [name, Ctor] of types) {
+      const t = typeof Ctor;
+      // Valid component types for React: function, class, string (host), or
+      // a React-special object with $$typeof (memo, forwardRef, lazy, context).
+      const isFunction = t === 'function';
+      const isString = t === 'string';
+      const isReactSpecial =
+        t === 'object' &&
+        Ctor !== null &&
+        typeof (Ctor as { $$typeof?: unknown }).$$typeof === 'symbol';
+      if (!isFunction && !isString && !isReactSpecial) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `[AppProviders] BAD IMPORT — "${name}" is ${t === 'undefined' ? 'UNDEFINED' : `typeof=${t}`}. ` +
+            `Object keys: ${Ctor && typeof Ctor === 'object' ? Object.keys(Ctor).slice(0, 5).join(',') : 'n/a'}. ` +
+            `This will trigger React error #130 ("got: object").`,
+        );
+      } else if (__DEV__ && t === 'object' && Ctor) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[AppProviders] ${name}: typeof=${t} keys=${Object.keys(Ctor).slice(0, 4).join(',')}`,
+        );
+      }
+    }
+  } catch {
+    // Diagnostic must never break rendering.
+  }
   const content = (
     <QueryClientProvider client={queryClient}>
     <ErrorBoundary onError={(error, info) => {
@@ -229,6 +279,11 @@ const ScreenTrackerInner = React.memo(function ScreenTrackerInner() {
 function ThemedNavigation() {
   const { isDark } = useTheme();
   const { state: authState } = useAuth();
+
+  if (__DEV__) {
+    // eslint-disable-next-line no-console
+    console.warn('[ThemedNavigation] render, authLoading=' + authState.isLoading);
+  }
 
   // Initialize analytics, remote feature flags, and offline sync queue (fire-and-forget)
   useEffect(() => {
