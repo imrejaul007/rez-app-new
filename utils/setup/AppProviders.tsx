@@ -280,9 +280,40 @@ function ThemedNavigation() {
   const { isDark } = useTheme();
   const { state: authState } = useAuth();
 
-  if (__DEV__) {
-    // eslint-disable-next-line no-console
-    console.warn('[ThemedNavigation] render, authLoading=' + authState.isLoading);
+  // DIAGNOSTIC: Validate every imported component used in ThemedNavigation's tree.
+  // Same shape check as AppProviders — surfaces the bad import causing React #130.
+  try {
+    const types: Array<[string, unknown]> = [
+      ['ThemeProvider', ThemeProvider],
+      ['Stack', Stack],
+      ['ScreenTrackerInner', ScreenTrackerInner],
+      ['DiagnosticErrorBoundary', DiagnosticErrorBoundary],
+      ['StatusBar', StatusBar],
+      ['ToastManager', ToastManager],
+      ['CrossPlatformAlertRenderer', CrossPlatformAlertRenderer],
+      ['OfflineBanner', OfflineBanner],
+      ['RewardPopupManager', RewardPopupManager],
+      ['BottomNavigation', BottomNavigation],
+    ];
+    for (const [name, Ctor] of types) {
+      const t = typeof Ctor;
+      const isFunction = t === 'function';
+      const isString = t === 'string';
+      const isReactSpecial =
+        t === 'object' &&
+        Ctor !== null &&
+        typeof (Ctor as { $$typeof?: unknown }).$$typeof === 'symbol';
+      if (!isFunction && !isString && !isReactSpecial) {
+        // eslint-disable-next-line no-console
+        console.error(
+          `[ThemedNavigation] BAD IMPORT — "${name}" is ${t === 'undefined' ? 'UNDEFINED' : `typeof=${t}`}. ` +
+            `Object keys: ${Ctor && typeof Ctor === 'object' ? Object.keys(Ctor).slice(0, 5).join(',') : 'n/a'}. ` +
+            `This will trigger React error #130 ("got: object").`,
+        );
+      }
+    }
+  } catch {
+    // Diagnostic must never break rendering.
   }
 
   // Initialize analytics, remote feature flags, and offline sync queue (fire-and-forget)
