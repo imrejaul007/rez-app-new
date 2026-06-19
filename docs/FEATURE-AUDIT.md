@@ -134,7 +134,7 @@ The ecosystem includes 15+ backend microservices handling distinct business doma
 | Branded Coins | `app/BrandedCoinsScreen.tsx` | Brand-specific coins |
 | Loyalty Program | `app/loyalty.tsx` | Loyalty tier system |
 | Tier Benefits | `app/tier-benefits.tsx` | Membership tier perks |
-| Savings Goals | `app/savings-goals.tsx` | Savings targets |
+| Savings Goals | `app/savings/list.tsx` | Savings targets |
 | Badges | `app/badges.tsx` | Achievement badges |
 | Achievements | `app/achievements/` | Achievement tracking |
 | Daily Check-in | `app/checkin-history/`, `app/explore/daily-checkin/` | Daily rewards |

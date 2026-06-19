@@ -144,7 +144,12 @@ function AppProviders({
 }: AppProvidersProps) {
   const content = (
     <QueryClientProvider client={queryClient}>
-    <ErrorBoundary onError={onErrorBoundaryError}>
+    <ErrorBoundary onError={(error, info) => {
+      // DIAGNOSTIC: log the actual error so we can see what's broken
+      // eslint-disable-next-line no-console
+      console.error('[AppProviders] ErrorBoundary caught:', error?.message, '\nComponent stack:', info?.componentStack);
+      onErrorBoundaryError(error, info);
+    }}>
       <AuthProvider>
         <SavingsProvider>
           <IdentityHydrator />
@@ -174,6 +179,27 @@ function AppProviders({
   );
 
   return content;
+}
+
+/**
+ * DIAGNOSTIC: ErrorBoundary that logs the full component stack on error
+ */
+function DiagnosticErrorBoundary({ children }: { children: React.ReactNode }) {
+  return (
+    <ErrorBoundary
+      onError={(error, info) => {
+        // eslint-disable-next-line no-console
+        console.error(
+          '[DIAG] ErrorBoundary caught:',
+          error?.message,
+          '\nComponent stack:',
+          info?.componentStack?.split('\n').slice(0, 30).join('\n'),
+        );
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
 }
 
 /**
@@ -233,14 +259,16 @@ function ThemedNavigation() {
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
       <ScreenTrackerInner />
-      <Stack screenOptions={{
-        headerShown: false,
-        animation: 'slide_from_right',
-        animationDuration: 250,
-      }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <DiagnosticErrorBoundary>
+        <Stack screenOptions={{
+          headerShown: false,
+          animation: 'slide_from_right',
+          animationDuration: 250,
+        }}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </DiagnosticErrorBoundary>
       {/* iOS fix: use 'light' (white icons) as the global default so status-bar icons
           remain visible on the many dark/navy gradient headers throughout the app.
           Screens with light backgrounds (e.g. home tab) can override per-screen. */}

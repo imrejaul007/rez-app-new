@@ -506,7 +506,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
         icon: 'flag-outline' as const,
         title: 'Savings Goals',
         subtitle: 'Track & hit your targets',
-        onPress: () => router.push('/savings-goals' as any),
+        onPress: () => router.push('/savings/list' as any),
       },
       {
         id: 'scratch-card',
